@@ -15,6 +15,7 @@
 @protocol ICECommunicator;
 @protocol GLACIER2RouterPrx;
 @interface ViewController : UIViewController{
+    
 @private
     id<ICECommunicator> communicator;
     id<WpQuoteServerCallbackReceiverPrx> twowayR;
@@ -25,6 +26,11 @@
     NSString* _IP;
     NSString* _Mac;
     NSString* strUserId;
+    
+@public
+    WpQuoteServerDayKLineList *KlineList;
+    
+    
 }
 
 

@@ -28,7 +28,7 @@
 @property (nonatomic,strong) UITableView *tableView;
 @property (nonatomic,copy)   NSArray *titlesArray;
 @property (nonatomic,copy)   NSMutableArray *titlesMArray;
-@property (nonatomic,copy) WpQuoteServerDayKLineList *KlineList;
+
 @property (nonatomic) ICEInt iRet;
 @property (nonatomic,copy) NSMutableArray* sCode;
 //ICE
@@ -36,6 +36,7 @@
 @property (nonatomic) id<WpQuoteServerCallbackReceiverPrx> twowayR;
 @property (nonatomic) id<GLACIER2RouterPrx> router;
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
+@property (nonatomic) WpQuoteServerDayKLineList *KlineList;
 @property (nonatomic) NSString* _Acc;
 @property (nonatomic)NSString* _Pass;
 @property (nonatomic)NSString* _IP;
@@ -55,6 +56,7 @@
 @synthesize _IP;
 @synthesize _Mac;
 @synthesize strUserId;
+@synthesize KlineList;
 
 - (void) getKlineData{
     ICEInitializationData* initData = [ICEInitializationData initializationData];
@@ -126,7 +128,7 @@
     NSMutableString* sExchangeID = [[NSMutableString alloc]initWithString:@"SHFE"];
     _iRet = [self.WpQuoteServerclientApiPrx GetDayKLine:sExchangeID DKLL:&DLL strErrInfo:&strErr2];
     NSLog(@"iRet = %d",_iRet);
-    _KlineList = DLL;
+    self.KlineList = DLL;
 }
 - (void)loadData{
     
@@ -134,7 +136,7 @@
     NSMutableArray* sCodeAll = [[NSMutableArray alloc]init];
     _sCode = [[NSMutableArray alloc]init];
     _titlesArray = [[NSArray alloc]init];
-    NSEnumerator *enumerator = [_KlineList objectEnumerator];
+    NSEnumerator *enumerator = [self.KlineList objectEnumerator];
     id obj = nil;
     while (obj = [enumerator nextObject]){
         WpQuoteServerDayKLineCodeInfo* kline = [[WpQuoteServerDayKLineCodeInfo alloc]init];
@@ -149,7 +151,7 @@
         }
     }
     _titlesArray = _sCode;
-    NSLog(@"%@",_titlesArray);
+    //NSLog(@"%@",_titlesArray);
     
     
 }
@@ -162,17 +164,6 @@
     lable.adjustsFontSizeToFitWidth = YES;
     lable.text = @"Loading data,Please wait";
     [self.view addSubview:lable];
-    
-    
-    //    _tableView = [[UITableView alloc] initWithFrame:self.view.bounds];
-    //    [self.view addSubview:_tableView];
-    //    _tableView.delegate = self;
-    //    _tableView.dataSource = self;
-    //_titlesArray = @[@"折线图",@"滑动折线图",@"K线图",@"分时图"];
-    //_titlesArray = @[@"FU1812",@"FU1905",@"K线图",@"分时图"];
-    //CandleLineVC* candleViewController = [[CandleLineVC alloc]init];
-    //[self.navigationController pushViewController:candleViewController animated:YES];
-    
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -182,10 +173,10 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *controllers = @[@"LineVC",@"SlipLineVC",@"CandleLineVC",@"TimeLineVC"];
-    NSString *vcName = controllers[indexPath.row];
-    Class class = NSClassFromString(vcName);//obtain a class by name 获取各个类
-    UIViewController *vc = [[class alloc] init];
+    //NSArray *controllers = @[@"LineVC",@"SlipLineVC",@"CandleLineVC",@"TimeLineVC"];
+    NSString *klinesCode = _titlesArray[indexPath.row];
+    //Class class = NSClassFromString(vcName);//obtain a class by name 获取各个类
+    CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
