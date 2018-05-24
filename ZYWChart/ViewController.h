@@ -7,8 +7,25 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <WpQuote.h>
+#import <objc/Glacier2.h>
+#import <objc/Ice.h>
 
-@interface ViewController : UIViewController
+@class ICEInitializationData;
+@protocol ICECommunicator;
+@protocol GLACIER2RouterPrx;
+@interface ViewController : UIViewController{
+@private
+    id<ICECommunicator> communicator;
+    id<WpQuoteServerCallbackReceiverPrx> twowayR;
+    id<GLACIER2RouterPrx> router;
+    id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
+    NSString* _Acc;
+    NSString* _Pass;
+    NSString* _IP;
+    NSString* _Mac;
+    NSString* strUserId;
+}
 
 
 @end

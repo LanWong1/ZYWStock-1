@@ -214,7 +214,25 @@
 		42E7292F1E13C80200682B3E /* ZYWCandleModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E7292E1E13C80200682B3E /* ZYWCandleModel.m */; };
 		42E729341E13CAF200682B3E /* CandleLineVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E729331E13CAF200682B3E /* CandleLineVC.m */; };
 		79715BAE312AE6B07031DB82 /* libPods-ZYWChart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E2B8C997449299EE5E08697 /* libPods-ZYWChart.a */; };
+		BA51D57920B6880E00B34DA7 /* config.client in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57820B6880E00B34DA7 /* config.client */; };
+		BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
+		BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		BA51D57C20B6899B00B34DA7 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.ice";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).h",
+				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).m",
+			);
+			script = /usr/local/bin/icebuilder;
+		};
+/* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
 		422787971E04F18600DB5CEC /* PBXContainerItemProxy */ = {
@@ -494,6 +512,8 @@
 		42E729331E13CAF200682B3E /* CandleLineVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CandleLineVC.m; sourceTree = "<group>"; };
 		4F7C1CFF0292A45235298718 /* Pods-ZYWChart.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZYWChart.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ZYWChart/Pods-ZYWChart.debug.xcconfig"; sourceTree = "<group>"; };
 		A8CBF1D36897BA6C3C8ABB35 /* Pods-ZYWChart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZYWChart.release.xcconfig"; path = "Pods/Target Support Files/Pods-ZYWChart/Pods-ZYWChart.release.xcconfig"; sourceTree = "<group>"; };
+		BA51D57820B6880E00B34DA7 /* config.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.client; sourceTree = "<group>"; };
+		BA51D57A20B6881F00B34DA7 /* WpQuote.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WpQuote.ice; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -584,7 +604,9 @@
 				422787891E04F18600DB5CEC /* Main.storyboard */,
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
 				4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */,
+				BA51D57820B6880E00B34DA7 /* config.client */,
 				422787911E04F18600DB5CEC /* Info.plist */,
+				BA51D57A20B6881F00B34DA7 /* WpQuote.ice */,
 				424236291EC1ED8300C161A8 /* N225.xml */,
 				422BF0B91EC7081400DF8F4A /* data.plist */,
 				422787801E04F18600DB5CEC /* Supporting Files */,
@@ -953,6 +975,7 @@
 				4227877B1E04F18600DB5CEC /* Resources */,
 			);
 			buildRules = (
+				BA51D57C20B6899B00B34DA7 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -1008,7 +1031,7 @@
 				TargetAttributes = {
 					4227877C1E04F18600DB5CEC = {
 						CreatedOnToolsVersion = 8.2;
-						DevelopmentTeam = 7Z578RDKM6;
+						DevelopmentTeam = W9753JG9F5;
 						ProvisioningStyle = Automatic;
 					};
 					422787951E04F18600DB5CEC = {
@@ -1053,7 +1076,9 @@
 				4227878D1E04F18600DB5CEC /* Assets.xcassets in Resources */,
 				4242362A1EC1ED8400C161A8 /* N225.xml in Resources */,
 				423942841E2B6D0300F2A873 /* ta_retcode.csv in Resources */,
+				BA51D57920B6880E00B34DA7 /* config.client in Resources */,
 				4227878B1E04F18600DB5CEC /* Main.storyboard in Resources */,
+				BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1099,6 +1124,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */,
 				423943061E2B6D0300F2A873 /* ta_PVI.c in Sources */,
 				423942BA1E2B6D0300F2A873 /* ta_CDLKICKINGBYLENGTH.c in Sources */,
 				423942DA1E2B6D0300F2A873 /* ta_DIV.c in Sources */,
@@ -1457,16 +1483,36 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4F7C1CFF0292A45235298718 /* Pods-ZYWChart.debug.xcconfig */;
 			buildSettings = {
+				ADDITIONAL_SDKS = "/usr/local/opt/ice/sdk/$(PLATFORM_NAME).sdk";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7Z578RDKM6;
+				DEVELOPMENT_TEAM = W9753JG9F5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/ZYWChart/ZYWChart-Prefix.pch";
 				INFOPLIST_FILE = ZYWChart/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = zyw113.ZYWChart;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"FHHFPSIndicator\"",
+					"-l\"KVOController\"",
+					"-l\"Masonry\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"UIKit\"",
+					"-lc++",
+					"-liconv",
+					"-ObjC",
+					"-lIce",
+					"-lIceSSL",
+					"-lIceObjc",
+					"-lGlacier2Objc",
+					"-lbz2",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = lanwong;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1477,16 +1523,36 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A8CBF1D36897BA6C3C8ABB35 /* Pods-ZYWChart.release.xcconfig */;
 			buildSettings = {
+				ADDITIONAL_SDKS = "/usr/local/opt/ice/sdk/$(PLATFORM_NAME).sdk";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7Z578RDKM6;
+				DEVELOPMENT_TEAM = W9753JG9F5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/ZYWChart/ZYWChart-Prefix.pch";
 				INFOPLIST_FILE = ZYWChart/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = zyw113.ZYWChart;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"FHHFPSIndicator\"",
+					"-l\"KVOController\"",
+					"-l\"Masonry\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"UIKit\"",
+					"-lc++",
+					"-liconv",
+					"-ObjC",
+					"-lIce",
+					"-lIceSSL",
+					"-lIceObjc",
+					"-lGlacier2Objc",
+					"-lbz2",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = lanwong;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
