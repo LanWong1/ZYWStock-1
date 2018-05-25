@@ -88,7 +88,6 @@
                 self->_tableView.delegate = self;
                 self->_tableView.dataSource = self;
             });
-            
         }
         @catch(GLACIER2CannotCreateSessionException* ex)
         {
@@ -127,7 +126,7 @@
     WpQuoteServerDayKLineList* DLL = [[WpQuoteServerDayKLineList alloc]init];
     NSMutableString* sExchangeID = [[NSMutableString alloc]initWithString:@"SHFE"];
     _iRet = [self.WpQuoteServerclientApiPrx GetDayKLine:sExchangeID DKLL:&DLL strErrInfo:&strErr2];
-    NSLog(@"iRet = %d",_iRet);
+    //NSLog(@"iRet = %d",_iRet);
     self.KlineList = DLL;
 }
 - (void)loadData{
@@ -142,8 +141,10 @@
         WpQuoteServerDayKLineCodeInfo* kline = [[WpQuoteServerDayKLineCodeInfo alloc]init];
         kline = obj;
         [sCodeAll addObject:kline.sCode];
+        //NSLog(@"scoede= %@ high = %@ low = %@ open = %@ close = %@",kline.sCode,kline.sHighPrice,kline.sLowPrice,kline.sOpenPrice, kline.sLastPrice);
     }
     [_sCode addObject:sCodeAll[0]];
+    
     for(int i=1;i<sCodeAll.count;i++){
         if(![sCodeAll[i] isEqual:sCodeAll[i-1]])
         {
@@ -151,10 +152,8 @@
         }
     }
     _titlesArray = _sCode;
-    //NSLog(@"%@",_titlesArray);
-    
-    
 }
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -175,7 +174,7 @@
 {
     //NSArray *controllers = @[@"LineVC",@"SlipLineVC",@"CandleLineVC",@"TimeLineVC"];
     NSString *klinesCode = _titlesArray[indexPath.row];
-    //Class class = NSClassFromString(vcName);//obtain a class by name 获取各个类
+   
     CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList];
     [self.navigationController pushViewController:vc animated:YES];
 }

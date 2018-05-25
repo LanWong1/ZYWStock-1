@@ -91,7 +91,7 @@ typedef enum
     if(self){
         _sCode = sCodeSelect;
         self.KlineData = KlineDataList;
-        NSLog(@"sCode = %@",_sCode);
+        //NSLog(@"sCode = %@",_sCode);
     }
     return self;
     
@@ -118,7 +118,7 @@ typedef enum
     _quotaView.backgroundColor = RoseColor;
     [self.view addSubview:_quotaView];
     [_quotaView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(@(64));
+        make.top.equalTo(@(40));
         make.left.right.equalTo(self.view);
         make.height.equalTo(@(100));
     }];
@@ -489,21 +489,20 @@ typedef enum
 
 - (void)loadData {
 
-    ZYWCandleModel *data = [[ZYWCandleModel alloc] init];
     NSEnumerator *enumerator = [ self.KlineData objectEnumerator];
     id obj = nil;
     while (obj = [enumerator nextObject]){
         WpQuoteServerDayKLineCodeInfo* kline = [[WpQuoteServerDayKLineCodeInfo alloc]init];
         kline = obj;
-
         if([_sCode isEqualToString: kline.sCode])
         {
+            ZYWCandleModel *data = [[ZYWCandleModel alloc] init];
             data.open = [kline.sOpenPrice floatValue];
             data.high = [kline.sHighPrice floatValue];
             data.low = [kline.sLowPrice floatValue];
             data.close = [kline.sLastPrice floatValue];
             data.date = kline.sDate;
-            //NSLog(@"data.close=%f",data.close);
+            
             self.model = data;
             if (self.dataSource == nil)
             {
@@ -512,69 +511,17 @@ typedef enum
             [self.dataSource addObject:self.model];
         }
     }
-    
 
-    
     NSMutableArray * newMarray = [NSMutableArray array];
-    NSEnumerator * enumerator1 = [self.dataSource reverseObjectEnumerator];
+    NSEnumerator * enumerator1 = [self.dataSource reverseObjectEnumerator];//倒序排列
     id object;
     while (object = [enumerator1 nextObject])
     {
         [newMarray addObject:object];
     }
     [self reloadData:newMarray reload:NO];
-    
-    
-    
-//    //数据加载
-//    NSString *fileName = @"N225.xml";
-//    NSArray *fileComponents = [fileName componentsSeparatedByString:@"."];
-//    NSString *filePath = [[NSBundle mainBundle] pathForResource:[fileComponents objectAtIndex:0]
-//                                                         ofType:[fileComponents objectAtIndex:1]];
-//    NSURL *url = [NSURL fileURLWithPath:filePath];
-//    NSXMLParser *parser = [[[NSXMLParser alloc] init] initWithContentsOfURL:url];
-//    parser.delegate = self;
-//    [parser parse];
-    
 }
 
-//- (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict
-//{
-//       if ([elementName isEqualToString:@"item"])
-//       {
-//           ZYWCandleModel *data = [[ZYWCandleModel alloc] init];
-//           data.open = [[attributeDict objectForKey:@"open"] floatValue];
-//           data.high = [[attributeDict objectForKey:@"high"] floatValue];
-//           data.low =  [[attributeDict objectForKey:@"low"] floatValue];
-//           data.close = [[attributeDict objectForKey:@"close"] floatValue];
-//           data.date = [attributeDict objectForKey:@"date"];
-//           self.model = data;
-//    }
-//}
-//
-//- (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName{
-//    if ([elementName isEqualToString:@"item"])
-//    {
-//        if (self.dataSource == nil)
-//        {
-//            self.dataSource = [[NSMutableArray alloc] init];
-//        }
-//        [self.dataSource addObject:self.model];
-//    }
-//}
-//
-//- (void)parserDidEndDocument:(NSXMLParser *)parser
-//{
-//    NSMutableArray * newMarray = [NSMutableArray array];
-//    NSEnumerator * enumerator = [self.dataSource reverseObjectEnumerator];
-//
-//    id object;
-//    while (object = [enumerator nextObject])
-//    {
-//        [newMarray addObject:object];
-//    }
-//    [self reloadData:newMarray reload:NO];
-//}
 
 - (void)reloadData:(NSMutableArray*)array reload:(BOOL)reload
 {
@@ -589,7 +536,6 @@ typedef enum
             {
                 model.isDrawDate = YES;
             }
-            
             else
             {
                 model.isDrawDate = NO;
