@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "ViewController.h"
+#import "HomeVC.h"
 #import "FHHFPSIndicator.h"
 #import "BaseNavigationController.h"
 @interface AppDelegate ()

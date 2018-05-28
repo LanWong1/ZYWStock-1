@@ -130,7 +130,7 @@ typedef enum
     [self.view addSubview:_scrollView];
     _scrollView.scrollEnabled = YES;
     _scrollView.bounces = YES;
-    _scrollView.showsHorizontalScrollIndicator = NO;
+    _scrollView.showsHorizontalScrollIndicator = YES;
     _scrollView.backgroundColor = [UIColor whiteColor];
     [_scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(_quotaView.mas_bottom);
@@ -502,7 +502,6 @@ typedef enum
             data.low = [kline.sLowPrice floatValue];
             data.close = [kline.sLastPrice floatValue];
             data.date = kline.sDate;
-            
             self.model = data;
             if (self.dataSource == nil)
             {

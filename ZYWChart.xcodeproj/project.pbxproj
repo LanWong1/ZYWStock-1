@@ -15,7 +15,7 @@
 		4205775F1E4AFAD500E8C15E /* ZYWCalcuteUntil.m in Sources */ = {isa = PBXBuildFile; fileRef = 4205775E1E4AFAD500E8C15E /* ZYWCalcuteUntil.m */; };
 		422787821E04F18600DB5CEC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 422787811E04F18600DB5CEC /* main.m */; };
 		422787851E04F18600DB5CEC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 422787841E04F18600DB5CEC /* AppDelegate.m */; };
-		422787881E04F18600DB5CEC /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 422787871E04F18600DB5CEC /* ViewController.m */; };
+		422787881E04F18600DB5CEC /* HomeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 422787871E04F18600DB5CEC /* HomeVC.m */; };
 		4227878B1E04F18600DB5CEC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 422787891E04F18600DB5CEC /* Main.storyboard */; };
 		4227878D1E04F18600DB5CEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4227878C1E04F18600DB5CEC /* Assets.xcassets */; };
 		422787901E04F18600DB5CEC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */; };
@@ -269,8 +269,8 @@
 		422787811E04F18600DB5CEC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		422787831E04F18600DB5CEC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		422787841E04F18600DB5CEC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		422787861E04F18600DB5CEC /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		422787871E04F18600DB5CEC /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		422787861E04F18600DB5CEC /* HomeVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HomeVC.h; sourceTree = "<group>"; };
+		422787871E04F18600DB5CEC /* HomeVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HomeVC.m; sourceTree = "<group>"; };
 		4227878A1E04F18600DB5CEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4227878C1E04F18600DB5CEC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4227878F1E04F18600DB5CEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -599,8 +599,6 @@
 				422787BE1E04F73900DB5CEC /* Controller */,
 				422787831E04F18600DB5CEC /* AppDelegate.h */,
 				422787841E04F18600DB5CEC /* AppDelegate.m */,
-				422787861E04F18600DB5CEC /* ViewController.h */,
-				422787871E04F18600DB5CEC /* ViewController.m */,
 				422787891E04F18600DB5CEC /* Main.storyboard */,
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
 				4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */,
@@ -644,6 +642,8 @@
 		422787BE1E04F73900DB5CEC /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				422787861E04F18600DB5CEC /* HomeVC.h */,
+				422787871E04F18600DB5CEC /* HomeVC.m */,
 				4204E0C81E12375D00A47FCF /* LineVC.h */,
 				4204E0C91E12375D00A47FCF /* LineVC.m */,
 				4204E0D11E12474400A47FCF /* SlipLineVC.h */,
@@ -1130,7 +1130,7 @@
 				423942DA1E2B6D0300F2A873 /* ta_DIV.c in Sources */,
 				42E729341E13CAF200682B3E /* CandleLineVC.m in Sources */,
 				423942D41E2B6D0300F2A873 /* ta_CEIL.c in Sources */,
-				422787881E04F18600DB5CEC /* ViewController.m in Sources */,
+				422787881E04F18600DB5CEC /* HomeVC.m in Sources */,
 				423942AC1E2B6D0300F2A873 /* ta_CDLGAPSIDESIDEWHITE.c in Sources */,
 				423942821E2B6D0300F2A873 /* ta_global.c in Sources */,
 				423942911E2B6D0300F2A873 /* ta_ATR.c in Sources */,
