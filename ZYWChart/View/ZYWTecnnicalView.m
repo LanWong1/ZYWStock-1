@@ -81,7 +81,6 @@
     {
         return;
     }
-    
     button.selected = !button.selected;
     UIButton *prevButton = [self viewWithTag:_currentButtonTag];
     prevButton.backgroundColor = [UIColor colorWithHexString:@"EE6363"];

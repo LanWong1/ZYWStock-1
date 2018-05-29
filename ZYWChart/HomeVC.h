@@ -14,7 +14,7 @@
 @class ICEInitializationData;
 @protocol ICECommunicator;
 @protocol GLACIER2RouterPrx;
-@interface ViewController : UIViewController{
+@interface HomeVC : UIViewController{
     
 @private
     id<ICECommunicator> communicator;

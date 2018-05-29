@@ -22,18 +22,18 @@
 
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
+ 
     [self.window makeKeyAndVisible];
     
-#if defined(DEBUG) || defined(_DEBUG)
-    
-    [[FHHFPSIndicator sharedFPSIndicator] show];
-    
-#endif
-    
-    ViewController *Controller = [[ViewController alloc] init];
+//#if defined(DEBUG) || defined(_DEBUG)
+//
+//    [[FHHFPSIndicator sharedFPSIndicator] show];
+//
+//#endif
+    NSLog(@"aaaaa");
+    HomeVC *Controller = [[HomeVC alloc] init];
     BaseNavigationController *nav = [[BaseNavigationController alloc] initWithRootViewController:Controller];
     self.window.rootViewController = nav;
-    
     return YES;
 }
 
