@@ -16,7 +16,6 @@
 		422787821E04F18600DB5CEC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 422787811E04F18600DB5CEC /* main.m */; };
 		422787851E04F18600DB5CEC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 422787841E04F18600DB5CEC /* AppDelegate.m */; };
 		422787881E04F18600DB5CEC /* HomeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 422787871E04F18600DB5CEC /* HomeVC.m */; };
-		4227878B1E04F18600DB5CEC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 422787891E04F18600DB5CEC /* Main.storyboard */; };
 		4227878D1E04F18600DB5CEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4227878C1E04F18600DB5CEC /* Assets.xcassets */; };
 		422787901E04F18600DB5CEC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */; };
 		4227879B1E04F18600DB5CEC /* ZYWChartTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4227879A1E04F18600DB5CEC /* ZYWChartTests.m */; };
@@ -214,7 +213,7 @@
 		42E7292F1E13C80200682B3E /* ZYWCandleModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E7292E1E13C80200682B3E /* ZYWCandleModel.m */; };
 		42E729341E13CAF200682B3E /* CandleLineVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E729331E13CAF200682B3E /* CandleLineVC.m */; };
 		79715BAE312AE6B07031DB82 /* libPods-ZYWChart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E2B8C997449299EE5E08697 /* libPods-ZYWChart.a */; };
-		BA0EF4C820BD3D3300E5F974 /* HistoryVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA0EF4C720BD3D3300E5F974 /* HistoryVC.m */; };
+		BA0EF4C820BD3D3300E5F974 /* CodeListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA0EF4C720BD3D3300E5F974 /* CodeListVC.m */; };
 		BA51D57920B6880E00B34DA7 /* config.client in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57820B6880E00B34DA7 /* config.client */; };
 		BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
 		BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
@@ -272,7 +271,6 @@
 		422787841E04F18600DB5CEC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		422787861E04F18600DB5CEC /* HomeVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HomeVC.h; sourceTree = "<group>"; };
 		422787871E04F18600DB5CEC /* HomeVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HomeVC.m; sourceTree = "<group>"; };
-		4227878A1E04F18600DB5CEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4227878C1E04F18600DB5CEC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4227878F1E04F18600DB5CEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		422787911E04F18600DB5CEC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -513,8 +511,8 @@
 		42E729331E13CAF200682B3E /* CandleLineVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CandleLineVC.m; sourceTree = "<group>"; };
 		4F7C1CFF0292A45235298718 /* Pods-ZYWChart.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZYWChart.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ZYWChart/Pods-ZYWChart.debug.xcconfig"; sourceTree = "<group>"; };
 		A8CBF1D36897BA6C3C8ABB35 /* Pods-ZYWChart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZYWChart.release.xcconfig"; path = "Pods/Target Support Files/Pods-ZYWChart/Pods-ZYWChart.release.xcconfig"; sourceTree = "<group>"; };
-		BA0EF4C620BD3D3300E5F974 /* HistoryVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HistoryVC.h; sourceTree = "<group>"; };
-		BA0EF4C720BD3D3300E5F974 /* HistoryVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HistoryVC.m; sourceTree = "<group>"; };
+		BA0EF4C620BD3D3300E5F974 /* CodeListVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodeListVC.h; sourceTree = "<group>"; };
+		BA0EF4C720BD3D3300E5F974 /* CodeListVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeListVC.m; sourceTree = "<group>"; };
 		BA51D57820B6880E00B34DA7 /* config.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.client; sourceTree = "<group>"; };
 		BA51D57A20B6881F00B34DA7 /* WpQuote.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WpQuote.ice; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -604,7 +602,6 @@
 				422787861E04F18600DB5CEC /* HomeVC.h */,
 				422787871E04F18600DB5CEC /* HomeVC.m */,
 				422787841E04F18600DB5CEC /* AppDelegate.m */,
-				422787891E04F18600DB5CEC /* Main.storyboard */,
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
 				4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */,
 				BA51D57820B6880E00B34DA7 /* config.client */,
@@ -647,8 +644,8 @@
 		422787BE1E04F73900DB5CEC /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				BA0EF4C620BD3D3300E5F974 /* HistoryVC.h */,
-				BA0EF4C720BD3D3300E5F974 /* HistoryVC.m */,
+				BA0EF4C620BD3D3300E5F974 /* CodeListVC.h */,
+				BA0EF4C720BD3D3300E5F974 /* CodeListVC.m */,
 				4204E0C81E12375D00A47FCF /* LineVC.h */,
 				4204E0C91E12375D00A47FCF /* LineVC.m */,
 				4204E0D11E12474400A47FCF /* SlipLineVC.h */,
@@ -1082,7 +1079,6 @@
 				4242362A1EC1ED8400C161A8 /* N225.xml in Resources */,
 				423942841E2B6D0300F2A873 /* ta_retcode.csv in Resources */,
 				BA51D57920B6880E00B34DA7 /* config.client in Resources */,
-				4227878B1E04F18600DB5CEC /* Main.storyboard in Resources */,
 				BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1194,7 +1190,7 @@
 				423B9A2B1EC15EE300A2B49A /* CandleCrossScreenVC.m in Sources */,
 				423942861E2B6D0300F2A873 /* ta_ACOS.c in Sources */,
 				4248A04A1EBC485A0086EAA7 /* ZYWTecnnicalView.m in Sources */,
-				BA0EF4C820BD3D3300E5F974 /* HistoryVC.m in Sources */,
+				BA0EF4C820BD3D3300E5F974 /* CodeListVC.m in Sources */,
 				4248A0451EBC485A0086EAA7 /* ZYWCandleChartView.m in Sources */,
 				423942FE1E2B6D0300F2A873 /* ta_MOM.c in Sources */,
 				423942951E2B6D0300F2A873 /* ta_BOP.c in Sources */,
@@ -1364,14 +1360,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		422787891E04F18600DB5CEC /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4227878A1E04F18600DB5CEC /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

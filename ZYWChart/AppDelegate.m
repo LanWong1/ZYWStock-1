@@ -30,7 +30,7 @@
 //    [[FHHFPSIndicator sharedFPSIndicator] show];
 //
 //#endif
-    NSLog(@"aaaaa");
+
     HomeVC *Controller = [[HomeVC alloc] init];
     BaseNavigationController *nav = [[BaseNavigationController alloc] initWithRootViewController:Controller];
     self.window.rootViewController = nav;

@@ -20,7 +20,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
    // Do any additional setup after loading the view.
-   
     self.navigationItem.title  = @"分时图";
     self.view.backgroundColor = [UIColor whiteColor];
     _timeLineView = [ZYWTimeLineView new];
@@ -49,8 +48,9 @@
     }
     _timeLineView.leftMargin =10;
     _timeLineView.rightMargin  = 10;
-    _timeLineView.lineColor = [UIColor blackColor];
-    _timeLineView.fillColor = [UIColor colorWithHexString:@"2828ff"];
+    _timeLineView.lineColor = [UIColor redColor];
+    //_timeLineView.fillColor = [UIColor colorWithHexString:@"2828ff"];
+    _timeLineView.fillColor = [UIColor whiteColor];
     _timeLineView.timesCount = 243;
     _timeLineView.dataArray = timeArray.mutableCopy;
     [_timeLineView stockFill];

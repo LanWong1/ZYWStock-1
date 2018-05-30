@@ -6,14 +6,17 @@
 //  Copyright © 2018 zyw113. All rights reserved.
 //
 
-#import "HistoryVC.h"
+#import "CodeListVC.h"
 #import "CandleLineVC.h"
 #import <objc/Ice.h>
 #import <objc/Glacier2.h>
 #import <WpQuote.h>
+//#import "EvenRefresh.h"
 
-@interface HistoryVC ()<UITableViewDelegate,UITableViewDataSource,UISearchResultsUpdating, UISearchControllerDelegate>
+
+@interface CodeListVC ()<UITableViewDelegate,UITableViewDataSource,UISearchResultsUpdating, UISearchControllerDelegate>
 @property (nonatomic,strong) UISearchController *searchController;
+@property (nonatomic, retain) UIRefreshControl * refreshControl;
 @property (nonatomic, copy) NSString *filterString;
 @property (nonatomic,strong) UITableView    *tableView;
 @property (nonatomic,copy)   NSMutableArray *titlesArray;
@@ -22,33 +25,82 @@
 @property (nonatomic,copy)   NSArray* searchResult;
 @property (nonatomic) WpQuoteServerDayKLineList *KlineList;
 @property (nonatomic)        ICEInt iRet;
-
-
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
-//@property (nonatomic) WpQuoteServerDayKLineList *KlineList;
+@property (nonatomic) id<GLACIER2RouterPrx> router;
+@property (nonatomic) id<ICECommunicator> communicator;
+@property (nonatomic) id session;
+@property (nonatomic)        ICEInt refreshFlag;
+
+@property (nonatomic,strong) UILabel *label;
+@property (nonatomic,strong) UIActivityIndicatorView *activeId;
+@property (nonatomic,strong) UIButton *btn;
+
+
 @end
 
-@implementation HistoryVC
 
+@implementation CodeListVC
 
+@synthesize communicator;
+@synthesize session;
+@synthesize router;
 @synthesize KlineList;
 @synthesize WpQuoteServerclientApiPrx;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"合约代码";
-    [self getKline];
+    if(self.KlineList == nil)
+    {
+        [self getData];
+    }
+    else{
+        [self addSearch];
+    }
+    
     
     //[self addSearch];
     // Do any additional setup after loading the view.
 }
+- (void)addActiveId{
+    self.activeId = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    self.activeId.center = CGPointMake(self.view.centerX ,self.view.centerY+200);
+    [self.view addSubview:self.activeId];
+    
+}
+
+- (void)addLabel{
+    self.label = [[UILabel alloc]initWithFrame:CGRectMake(self.view.centerX-80, self.view.centerY-50, 160, 20)];
+    self.label.adjustsFontSizeToFitWidth = YES;
+    self.label.text = @"Loading data,Please wait...";
+    [self.view addSubview:self.label];
+}
+
+
+-(void)activate:(id<ICECommunicator>)c
+         router:(id<GLACIER2RouterPrx>)r
+        WpQuoteServerclientApiPrx:(id<WpQuoteServerClientApiPrx>)l
+{
+    self.communicator = c;
+    self.router = r;
+    self.WpQuoteServerclientApiPrx = l;
+}
 //getData
 - (void)getData{
+    if(self.refreshFlag!= 1)
+    {
+        [self addActiveId];
+        [self addLabel];
+        [self.activeId startAnimating];
+    }
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-        NSLog(@"ssssdffffggg");
-        [self getKline];
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [self addSearch];
+    [self getKline];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [self.activeId stopAnimating];
+        [self.activeId removeFromSuperview];
+        [self.label removeFromSuperview];
+        [self addSearch];
+        [self addRefreshControl];
         });
     });
 }
@@ -61,8 +113,13 @@
     NSString* strErr2 = @"";
     WpQuoteServerDayKLineList* DLL = [[WpQuoteServerDayKLineList alloc]init];
     NSMutableString* sExchangeID = [[NSMutableString alloc]initWithString:@"SHFE"];
-    _iRet = [self.WpQuoteServerclientApiPrx GetDayKLine:sExchangeID DKLL:&DLL strErrInfo:&strErr2];
-    NSLog(@"_iRet=%d",_iRet);
+    @try{
+        _iRet = [self.WpQuoteServerclientApiPrx GetDayKLine:sExchangeID DKLL:&DLL strErrInfo:&strErr2];
+    }
+    @catch(ICEException* s)
+    {
+        NSLog(@"%@",s);
+    }
     self.KlineList = DLL;
     [self loadData];
 }
@@ -86,7 +143,6 @@
         }
     }
     _searchResult = _titlesArray;
-    
 }
 - (void)addSearch{
     self.searchController = [[UISearchController alloc]initWithSearchResultsController:nil];
@@ -115,10 +171,27 @@
 }
 
 - (void)addTableView{
-    self->_tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DEVICE_WIDTH,500)];
+    self->_tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DEVICE_WIDTH,DEVICE_HEIGHT)];
     [self.view addSubview:self->_tableView];
     self->_tableView.delegate = self;
     self->_tableView.dataSource = self;
+}
+- (void)addRefreshControl{
+    _refreshControl = [[UIRefreshControl alloc]init];
+    _refreshControl.tintColor = [UIColor redColor];
+    _refreshControl.attributedTitle = [[NSAttributedString alloc]initWithString:@"下拉刷新"];
+    [_refreshControl addTarget:self action:@selector(refreshControlAction) forControlEvents:UIControlEventValueChanged];
+    [_tableView addSubview:_refreshControl];
+}
+- (void)refreshControlAction{
+    if(self.refreshControl.refreshing){
+        _refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"加载中..."];
+        self.refreshFlag = 1;
+        [self getData];
+        [self.refreshControl endRefreshing];
+        
+    }
+    
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -132,6 +205,8 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+
+
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *identifier = @"identifier";
@@ -142,8 +217,30 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     NSString* title = _searchResult[indexPath.row];
+
+    
+        UIButton* btn = [[UIButton alloc]initWithFrame:CGRectMake(DEVICE_WIDTH-200, 10, 80, 35)];
+        btn.backgroundColor = [UIColor greenColor];
+        [btn setTitle:@"历史行情" forState:UIControlStateNormal];
+        [btn.titleLabel setFont:[UIFont systemFontOfSize:12]];
+        [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [btn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
+        btn.tag = indexPath.row;
+        [btn addTarget:self action:@selector(btnPress:) forControlEvents:UIControlEventTouchUpInside];
+      
+ 
+    NSLog(@"idexPath=%ld",indexPath.row);
     cell.textLabel.text = title;
+    
+    [cell addSubview:btn];
     return cell;
+}
+- (void)btnPress:(id)sender{
+    UIButton*btn  = (UIButton*)sender;
+    NSLog(@"%ld",btn.tag);
+    NSString *klinesCode = _searchResult[btn.tag];
+    CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 - (void)setFilterString:(NSString *)filterString{
     _filterString = filterString;
@@ -176,19 +273,8 @@
     self.searchResult = self.titlesArray;
     [self.tableView reloadData];
 }
--(void)didDismissSearchController:(UISearchController *)searchController
+- (void)didDismissSearchController:(UISearchController *)searchController
 {
     
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 @end
