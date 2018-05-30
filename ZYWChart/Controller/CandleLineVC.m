@@ -502,7 +502,6 @@ typedef enum
             data.low = [kline.sLowPrice floatValue];
             data.close = [kline.sLastPrice floatValue];
             data.date = kline.sDate;
-            
             self.model = data;
             if (self.dataSource == nil)
             {
