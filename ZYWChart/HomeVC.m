@@ -107,13 +107,7 @@
             [adapter activate];
             self.twowayR = [WpQuoteServerCallbackReceiverPrx uncheckedCast:[adapter add:[[WpQuoteServerCallbackReceiverI alloc]init] identity:callbackReceiverIdent]];
             
-            NSMutableString* strOut = [[NSMutableString alloc]init];
-            NSString* Time = @"154000";
-            NSString* Code = @"cu1903";
-            NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-            NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,Code,@"=",Time];
-            [self.WpQuoteServerclientApiPrx GetKLine:@"minute" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
-            NSLog(@"%@",strOut);
+        
             
             dispatch_sync(dispatch_get_main_queue(), ^{
                 

@@ -94,14 +94,15 @@
         [self.activeId startAnimating];
     }
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-    [self getKline];
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        [self.activeId stopAnimating];
-        [self.activeId removeFromSuperview];
-        [self.label removeFromSuperview];
-        [self addSearch];
-        [self addRefreshControl];
-        });
+        
+        [self getKline];
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [self.activeId stopAnimating];
+            [self.activeId removeFromSuperview];
+            [self.label removeFromSuperview];
+            [self addSearch];
+            [self addRefreshControl];
+            });
     });
 }
 
@@ -219,29 +220,68 @@
     NSString* title = _searchResult[indexPath.row];
 
     
-        UIButton* btn = [[UIButton alloc]initWithFrame:CGRectMake(DEVICE_WIDTH-200, 10, 80, 35)];
-        btn.backgroundColor = [UIColor greenColor];
-        [btn setTitle:@"历史行情" forState:UIControlStateNormal];
-        [btn.titleLabel setFont:[UIFont systemFontOfSize:12]];
-        [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [btn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
-        btn.tag = indexPath.row;
-        [btn addTarget:self action:@selector(btnPress:) forControlEvents:UIControlEventTouchUpInside];
+    UIButton* btn = [[UIButton alloc]init];
+    btn = [self setButton:@"历史行情" xPosition:200];
+    btn.tag = indexPath.row;
+    btn.backgroundColor = [UIColor greenColor];
+    [btn addTarget:self action:@selector(btnPress:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIButton *btn1 = [[UIButton alloc]init];
+    btn1 = [self setButton:@"分时图" xPosition:100];
+    btn1.backgroundColor = RoseColor;
+    btn1.tag = indexPath.row+[_searchResult count];
+    [btn1 addTarget:self action:@selector(btnPress:) forControlEvents:UIControlEventTouchUpInside];
       
  
-    NSLog(@"idexPath=%ld",indexPath.row);
+
     cell.textLabel.text = title;
-    
     [cell addSubview:btn];
+    [cell addSubview:btn1];
     return cell;
+}
+- (UIButton*)setButton:(NSString*)title xPosition:(CGFloat) x {
+    UIButton* btn = [[UIButton alloc]initWithFrame:CGRectMake(DEVICE_WIDTH-x, 10, 80, 35)];
+    [btn setTitle:title forState:UIControlStateNormal];
+    [btn.titleLabel setFont:[UIFont systemFontOfSize:12]];
+    btn.layer.cornerRadius=20;
+    [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [btn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
+    return btn;
 }
 - (void)btnPress:(id)sender{
     UIButton*btn  = (UIButton*)sender;
-    NSLog(@"%ld",btn.tag);
-    NSString *klinesCode = _searchResult[btn.tag];
-    CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList];
-    [self.navigationController pushViewController:vc animated:YES];
+    
+    if(btn.tag<[_searchResult count])
+    {
+        NSLog(@"历史行情 %ld",btn.tag);
+        NSString *klinesCode = _searchResult[btn.tag];
+        CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+    else{
+        NSLog(@"分时图 %ld",btn.tag);
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
+            
+            [self getTimeData];
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                NSLog(@"hhhhh");
+            });
+        });
+    }
+  
 }
+- (void)getTimeData{
+    
+    NSMutableString* strOut = [[NSMutableString alloc]init];
+    NSString* Time = @"154000";
+    NSString* Code = @"cu1903";
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,Code,@"=",Time];
+    [self.WpQuoteServerclientApiPrx GetKLine:@"minute" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+    NSLog(@"%@",strOut);
+}
+
+
 - (void)setFilterString:(NSString *)filterString{
     _filterString = filterString;
     if(!filterString||filterString.length<=0){
