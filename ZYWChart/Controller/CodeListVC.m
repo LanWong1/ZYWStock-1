@@ -24,7 +24,7 @@
 @property (nonatomic,copy)   NSMutableArray *titlesMArray;
 @property (nonatomic,strong) UISearchBar *search;
 @property (nonatomic,copy)   NSArray* searchResult;
-@property (nonatomic,copy)   NSMutableArray* array;
+//@property (nonatomic,copy)   NSMutableArray* array;
 @property (nonatomic) WpQuoteServerDayKLineList *KlineList;
 @property (nonatomic)        ICEInt iRet;
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
@@ -260,10 +260,10 @@
     else{
         NSInteger tag = btn.tag;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-            [self getTimeData:self.searchResult[tag-[self.searchResult count]]];
+            NSMutableArray* arry =[self getTimeData:self.searchResult[tag-[self.searchResult count]]];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 self.timeLineVC = [[TimeLineVC alloc]init];
-                self.timeLineVC.timeData = self.array;
+                self.timeLineVC.timeData = arry;
                 self.timeLineVC.sCode = self.searchResult[tag-[self.searchResult count]];
                 [self.navigationController pushViewController:self.timeLineVC animated:YES];  
             });
@@ -271,7 +271,7 @@
     }
   
 }
-- (void)getTimeData:(NSString*)sCode {
+- (NSMutableArray*)getTimeData:(NSString*)sCode {
     
     NSMutableString* strOut = [[NSMutableString alloc]init];
     NSString* Time = [self getCurrentTime];
@@ -280,13 +280,16 @@
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,Code,@"=",Time];
     [self.WpQuoteServerclientApiPrx GetKLine:@"minute" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
-    NSLog(@"%@",strOut);
+    NSMutableArray* array = [NSMutableArray array];
     if([strOut length]> 0){
-        self.array = [[strOut componentsSeparatedByString:@"|"] mutableCopy];
-        NSLog(@"%@",self.array);
-        [self.array removeLastObject];
+        array = [NSMutableArray array];
+        array = [[strOut componentsSeparatedByString:@"|"] mutableCopy];
+       [array removeLastObject];
     }
-
+    else{
+        array = nil;
+    }
+    return array;
 }
 
 - (NSString*)getCurrentTime{

@@ -49,13 +49,12 @@
     if([self.timeData count]>0)
     {
         NSMutableArray * timeArray = [NSMutableArray array];
+        //[self.timeData removeLastObject];
         NSEnumerator *enumerator =[self.timeData objectEnumerator];
         id obj = nil;
         while (obj = [enumerator nextObject]){
             NSString *string = obj;
             NSArray* array1 = [string componentsSeparatedByString:@","];
-            NSLog(@"%@",array1);
-            //NSLog(@"time %@ openprice %@ lastprice %@",array1[1],array1[2],array1[3]);
             ZYWTimeLineModel * e = [[ZYWTimeLineModel alloc]init];
             e.currtTime = array1[1];
             e.preClosePx = [array1[6] doubleValue];
