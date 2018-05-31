@@ -11,6 +11,7 @@
 #import <objc/Ice.h>
 #import <objc/Glacier2.h>
 #import <WpQuote.h>
+#include "TimeLineVC.h"
 //#import "EvenRefresh.h"
 
 
@@ -23,6 +24,7 @@
 @property (nonatomic,copy)   NSMutableArray *titlesMArray;
 @property (nonatomic,strong) UISearchBar *search;
 @property (nonatomic,copy)   NSArray* searchResult;
+@property (nonatomic,copy)   NSMutableArray* array;
 @property (nonatomic) WpQuoteServerDayKLineList *KlineList;
 @property (nonatomic)        ICEInt iRet;
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
@@ -35,6 +37,7 @@
 @property (nonatomic,strong) UIActivityIndicatorView *activeId;
 @property (nonatomic,strong) UIButton *btn;
 
+@property (nonatomic,strong) TimeLineVC *timeLineVC;
 
 @end
 
@@ -49,7 +52,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationItem.title = @"合约代码";
+    self.navigationItem.title = @"看行情";
     if(self.KlineList == nil)
     {
         [self getData];
@@ -66,7 +69,6 @@
     self.activeId = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.activeId.center = CGPointMake(self.view.centerX ,self.view.centerY+200);
     [self.view addSubview:self.activeId];
-    
 }
 
 - (void)addLabel{
@@ -219,7 +221,6 @@
     }
     NSString* title = _searchResult[indexPath.row];
 
-    
     UIButton* btn = [[UIButton alloc]init];
     btn = [self setButton:@"历史行情" xPosition:200];
     btn.tag = indexPath.row;
@@ -231,8 +232,6 @@
     btn1.backgroundColor = RoseColor;
     btn1.tag = indexPath.row+[_searchResult count];
     [btn1 addTarget:self action:@selector(btnPress:) forControlEvents:UIControlEventTouchUpInside];
-      
- 
 
     cell.textLabel.text = title;
     [cell addSubview:btn];
@@ -249,8 +248,8 @@
     return btn;
 }
 - (void)btnPress:(id)sender{
-    UIButton*btn  = (UIButton*)sender;
     
+    UIButton*btn  = (UIButton*)sender;
     if(btn.tag<[_searchResult count])
     {
         NSLog(@"历史行情 %ld",btn.tag);
@@ -259,26 +258,43 @@
         [self.navigationController pushViewController:vc animated:YES];
     }
     else{
-        NSLog(@"分时图 %ld",btn.tag);
+        NSInteger tag = btn.tag;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-            
-            [self getTimeData];
+            [self getTimeData:self.searchResult[tag-[self.searchResult count]]];
             dispatch_sync(dispatch_get_main_queue(), ^{
-                NSLog(@"hhhhh");
+                self.timeLineVC = [[TimeLineVC alloc]init];
+                self.timeLineVC.timeData = self.array;
+                self.timeLineVC.sCode = self.searchResult[tag-[self.searchResult count]];
+                [self.navigationController pushViewController:self.timeLineVC animated:YES];  
             });
         });
     }
   
 }
-- (void)getTimeData{
+- (void)getTimeData:(NSString*)sCode {
     
     NSMutableString* strOut = [[NSMutableString alloc]init];
-    NSString* Time = @"154000";
-    NSString* Code = @"cu1903";
+    NSString* Time = [self getCurrentTime];
+    NSString* Code = sCode;
+    NSLog(@"%@",Code);
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,Code,@"=",Time];
     [self.WpQuoteServerclientApiPrx GetKLine:@"minute" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
     NSLog(@"%@",strOut);
+    if([strOut length]> 0){
+        self.array = [[strOut componentsSeparatedByString:@"|"] mutableCopy];
+        NSLog(@"%@",self.array);
+        [self.array removeLastObject];
+    }
+
+}
+
+- (NSString*)getCurrentTime{
+    NSDate * date = [NSDate date];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateFormat = @"HHmmss";
+    NSString *string = [formatter stringFromDate:date];
+    return string;
 }
 
 

@@ -10,4 +10,8 @@
 
 @interface TimeLineVC : UIViewController
 
+@property(nonatomic,copy)NSMutableArray* timeData;
+@property(nonatomic,copy)NSString* sCode;
+
+
 @end

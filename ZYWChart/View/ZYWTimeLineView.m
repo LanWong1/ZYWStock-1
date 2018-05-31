@@ -201,7 +201,7 @@
         ZYWTimeLineModel *model = self.dataArray[self.dataArray.count*i/3];
         CGFloat x = self.width/3*i;
         CATextLayer *layer = [self getTextLayer];
-         layer.string = model.currtTime;
+        layer.string = model.currtTime;
         layer.position = CGPointMake(x,self.height - _timeLayerHeight/2);
         layer.bounds = CGRectMake(0, 0, 60, self.timeLayerHeight);
         [self.timeLayer addSublayer:layer];

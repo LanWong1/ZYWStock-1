@@ -71,7 +71,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.navigationItem.title = @"Home";
+    self.navigationItem.title = @"主页";
     UINavigationBar.appearance.translucent = false;
     self.view.backgroundColor = [UIColor clearColor];
     [self addLabel];
@@ -106,17 +106,11 @@
             id<ICEObjectAdapter> adapter = [self.communicator createObjectAdapterWithRouter:@"" router:self.router];
             [adapter activate];
             self.twowayR = [WpQuoteServerCallbackReceiverPrx uncheckedCast:[adapter add:[[WpQuoteServerCallbackReceiverI alloc]init] identity:callbackReceiverIdent]];
-            
-        
-            
+    
             dispatch_sync(dispatch_get_main_queue(), ^{
-                
-          
-                //self.getCandleLineBtn.enabled = YES;
                 [self.activeId stopAnimating];
                 [self.label removeFromSuperview];
                 [self addgetCandleLineBtn];//添加按钮
-                [self addGetTimeLineBtn];
             });
         }
         @catch(GLACIER2CannotCreateSessionException* ex)
@@ -140,7 +134,7 @@
                                                                     preferredStyle:UIAlertControllerStyleAlert];
             [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
             [self presentViewController:alert animated:YES completion:nil];
-            [communicator destroy];
+            [self.communicator destroy];
             self.communicator = nil;
             return;
         }
@@ -162,32 +156,18 @@
     self.getCandleLineBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     self.getCandleLineBtn.backgroundColor = RoseColor;
     self.getCandleLineBtn.layer.cornerRadius=20;
-    self.getCandleLineBtn.frame = CGRectMake(self.view.centerX-50, self.view.centerY-100, 100, 50);
-    [self.getCandleLineBtn setTitle:@"历史行情" forState:UIControlStateNormal];
+    self.getCandleLineBtn.frame = CGRectMake(self.view.centerX-50, self.view.centerY-25, 100, 50);
+    [self.getCandleLineBtn setTitle:@"看行情" forState:UIControlStateNormal];
     [self.getCandleLineBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [self.getCandleLineBtn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
-    [self.getCandleLineBtn addTarget:self action:@selector(getHisData) forControlEvents:UIControlEventTouchUpInside];
+    [self.getCandleLineBtn addTarget:self action:@selector(btnPress) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.getCandleLineBtn];
 }
-- (void)addGetTimeLineBtn{
-    self.getTimeLineBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.getTimeLineBtn.backgroundColor = RoseColor;
-    self.getTimeLineBtn.layer.cornerRadius=20;
-    self.getTimeLineBtn.frame = CGRectMake(self.view.centerX-50, self.view.centerY+100, 100, 50);
-    [self.getTimeLineBtn setTitle:@"分时图" forState:UIControlStateNormal];
-    [self.getTimeLineBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [self.getTimeLineBtn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
-    [self.getTimeLineBtn addTarget:self action:@selector(getTimeData) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.getTimeLineBtn];
-}
 
-- (void)getTimeData{
-    TimeLineVC* timeLineVC = [[TimeLineVC alloc]init];
-    [self.navigationController pushViewController:timeLineVC animated:YES];
-}
+
+
 //getData
-- (void)getHisData{
-    
+- (void)btnPress{
     if(self.historyVC == nil){
         self.historyVC = [[CodeListVC alloc]init];
         [self.historyVC activate:self.communicator router:self.router WpQuoteServerclientApiPrx:self.WpQuoteServerclientApiPrx];
