@@ -95,13 +95,17 @@ NSMutableArray* computeMACDData(NSArray *items)
                                     outMACD,
                                     outMACDSignal,
                                     outMACDHist);
+    
     if (TA_SUCCESS == ta_retCode) {
         //  DEA
+        
         NSArray *arrMACDSignal = MACDCArrayToNSArray(outMACDSignal, (int)items.count, outBegIdx, outNBElement, items, MACDParameterDEA);
         //  DIFF
         NSArray *arrMACD = MACDCArrayToNSArray(outMACD, (int)items.count, outBegIdx, outNBElement, items, MACDParameterDIFF);
         //  MACD
+    
         NSArray *arrMACDHist = MACDCArrayToNSArray(outMACDHist, (int)items.count, outBegIdx, outNBElement, items, MACDParameterMACD);
+       
         for (NSInteger index = 0; index < items.count; index++) {
             //两倍表示MACD
             ZYWCandleModel *item = [items objectAtIndex:items.count - 1 - index];
@@ -120,6 +124,7 @@ NSMutableArray* computeMACDData(NSArray *items)
     freeAndSetNULL(outMACD);
     freeAndSetNULL(outMACDSignal);
     freeAndSetNULL(outMACDHist);
+    
     return resultArray;
 }
 

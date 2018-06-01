@@ -7,15 +7,21 @@
 //
 
 #import <UIKit/UIKit.h>
+
 #import <WpQuote.h>
 #import <objc/Glacier2.h>
 #import <objc/Ice.h>
+
+//@class ICEInitializationData;
+//@protocol ICECommunicator;
+//@protocol GLACIER2RouterPrx;
 @interface CodeListVC : UIViewController{
 @private
     id<ICECommunicator> communicator;
     id session;
     id<GLACIER2RouterPrx> router;
     id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
+    //id<WpQuoteServerCallbackReceiverPrx> twowayR;
 @public
     WpQuoteServerDayKLineList *KlineList;
 }

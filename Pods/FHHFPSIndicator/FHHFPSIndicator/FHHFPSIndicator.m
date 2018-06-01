@@ -102,7 +102,7 @@
     float fps = _count / delta;
     _count = 0;
     NSString *text = [NSString stringWithFormat:@"%d FPS",(int)round(fps)];
-    //[_fpsLabel setText: text];
+    [_fpsLabel setText: text];
 }
 
 - (void)show {

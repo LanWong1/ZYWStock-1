@@ -74,13 +74,9 @@
         [_timeLineView stockFill];
     }
     else{
-        
-        NSLog(@"ssssssss"); //弹窗警告
-        
+        //NSLog(@"ssssssss"); //弹窗警告
     }
- 
 
-   
 }
 
 - (void)didReceiveMemoryWarning {

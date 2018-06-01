@@ -606,7 +606,9 @@ static inline bool isEqualZero(float value)
 
 - (void)drawKLine
 {
+    
     [self initCurrentDisplayModels];
+    
     if (self.delegate && [self.delegate respondsToSelector: @selector(displayScreenleftPostion:startIndex:count:)])
     {
         [_delegate displayScreenleftPostion:self.leftPostion startIndex:self.currentStartIndex count:self.displayCount];
@@ -617,7 +619,7 @@ static inline bool isEqualZero(float value)
         ZYWCandleModel *lastModel = self.currentDisplayArray.lastObject;
         [_delegate displayLastModel:lastModel];
     }
-
+    
     [self calcuteMaxAndMinValue];
     [self initModelPositoin];
     [CATransaction begin];
@@ -634,11 +636,17 @@ static inline bool isEqualZero(float value)
 - (void)stockFill
 {
     [self initConfig];
+
     [self initLayer];
+ 
     [self.superScrollView layoutIfNeeded];
+   
     [self calcuteCandleWidth];
+
     [self updateWidth];
+  
     [self drawKLine];
+    
 }
 
 - (void)reload

@@ -69,7 +69,7 @@ NSArray *MACDCArrayToNSArray(const double inCArray[], int length, int outBegIdx,
     if (NULL == inCArray) {
         return nil;
     }
-    
+     
     NSMutableArray *outNSArray = [[NSMutableArray alloc] initWithCapacity:length];
     //  EMA
     CGFloat EMA12Value = 0.0f;
@@ -80,31 +80,35 @@ NSArray *MACDCArrayToNSArray(const double inCArray[], int length, int outBegIdx,
     CGFloat DEAValue = 0.0f;
     //  MACD
     CGFloat MACDValue = 0.0f;
+
     
     for (NSInteger index = 0; index < length; index++) {
+       
         if (index >= outBegIdx && index < outBegIdx + outNBElement) {
+            
             [outNSArray addObject:[NSString stringWithFormat:@"%f", inCArray[index - outBegIdx]]];
+            
             if (parameter == MACDParameterMACD) {
             }
             
-        } else {
-            //  当前天数
+        }
+        else {
             NSUInteger nowIndex = length - index - 1;
             //  当前蜡烛图数据
             ZYWCandleModel *item = items[nowIndex];
             //  前一日数据
-            ZYWCandleModel *lastItem = items[nowIndex - 1];
             //  第一天
             if (index == 0) {
                 [outNSArray addObject:[NSString stringWithFormat:@"%.2f", 0.0f]];
                 continue;
             }
-            
             //  第二天
             else if (index == 1) {
-                [outNSArray addObject:[NSString stringWithFormat:@"%.2f", 0.0f]];
+                ZYWCandleModel *lastItem = items[nowIndex - 1];
+                //  当前天数
                 
-                EMA12Value = lastItem.close + (item.close  - lastItem.close ) * 2.0 / 13;
+                [outNSArray addObject:[NSString stringWithFormat:@"%.2f", 0.0f]];
+                EMA12Value = lastItem.close + (item.close - lastItem.close ) * 2.0 / 13;
                 EMA26Value = lastItem.close  + (item.close  - lastItem.close ) * 2.0 / 27;
                 DIFFValue = EMA12Value - EMA26Value;
                 DEAValue = DEAValue * 8.0 / 10 + DIFFValue * 2.0 / 10;
@@ -135,6 +139,7 @@ NSArray *MACDCArrayToNSArray(const double inCArray[], int length, int outBegIdx,
                     break;
             }
         }
+        
     }
     return outNSArray;
 }

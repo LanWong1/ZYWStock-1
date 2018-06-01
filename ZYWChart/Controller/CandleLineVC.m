@@ -154,7 +154,7 @@ typedef enum
     }];
   
     _candleChartView.candleSpace = 2;
-    _candleChartView.displayCount = 25;
+    _candleChartView.displayCount = 15;
     _displayCount = _candleChartView.displayCount;
     _candleChartView.lineWidth = 1*widthradio;
 }
@@ -489,45 +489,52 @@ typedef enum
 
 - (void)loadData {
 
-    NSEnumerator *enumerator = [ self.KlineData objectEnumerator];
-    id obj = nil;
-    while (obj = [enumerator nextObject]){
-        WpQuoteServerDayKLineCodeInfo* kline = [[WpQuoteServerDayKLineCodeInfo alloc]init];
-        kline = obj;
-        if([_sCode isEqualToString: kline.sCode])
-        {
-            ZYWCandleModel *data = [[ZYWCandleModel alloc] init];
-            data.open = [kline.sOpenPrice floatValue];
-            data.high = [kline.sHighPrice floatValue];
-            data.low = [kline.sLowPrice floatValue];
-            data.close = [kline.sLastPrice floatValue];
-            data.date = kline.sDate;
-            self.model = data;
-            if (self.dataSource == nil)
+        NSEnumerator *enumerator = [ self.KlineData objectEnumerator];
+        id obj = nil;
+        while (obj = [enumerator nextObject]){
+            WpQuoteServerDayKLineCodeInfo* kline = [[WpQuoteServerDayKLineCodeInfo alloc]init];
+            kline = obj;
+            if([_sCode isEqualToString: kline.sCode])
             {
-                self.dataSource = [[NSMutableArray alloc] init];
+                ZYWCandleModel *data = [[ZYWCandleModel alloc] init];
+                data.open = [kline.sOpenPrice floatValue];
+                data.high = [kline.sHighPrice floatValue];
+                data.low = [kline.sLowPrice floatValue];
+                data.close = [kline.sLastPrice floatValue];
+                data.date = kline.sDate;
+                self.model = data;
+                if (self.dataSource == nil)
+                {
+                    self.dataSource = [[NSMutableArray alloc] init];
+                }
+                [self.dataSource addObject:self.model];
             }
-            [self.dataSource addObject:self.model];
         }
-    }
+       
+        NSMutableArray * newMarray = [NSMutableArray array];
+        NSEnumerator * enumerator1 = [self.dataSource reverseObjectEnumerator];//倒序排列
+        id object;
+        while (object = [enumerator1 nextObject])
+        {
+            [newMarray addObject:object];
+        }
+        [self reloadData:newMarray reload:NO];
+    
+ 
 
-    NSMutableArray * newMarray = [NSMutableArray array];
-    NSEnumerator * enumerator1 = [self.dataSource reverseObjectEnumerator];//倒序排列
-    id object;
-    while (object = [enumerator1 nextObject])
-    {
-        [newMarray addObject:object];
-    }
-    [self reloadData:newMarray reload:NO];
 }
 
 
 - (void)reloadData:(NSMutableArray*)array reload:(BOOL)reload
 {
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
+       
         _macdView.dataArray = computeMACDData(array).mutableCopy;
+       
         _kdjLineView.dataArray = computeKDJData(array).mutableCopy;
+      
         _wrLineView.dataArray = computeWRData(array,10).mutableCopy;
+        
         for (NSInteger i = 0;i<array.count;i++)
         {
             ZYWCandleModel *model = array[i];
@@ -550,7 +557,9 @@ typedef enum
             }
             else
             {
+                
                 [self.candleChartView stockFill];
+                
             }
         });
     });

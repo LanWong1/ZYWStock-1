@@ -12,7 +12,19 @@
 #import <objc/Glacier2.h>
 #import <WpQuote.h>
 #include "TimeLineVC.h"
+
+
 //#import "EvenRefresh.h"
+
+//@interface WpQuoteServerCallbackReceiverI : WpQuoteServerCallbackReceiver<WpQuoteServerCallbackReceiver>
+//@end
+//
+//@implementation WpQuoteServerCallbackReceiverI
+//- (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current
+//{
+//    NSLog(@"%@",strMessage);
+//}
+//@end
 
 
 @interface CodeListVC ()<UITableViewDelegate,UITableViewDataSource,UISearchResultsUpdating, UISearchControllerDelegate>
@@ -24,7 +36,7 @@
 @property (nonatomic,copy)   NSMutableArray *titlesMArray;
 @property (nonatomic,strong) UISearchBar *search;
 @property (nonatomic,copy)   NSArray* searchResult;
-//@property (nonatomic,copy)   NSMutableArray* array;
+@property (nonatomic,copy)   NSMutableArray* array;
 @property (nonatomic) WpQuoteServerDayKLineList *KlineList;
 @property (nonatomic)        ICEInt iRet;
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
@@ -37,8 +49,9 @@
 @property (nonatomic,strong) UIActivityIndicatorView *activeId;
 @property (nonatomic,strong) UIButton *btn;
 
-@property (nonatomic,strong) TimeLineVC *timeLineVC;
+//@property (nonatomic,strong) TimeLineVC *timeLineVC;
 
+@property (nonatomic) id<WpQuoteServerCallbackReceiverPrx> twowayR;
 @end
 
 
@@ -47,6 +60,7 @@
 @synthesize communicator;
 @synthesize session;
 @synthesize router;
+@synthesize twowayR;
 @synthesize KlineList;
 @synthesize WpQuoteServerclientApiPrx;
 
@@ -60,9 +74,6 @@
     else{
         [self addSearch];
     }
-    
-    
-    //[self addSearch];
     // Do any additional setup after loading the view.
 }
 - (void)addActiveId{
@@ -147,6 +158,7 @@
     }
     _searchResult = _titlesArray;
 }
+//添加searchbar
 - (void)addSearch{
     self.searchController = [[UISearchController alloc]initWithSearchResultsController:nil];
     self.searchController.searchResultsUpdater = self;
@@ -172,13 +184,14 @@
     [self addTableView];
     self.tableView.tableHeaderView = view;
 }
-
+//tableview
 - (void)addTableView{
     self->_tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DEVICE_WIDTH,DEVICE_HEIGHT)];
     [self.view addSubview:self->_tableView];
     self->_tableView.delegate = self;
     self->_tableView.dataSource = self;
 }
+#pragma 下拉刷新
 - (void)addRefreshControl{
     _refreshControl = [[UIRefreshControl alloc]init];
     _refreshControl.tintColor = [UIColor redColor];
@@ -194,7 +207,6 @@
         [self.refreshControl endRefreshing];
         
     }
-    
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -207,9 +219,6 @@
     CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList];
     [self.navigationController pushViewController:vc animated:YES];
 }
-
-
-
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *identifier = @"identifier";
@@ -238,6 +247,7 @@
     [cell addSubview:btn1];
     return cell;
 }
+//button设置
 - (UIButton*)setButton:(NSString*)title xPosition:(CGFloat) x {
     UIButton* btn = [[UIButton alloc]initWithFrame:CGRectMake(DEVICE_WIDTH-x, 10, 80, 35)];
     [btn setTitle:title forState:UIControlStateNormal];
@@ -247,9 +257,11 @@
     [btn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
     return btn;
 }
+//按下行情或者分时按钮
 - (void)btnPress:(id)sender{
     
     UIButton*btn  = (UIButton*)sender;
+    //行情button按下
     if(btn.tag<[_searchResult count])
     {
         NSLog(@"历史行情 %ld",btn.tag);
@@ -257,40 +269,64 @@
         CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList];
         [self.navigationController pushViewController:vc animated:YES];
     }
+    
+    //分时按钮按下
     else{
         NSInteger tag = btn.tag;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
+            
             NSMutableArray* arry =[self getTimeData:self.searchResult[tag-[self.searchResult count]]];
             dispatch_sync(dispatch_get_main_queue(), ^{
-                self.timeLineVC = [[TimeLineVC alloc]init];
-                self.timeLineVC.timeData = arry;
-                self.timeLineVC.sCode = self.searchResult[tag-[self.searchResult count]];
-                [self.navigationController pushViewController:self.timeLineVC animated:YES];  
+                TimeLineVC* timeLineVC = [[TimeLineVC alloc]init];
+                timeLineVC.timeData = arry;
+                timeLineVC.sCode = self.searchResult[tag-[self.searchResult count]];
+                [self.navigationController pushViewController:timeLineVC animated:YES];
             });
         });
     }
-  
 }
+//获取timedata
 - (NSMutableArray*)getTimeData:(NSString*)sCode {
-    
-    NSMutableString* strOut = [[NSMutableString alloc]init];
-    NSString* Time = [self getCurrentTime];
-    NSString* Code = sCode;
-    NSLog(@"%@",Code);
-    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-    NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,Code,@"=",Time];
-    [self.WpQuoteServerclientApiPrx GetKLine:@"minute" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
-    NSMutableArray* array = [NSMutableArray array];
-    if([strOut length]> 0){
-        array = [NSMutableArray array];
-        array = [[strOut componentsSeparatedByString:@"|"] mutableCopy];
-       [array removeLastObject];
+    @try{
+        [self reconnect];
+        NSMutableString* strOut = [[NSMutableString alloc]init];
+        NSString* Time = [self getCurrentTime];
+        NSString* Code = sCode;
+        NSLog(@"%@",Code);
+        NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+        NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,Code,@"=",Time];
+        ICEInt ret = [self.WpQuoteServerclientApiPrx GetKLine:@"minute" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+        NSMutableArray* array = [NSMutableArray array];
+        if([strOut length]> 0){
+            array = [NSMutableArray array];
+            array = [[strOut componentsSeparatedByString:@"|"] mutableCopy];
+            [array removeLastObject];
+        }
+        else{
+            array = nil;
+        }
+        return array;
     }
-    else{
-        array = nil;
+    @catch(ICEException* s)
+    {
+        NSLog(@"sssssddddffff %@",s);
     }
-    return array;
 }
+- (void)reconnect{
+    ICEInitializationData* initData = [ICEInitializationData initializationData];
+    initData.properties = [ICEUtil createProperties];
+    [initData.properties load:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"config.client"]];
+    initData.dispatcher = ^(id<ICEDispatcherCall> call, id<ICEConnection> con)
+    {
+        dispatch_sync(dispatch_get_main_queue(), ^ { [call run]; });
+    };
+    self.communicator = [ICEUtil createCommunicator:initData];//创建communicator
+    
+    self.router = [GLACIER2RouterPrx checkedCast:[self.communicator getDefaultRouter]];//路由
+    [self.router createSession:@"" password:@""];//创建session
+    self.WpQuoteServerclientApiPrx = [WpQuoteServerClientApiPrx uncheckedCast:[self.communicator stringToProxy:@"ClientApiId"]];//返回具有所请求类型代理
+}
+
 
 - (NSString*)getCurrentTime{
     NSDate * date = [NSDate date];

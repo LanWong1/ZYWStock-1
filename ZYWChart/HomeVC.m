@@ -29,7 +29,7 @@
 
 @property (nonatomic,strong) UILabel *label;
 @property (nonatomic,strong) UIActivityIndicatorView *activeId;
-@property (nonatomic,strong) UIButton *getCandleLineBtn;
+@property (nonatomic,strong) UIButton *homeButton;
 @property (nonatomic,strong) UIButton *getTimeLineBtn;
 @property (nonatomic)        ICEInt iRet;
 @property (nonatomic,strong) UISearchBar *search;
@@ -91,26 +91,25 @@
     {
         dispatch_sync(dispatch_get_main_queue(), ^ { [call run]; });
     };
-    
     self.communicator = [ICEUtil createCommunicator:initData];//创建communicator
     //开线程
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
         @try
         {
             //连接
-            self.router = [GLACIER2RouterPrx checkedCast:[self.communicator getDefaultRouter]];//路由
-            [self.router createSession:@"" password:@""];//创建session
-            self.WpQuoteServerclientApiPrx = [WpQuoteServerClientApiPrx uncheckedCast:[self.communicator stringToProxy:@"ClientApiId"]];//返回具有所请求类型代理
+             self.router = [GLACIER2RouterPrx checkedCast:[self.communicator getDefaultRouter]];//路由
+             [self.router createSession:@"" password:@""];//创建session
+             self.WpQuoteServerclientApiPrx = [WpQuoteServerClientApiPrx uncheckedCast:[self.communicator stringToProxy:@"ClientApiId"]];//返回具有所请求类型代理
             //启用主推回报
             ICEIdentity* callbackReceiverIdent= [ICEIdentity identity:@"callbackReceiver" category:[self.router getCategoryForClient]];
             id<ICEObjectAdapter> adapter = [self.communicator createObjectAdapterWithRouter:@"" router:self.router];
             [adapter activate];
             self.twowayR = [WpQuoteServerCallbackReceiverPrx uncheckedCast:[adapter add:[[WpQuoteServerCallbackReceiverI alloc]init] identity:callbackReceiverIdent]];
-    
             dispatch_sync(dispatch_get_main_queue(), ^{
+                
                 [self.activeId stopAnimating];
                 [self.label removeFromSuperview];
-                [self addgetCandleLineBtn];//添加按钮
+                [self addHomeBtn];//添加按钮
             });
         }
         @catch(GLACIER2CannotCreateSessionException* ex)
@@ -152,16 +151,16 @@
     self.label.text = @"Loading data,Please wait";
     [self.view addSubview:self.label];
 }
-- (void)addgetCandleLineBtn{
-    self.getCandleLineBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.getCandleLineBtn.backgroundColor = RoseColor;
-    self.getCandleLineBtn.layer.cornerRadius=20;
-    self.getCandleLineBtn.frame = CGRectMake(self.view.centerX-50, self.view.centerY-25, 100, 50);
-    [self.getCandleLineBtn setTitle:@"看行情" forState:UIControlStateNormal];
-    [self.getCandleLineBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [self.getCandleLineBtn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
-    [self.getCandleLineBtn addTarget:self action:@selector(btnPress) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.getCandleLineBtn];
+- (void)addHomeBtn{
+    self.homeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.homeButton.backgroundColor = RoseColor;
+    self.homeButton.layer.cornerRadius=20;
+    self.homeButton.frame = CGRectMake(self.view.centerX-50, self.view.centerY-25, 100, 50);
+    [self.homeButton setTitle:@"看行情" forState:UIControlStateNormal];
+    [self.homeButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [self.homeButton setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
+    [self.homeButton addTarget:self action:@selector(btnPress) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.homeButton];
 }
 
 
