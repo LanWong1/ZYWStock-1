@@ -57,6 +57,7 @@
 
 @implementation CodeListVC
 
+
 @synthesize communicator;
 @synthesize session;
 @synthesize router;
@@ -98,6 +99,7 @@
     self.router = r;
     self.WpQuoteServerclientApiPrx = l;
 }
+
 //getData
 - (void)getData{
     if(self.refreshFlag!= 1)
@@ -128,6 +130,7 @@
     WpQuoteServerDayKLineList* DLL = [[WpQuoteServerDayKLineList alloc]init];
     NSMutableString* sExchangeID = [[NSMutableString alloc]initWithString:@"SHFE"];
     @try{
+        //[self reconnect];
         _iRet = [self.WpQuoteServerclientApiPrx GetDayKLine:sExchangeID DKLL:&DLL strErrInfo:&strErr2];
     }
     @catch(ICEException* s)
@@ -233,7 +236,7 @@
     UIButton* btn = [[UIButton alloc]init];
     btn = [self setButton:@"历史行情" xPosition:200];
     btn.tag = indexPath.row;
-    btn.backgroundColor = [UIColor greenColor];
+    btn.backgroundColor = DropColor;
     [btn addTarget:self action:@selector(btnPress:) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *btn1 = [[UIButton alloc]init];
@@ -252,29 +255,27 @@
     UIButton* btn = [[UIButton alloc]initWithFrame:CGRectMake(DEVICE_WIDTH-x, 10, 80, 35)];
     [btn setTitle:title forState:UIControlStateNormal];
     [btn.titleLabel setFont:[UIFont systemFontOfSize:12]];
-    btn.layer.cornerRadius=20;
+    //btn.layer.cornerRadius=20;
     [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
     return btn;
 }
 //按下行情或者分时按钮
 - (void)btnPress:(id)sender{
-    
     UIButton*btn  = (UIButton*)sender;
     //行情button按下
     if(btn.tag<[_searchResult count])
     {
-        NSLog(@"历史行情 %ld",btn.tag);
         NSString *klinesCode = _searchResult[btn.tag];
+        NSLog(@"历史行情 %@",_searchResult[btn.tag]);
         CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList];
         [self.navigationController pushViewController:vc animated:YES];
     }
-    
     //分时按钮按下
     else{
         NSInteger tag = btn.tag;
+        NSLog(@"分时图 %@",self.searchResult[tag-[self.searchResult count]]);
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-            
             NSMutableArray* arry =[self getTimeData:self.searchResult[tag-[self.searchResult count]]];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 TimeLineVC* timeLineVC = [[TimeLineVC alloc]init];
@@ -288,14 +289,13 @@
 //获取timedata
 - (NSMutableArray*)getTimeData:(NSString*)sCode {
     @try{
-        [self reconnect];
+       // [self reconnect];//重连
         NSMutableString* strOut = [[NSMutableString alloc]init];
         NSString* Time = [self getCurrentTime];
         NSString* Code = sCode;
-        NSLog(@"%@",Code);
         NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
         NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,Code,@"=",Time];
-        ICEInt ret = [self.WpQuoteServerclientApiPrx GetKLine:@"minute" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+        [self.WpQuoteServerclientApiPrx GetKLine:@"minute" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
         NSMutableArray* array = [NSMutableArray array];
         if([strOut length]> 0){
             array = [NSMutableArray array];
@@ -309,9 +309,10 @@
     }
     @catch(ICEException* s)
     {
-        NSLog(@"sssssddddffff %@",s);
+        NSLog(@"Fail %@",s);
     }
 }
+//连接服务器
 - (void)reconnect{
     ICEInitializationData* initData = [ICEInitializationData initializationData];
     initData.properties = [ICEUtil createProperties];
@@ -321,13 +322,12 @@
         dispatch_sync(dispatch_get_main_queue(), ^ { [call run]; });
     };
     self.communicator = [ICEUtil createCommunicator:initData];//创建communicator
-    
     self.router = [GLACIER2RouterPrx checkedCast:[self.communicator getDefaultRouter]];//路由
     [self.router createSession:@"" password:@""];//创建session
     self.WpQuoteServerclientApiPrx = [WpQuoteServerClientApiPrx uncheckedCast:[self.communicator stringToProxy:@"ClientApiId"]];//返回具有所请求类型代理
 }
 
-
+//获取当前时间
 - (NSString*)getCurrentTime{
     NSDate * date = [NSDate date];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
@@ -336,7 +336,7 @@
     return string;
 }
 
-
+//search bar 过滤字符串 setter
 - (void)setFilterString:(NSString *)filterString{
     _filterString = filterString;
     if(!filterString||filterString.length<=0){
@@ -357,6 +357,7 @@
 }
 
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController{
+   
     if(!self.searchController.active){
         return;
     }

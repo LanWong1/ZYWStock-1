@@ -10,29 +10,37 @@
 #import <WpQuote.h>
 #import <objc/Glacier2.h>
 #import <objc/Ice.h>
+#import <NpTrade.h>
 
 @class ICEInitializationData;
 @protocol ICECommunicator;
 @protocol GLACIER2RouterPrx;
 @interface HomeVC : UIViewController{
-    
-@private
-    id<ICECommunicator> communicator;
-    id<WpQuoteServerCallbackReceiverPrx> twowayR;
-    id<GLACIER2RouterPrx> router;
-    id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
-    NSString* _Acc;
-    NSString* _Pass;
-    NSString* _IP;
-    NSString* _Mac;
-    NSString* strUserId;
-    
-@public
-    WpQuoteServerDayKLineList *KlineList;
-    
-    
-}
 
+    
+//@private
+//    id<ICECommunicator> communicator;
+//    id<WpQuoteServerCallbackReceiverPrx> twowayR;
+//    id<GLACIER2RouterPrx> router;
+//    id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
+//    NSString* _Acc;
+//    NSString* _Pass;
+//    NSString* _IP;
+//    NSString* _Mac;
+//    NSString* strUserId;
+//@public
+//    WpQuoteServerDayKLineList *KlineList;
+    
+      //NSString* loginStrCmd;
+}
+//-(void)activate:(id<ICECommunicator>)communicator
+//         router:(id<GLACIER2RouterPrx>)router
+//WpQuoteServerclientApiPrx:(id<WpQuoteServerClientApiPrx>)WpQuoteServerclientApiPrx;
+
+-(void)activate:(id<ICECommunicator>)communicator
+         router:(id<GLACIER2RouterPrx>)router
+NpTradeAPIServerClientApiPrx:(id<NpTradeAPIServerClientApiPrx>)NpTradeAPIServerclientApiPrx
+       loginCmd:(NSString*)loginStrCmd;
 
 @end
 

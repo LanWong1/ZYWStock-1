@@ -17,9 +17,9 @@
 //@protocol GLACIER2RouterPrx;
 @interface CodeListVC : UIViewController{
 @private
-    id<ICECommunicator> communicator;
-    id session;
-    id<GLACIER2RouterPrx> router;
+//    id<ICECommunicator> communicator;
+//    id session;
+//    id<GLACIER2RouterPrx> router;
     id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
     //id<WpQuoteServerCallbackReceiverPrx> twowayR;
 @public

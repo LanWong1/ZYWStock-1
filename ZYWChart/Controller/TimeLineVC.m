@@ -32,20 +32,7 @@
     }];
     [_timeLineView layoutIfNeeded];
     
-    
-    
-//    NSString * path =[[NSBundle mainBundle]pathForResource:@"data.plist" ofType:nil];
-//    NSArray * sourceArray = [[NSDictionary dictionaryWithContentsOfFile:path] objectForKey:@"data3"];
-//    for (NSDictionary * dic in sourceArray) {
-//        ZYWTimeLineModel * e = [[ZYWTimeLineModel alloc]init];
-//        e.currtTime = dic[@"curr_time"];
-//        e.preClosePx = [dic[@"pre_close_px"] doubleValue];
-//        e.avgPirce = [dic[@"avg_pirce"] doubleValue];
-//        e.lastPirce = [dic[@"last_px"]doubleValue];
-//        e.volume = [dic[@"last_volume_trade"]doubleValue];
-//        e.rate = dic[@"rise_and_fall_rate"];
-//        [timeArray addObject:e];
-//    }
+
     if([self.timeData count]>0)
     {
         NSMutableArray * timeArray = [NSMutableArray array];

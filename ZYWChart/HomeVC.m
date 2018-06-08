@@ -14,16 +14,18 @@
 #import <WpQuote.h>
 #import "CodeListVC.h"
 #import "TimeLineVC.h"
+#import "BuyVC.h"
+#import "NpTrade.h"
 
-@interface WpQuoteServerCallbackReceiverI : WpQuoteServerCallbackReceiver<WpQuoteServerCallbackReceiver>
-@end
-
-@implementation WpQuoteServerCallbackReceiverI
-- (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current
-{
-    NSLog(@"%@",strMessage);
-}
-@end
+//@interface WpQuoteServerCallbackReceiverI : WpQuoteServerCallbackReceiver<WpQuoteServerCallbackReceiver>
+//@end
+//
+//@implementation WpQuoteServerCallbackReceiverI
+//- (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current
+//{
+//    NSLog(@"%@",strMessage);
+//}
+//@end
 
 @interface HomeVC () 
 
@@ -40,7 +42,7 @@
 
 //ICE
 @property (nonatomic) id<ICECommunicator> communicator;
-@property (nonatomic) id<WpQuoteServerCallbackReceiverPrx> twowayR;
+//@property (nonatomic) id<WpQuoteServerCallbackReceiverPrx> twowayR;
 @property (nonatomic) id<GLACIER2RouterPrx> router;
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
 @property (nonatomic) WpQuoteServerDayKLineList *KlineList;
@@ -49,7 +51,11 @@
 @property (nonatomic) NSString* _IP;
 @property (nonatomic) NSString* _Mac;
 @property (nonatomic) NSString* strUserId;
+@property (nonatomic) NSString* loginStrCmd;
 
+@property (nonatomic) id<NpTradeAPIServerCallbackReceiverPrx> twowayR;
+
+@property (nonatomic) id<NpTradeAPIServerClientApiPrx> NpTrade;
 @end
 
 @implementation HomeVC
@@ -64,7 +70,7 @@
 @synthesize _IP;
 @synthesize _Mac;
 @synthesize strUserId;
-
+//@synthesize loginStrCmd;
 
 
 
@@ -72,73 +78,95 @@
 {
     [super viewDidLoad];
     self.navigationItem.title = @"主页";
-    UINavigationBar.appearance.translucent = false;
+    UINavigationBar.appearance.translucent = YES;
     self.view.backgroundColor = [UIColor clearColor];
-    [self addLabel];
-    [self addActiveId];
-    [self connect2Server];
+//    [self addLabel];
+//    [self addActiveId];
+    UIButton *lineButton  = [self addBtn:@"看行情" y_Position:self.view.centerY-200];//添加按钮
+    UIButton *buyButton   = [self addBtn:@"交易" y_Position:self.view.centerY+100];
+    UIButton *checkButton = [self addBtn:@"差委托" y_Position:self.view.centerY+150];
+    
+    lineButton.tag = 1000;
+    buyButton.tag  = 1000+1;
+    checkButton.tag = 1002;
+    
+    [self.view addSubview:lineButton];
+    [self.view addSubview: buyButton];
+    [self.view addSubview: checkButton];
+    
+    //[self connect2Server];
 }
 
 //conncet to server
-- (void) connect2Server{
-
-    [self.activeId startAnimating];
-    ICEInitializationData* initData = [ICEInitializationData initializationData];
-    initData.properties = [ICEUtil createProperties];
-    [initData.properties load:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"config.client"]];
-    
-    initData.dispatcher = ^(id<ICEDispatcherCall> call, id<ICEConnection> con)
-    {
-        dispatch_sync(dispatch_get_main_queue(), ^ { [call run]; });
-    };
-    self.communicator = [ICEUtil createCommunicator:initData];//创建communicator
-    //开线程
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-        @try
-        {
-            //连接
-             self.router = [GLACIER2RouterPrx checkedCast:[self.communicator getDefaultRouter]];//路由
-             [self.router createSession:@"" password:@""];//创建session
-             self.WpQuoteServerclientApiPrx = [WpQuoteServerClientApiPrx uncheckedCast:[self.communicator stringToProxy:@"ClientApiId"]];//返回具有所请求类型代理
-            //启用主推回报
-            ICEIdentity* callbackReceiverIdent= [ICEIdentity identity:@"callbackReceiver" category:[self.router getCategoryForClient]];
-            id<ICEObjectAdapter> adapter = [self.communicator createObjectAdapterWithRouter:@"" router:self.router];
-            [adapter activate];
-            self.twowayR = [WpQuoteServerCallbackReceiverPrx uncheckedCast:[adapter add:[[WpQuoteServerCallbackReceiverI alloc]init] identity:callbackReceiverIdent]];
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                
-                [self.activeId stopAnimating];
-                [self.label removeFromSuperview];
-                [self addHomeBtn];//添加按钮
-            });
-        }
-        @catch(GLACIER2CannotCreateSessionException* ex)
-        {
-            NSString* s = [NSString stringWithFormat:@"Session creation failed: %@", ex.reason_];
-            dispatch_async(dispatch_get_main_queue(), ^ {
-                NSLog(@"%@",s);
-            });
-        }
-        @catch(GLACIER2PermissionDeniedException* ex)
-        {
-            NSString* s = [NSString stringWithFormat:@"Login failed: %@", ex.reason_];
-            dispatch_async(dispatch_get_main_queue(), ^ {
-                NSLog(@"%@",s);
-            });
-        }
-        @catch(ICEEndpointParseException* ex)
-        {
-            UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error parsing config"
-                                                                           message:ex.reason
-                                                                    preferredStyle:UIAlertControllerStyleAlert];
-            [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-            [self presentViewController:alert animated:YES completion:nil];
-            [self.communicator destroy];
-            self.communicator = nil;
-            return;
-        }
-    });
-}
+//- (void) connect2Server{
+//
+//     [self.activeId startAnimating];
+//    //开线程
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
+//        @try
+//        {
+//
+//            [self Reconnect];
+//            dispatch_sync(dispatch_get_main_queue(), ^{
+//                [self.activeId stopAnimating];
+//                [self.label removeFromSuperview];
+//                UIButton *lineButton=[self addBtn:@"看行情" y_Position:self.view.centerY-200];//添加按钮
+//                UIButton *buyButton = [self addBtn:@"交易" y_Position:self.view.centerY+100];
+//                lineButton.tag = 1000;
+//                buyButton.tag  = 1000+1;
+//                [self.view addSubview:lineButton];
+//                [self.view addSubview: buyButton];
+//            });
+//        }
+//        @catch(GLACIER2CannotCreateSessionException* ex)
+//        {
+//            NSString* s = [NSString stringWithFormat:@"Session creation failed: %@", ex.reason_];
+//            dispatch_async(dispatch_get_main_queue(), ^ {
+//                NSLog(@"%@",s);
+//            });
+//        }
+//        @catch(GLACIER2PermissionDeniedException* ex)
+//        {
+//            NSString* s = [NSString stringWithFormat:@"Login failed: %@", ex.reason_];
+//            dispatch_async(dispatch_get_main_queue(), ^ {
+//                NSLog(@"%@",s);
+//            });
+//        }
+//        @catch(ICEEndpointParseException* ex)
+//        {
+//            UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error parsing config"
+//                                                                           message:ex.reason
+//                                                                    preferredStyle:UIAlertControllerStyleAlert];
+//            [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+//            [self presentViewController:alert animated:YES completion:nil];
+//            [self.communicator destroy];
+//            self.communicator = nil;
+//            return;
+//        }
+//    });
+//}
+//
+//- (void)Reconnect{
+//    ICEInitializationData* initData = [ICEInitializationData initializationData];
+//    initData.properties = [ICEUtil createProperties];
+//    [initData.properties load:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"config.client"]];
+//
+//    initData.dispatcher = ^(id<ICEDispatcherCall> call, id<ICEConnection> con)
+//    {
+//        dispatch_sync(dispatch_get_main_queue(), ^ { [call run]; });
+//    };
+//    self.communicator = [ICEUtil createCommunicator:initData];//创建communicator
+//    //连接
+//    self.router = [GLACIER2RouterPrx checkedCast:[self.communicator getDefaultRouter]];//路由
+//    [self.router createSession:@"" password:@""];//创建session
+//
+//    self.WpQuoteServerclientApiPrx = [WpQuoteServerClientApiPrx uncheckedCast:[self.communicator stringToProxy:@"ClientApiId"]];//返回具有所请求类型代理
+//    //启用主推回报
+//    ICEIdentity* callbackReceiverIdent= [ICEIdentity identity:@"callbackReceiver" category:[self.router getCategoryForClient]];
+//    id<ICEObjectAdapter> adapter = [self.communicator createObjectAdapterWithRouter:@"" router:self.router];
+//    [adapter activate];
+//    self.twowayR = [WpQuoteServerCallbackReceiverPrx uncheckedCast:[adapter add:[[WpQuoteServerCallbackReceiverI alloc]init] identity:callbackReceiverIdent]];
+//}
 
 - (void)addActiveId{
     self.activeId = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -148,31 +176,83 @@
 - (void)addLabel{
     self.label = [[UILabel alloc]initWithFrame:CGRectMake(self.view.centerX-80, self.view.centerY-200, 160, 20)];
     self.label.adjustsFontSizeToFitWidth = YES;
-    self.label.text = @"Loading data,Please wait";
+    self.label.text = @"Connect to server,Please wait";
     [self.view addSubview:self.label];
 }
-- (void)addHomeBtn{
-    self.homeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.homeButton.backgroundColor = RoseColor;
-    self.homeButton.layer.cornerRadius=20;
-    self.homeButton.frame = CGRectMake(self.view.centerX-50, self.view.centerY-25, 100, 50);
-    [self.homeButton setTitle:@"看行情" forState:UIControlStateNormal];
-    [self.homeButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [self.homeButton setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
-    [self.homeButton addTarget:self action:@selector(btnPress) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.homeButton];
+- (UIButton*)addBtn:(NSString*)name y_Position:(CGFloat)Y
+{
+    UIButton* btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    btn.backgroundColor = RoseColor;
+    btn.layer.cornerRadius=20;
+    btn.frame = CGRectMake(self.view.centerX-50, Y, 100, 50);
+    [btn setTitle:name forState:UIControlStateNormal];
+    [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [btn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
+    [btn addTarget:self action:@selector(btnPress:) forControlEvents:UIControlEventTouchUpInside];
+    return btn;
+    //[self.view addSubview:self.homeButton];
 }
 
 
 
 //getData
-- (void)btnPress{
-    if(self.historyVC == nil){
-        self.historyVC = [[CodeListVC alloc]init];
-        [self.historyVC activate:self.communicator router:self.router WpQuoteServerclientApiPrx:self.WpQuoteServerclientApiPrx];
+- (void)btnPress:(id)sender{
+    UIButton* btn = sender;
+    if(btn.tag==1000){
+        if(self.historyVC == nil){
+            self.historyVC = [[CodeListVC alloc]init];
+            NSLog(@"historyvc");
+            [self.historyVC activate:self.communicator router:self.router WpQuoteServerclientApiPrx:self.WpQuoteServerclientApiPrx];
+        }
+        [self.navigationController pushViewController:self.historyVC animated:NO];
     }
-    [self.navigationController pushViewController:self.historyVC animated:NO];
+    else if(btn.tag==1001){
+        BuyVC* buyVC = [[BuyVC alloc]init];
+        [self.navigationController pushViewController:buyVC animated:NO];
+    }
+    else{
+        [self queryOrder];
+    }
 }
+- (void)queryOrder{
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
+        NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+        NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+        NpTradeAPIServerMutableSTRLIST* outList = [[NpTradeAPIServerMutableSTRLIST alloc]initWithCapacity:0];
+        //[self.NpTrade QueryFund:@"" strCmd:self.loginStrCmd ListEntrust:&outList strOut:&strOut strErrInfo:&strErroInfo];
+        @try{
+            [self.NpTrade QueryOrder:@"" strCmd:self.loginStrCmd ListEntrust:&outList strOut:&strOut strErrInfo:&strErroInfo];
+            NSLog(@"%@",outList);
+        }
+        @catch(ICEException* s){
+            NSLog(@"%@",s);
+        }
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            NSLog(@"hhhhhhhhhhhh");
+        });
+    });
+    
+   
+}
+//-(void)activate:(id<ICECommunicator>)c
+//         router:(id<GLACIER2RouterPrx>)r
+//        WpQuoteServerclientApiPrx:(id<WpQuoteServerClientApiPrx>)l
+//{
+//    self.communicator = c;
+//    self.router = r;
+//    self.NpTrade = l;
+//}
 
+-(void)activate:(id<ICECommunicator>)c
+         router:(id<GLACIER2RouterPrx>)r
+NpTradeAPIServerClientApiPrx:(id<NpTradeAPIServerClientApiPrx>)N
+loginCmd:(NSString *)l{
+    self.communicator = c;
+    self.router = r;
+    self.NpTrade = N;
+    self.loginStrCmd = l;
+    NSLog(@"%@",l);
+}
 
 @end

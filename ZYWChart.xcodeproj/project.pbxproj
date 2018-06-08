@@ -217,6 +217,12 @@
 		BA51D57920B6880E00B34DA7 /* config.client in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57820B6880E00B34DA7 /* config.client */; };
 		BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
 		BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
+		BA8209C320C66E5700A5BCAE /* BuyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA8209C220C66E5700A5BCAE /* BuyVC.m */; };
+		BAE5985720C7718000524CB7 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985620C7718000524CB7 /* LoginVC.m */; };
+		BAE5985920C7CDE000524CB7 /* NpTrade.ice in Resources */ = {isa = PBXBuildFile; fileRef = BAE5985820C7CDE000524CB7 /* NpTrade.ice */; };
+		BAE5985A20C7CE2C00524CB7 /* NpTrade.ice in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985820C7CDE000524CB7 /* NpTrade.ice */; };
+		BAE5985C20CA69B000524CB7 /* WpTrade.ice in Resources */ = {isa = PBXBuildFile; fileRef = BAE5985B20CA69B000524CB7 /* WpTrade.ice */; };
+		BAE5985D20CA6EB200524CB7 /* WpTrade.ice in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985B20CA69B000524CB7 /* WpTrade.ice */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -466,8 +472,8 @@
 		423B9A2E1EC18BD800A2B49A /* ZYWCrossPriceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZYWCrossPriceView.h; sourceTree = "<group>"; };
 		423B9A2F1EC18BD800A2B49A /* ZYWCrossPriceView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZYWCrossPriceView.m; sourceTree = "<group>"; };
 		424236291EC1ED8300C161A8 /* N225.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = N225.xml; sourceTree = "<group>"; };
-		424347141EF69C570021F2C5 /* BaseNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseNavigationController.h; path = ../BaseNavigationController.h; sourceTree = "<group>"; };
-		424347151EF69C570021F2C5 /* BaseNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BaseNavigationController.m; path = ../BaseNavigationController.m; sourceTree = "<group>"; };
+		424347141EF69C570021F2C5 /* BaseNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseNavigationController.h; sourceTree = "<group>"; };
+		424347151EF69C570021F2C5 /* BaseNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseNavigationController.m; sourceTree = "<group>"; };
 		4248A0331EBC485A0086EAA7 /* ZYWBaseChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZYWBaseChartView.h; sourceTree = "<group>"; };
 		4248A0341EBC485A0086EAA7 /* ZYWBaseChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZYWBaseChartView.m; sourceTree = "<group>"; };
 		4248A0351EBC485A0086EAA7 /* ZYWCandleChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZYWCandleChartView.h; sourceTree = "<group>"; };
@@ -515,6 +521,12 @@
 		BA0EF4C720BD3D3300E5F974 /* CodeListVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeListVC.m; sourceTree = "<group>"; };
 		BA51D57820B6880E00B34DA7 /* config.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.client; sourceTree = "<group>"; };
 		BA51D57A20B6881F00B34DA7 /* WpQuote.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WpQuote.ice; sourceTree = "<group>"; };
+		BA8209C120C66E5700A5BCAE /* BuyVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BuyVC.h; sourceTree = "<group>"; };
+		BA8209C220C66E5700A5BCAE /* BuyVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BuyVC.m; sourceTree = "<group>"; };
+		BAE5985520C7718000524CB7 /* LoginVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginVC.h; sourceTree = "<group>"; };
+		BAE5985620C7718000524CB7 /* LoginVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginVC.m; sourceTree = "<group>"; };
+		BAE5985820C7CDE000524CB7 /* NpTrade.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NpTrade.ice; sourceTree = "<group>"; };
+		BAE5985B20CA69B000524CB7 /* WpTrade.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WpTrade.ice; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -601,11 +613,17 @@
 				422787831E04F18600DB5CEC /* AppDelegate.h */,
 				422787861E04F18600DB5CEC /* HomeVC.h */,
 				422787871E04F18600DB5CEC /* HomeVC.m */,
+				424347141EF69C570021F2C5 /* BaseNavigationController.h */,
+				424347151EF69C570021F2C5 /* BaseNavigationController.m */,
 				422787841E04F18600DB5CEC /* AppDelegate.m */,
+				BAE5985520C7718000524CB7 /* LoginVC.h */,
+				BAE5985620C7718000524CB7 /* LoginVC.m */,
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
 				4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */,
 				BA51D57820B6880E00B34DA7 /* config.client */,
 				422787911E04F18600DB5CEC /* Info.plist */,
+				BAE5985B20CA69B000524CB7 /* WpTrade.ice */,
+				BAE5985820C7CDE000524CB7 /* NpTrade.ice */,
 				BA51D57A20B6881F00B34DA7 /* WpQuote.ice */,
 				424236291EC1ED8300C161A8 /* N225.xml */,
 				422BF0B91EC7081400DF8F4A /* data.plist */,
@@ -656,8 +674,8 @@
 				4248A04D1EBC80E20086EAA7 /* TimeLineVC.m */,
 				423B9A291EC15EE300A2B49A /* CandleCrossScreenVC.h */,
 				423B9A2A1EC15EE300A2B49A /* CandleCrossScreenVC.m */,
-				424347141EF69C570021F2C5 /* BaseNavigationController.h */,
-				424347151EF69C570021F2C5 /* BaseNavigationController.m */,
+				BA8209C120C66E5700A5BCAE /* BuyVC.h */,
+				BA8209C220C66E5700A5BCAE /* BuyVC.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1073,10 +1091,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BAE5985920C7CDE000524CB7 /* NpTrade.ice in Resources */,
 				422BF0BA1EC7081400DF8F4A /* data.plist in Resources */,
 				422787901E04F18600DB5CEC /* LaunchScreen.storyboard in Resources */,
 				4227878D1E04F18600DB5CEC /* Assets.xcassets in Resources */,
 				4242362A1EC1ED8400C161A8 /* N225.xml in Resources */,
+				BAE5985C20CA69B000524CB7 /* WpTrade.ice in Resources */,
 				423942841E2B6D0300F2A873 /* ta_retcode.csv in Resources */,
 				BA51D57920B6880E00B34DA7 /* config.client in Resources */,
 				BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */,
@@ -1125,6 +1145,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BAE5985D20CA6EB200524CB7 /* WpTrade.ice in Sources */,
+				BAE5985A20C7CE2C00524CB7 /* NpTrade.ice in Sources */,
 				BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */,
 				423943061E2B6D0300F2A873 /* ta_PVI.c in Sources */,
 				423942BA1E2B6D0300F2A873 /* ta_CDLKICKINGBYLENGTH.c in Sources */,
@@ -1173,6 +1195,7 @@
 				423942991E2B6D0300F2A873 /* ta_CDL3INSIDE.c in Sources */,
 				423943141E2B6D0300F2A873 /* ta_STOCHF.c in Sources */,
 				4239431A1E2B6D0300F2A873 /* ta_TANH.c in Sources */,
+				BAE5985720C7718000524CB7 /* LoginVC.m in Sources */,
 				423942901E2B6D0300F2A873 /* ta_ATAN.c in Sources */,
 				4276AC451EA8B82600FD3986 /* UIView+Extension.m in Sources */,
 				423942EB1E2B6D0300F2A873 /* ta_LOG10.c in Sources */,
@@ -1194,6 +1217,7 @@
 				4248A0451EBC485A0086EAA7 /* ZYWCandleChartView.m in Sources */,
 				423942FE1E2B6D0300F2A873 /* ta_MOM.c in Sources */,
 				423942951E2B6D0300F2A873 /* ta_BOP.c in Sources */,
+				BA8209C320C66E5700A5BCAE /* BuyVC.m in Sources */,
 				423943251E2B6D0300F2A873 /* ta_WILLR.c in Sources */,
 				422787821E04F18600DB5CEC /* main.m in Sources */,
 				423942F41E2B6D0300F2A873 /* ta_MEDPRICE.c in Sources */,
