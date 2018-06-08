@@ -15,7 +15,7 @@
 #import "CodeListVC.h"
 #import "TimeLineVC.h"
 #import "BuyVC.h"
-#import "NpTrade.h"
+#import "WpTrade.h"
 
 //@interface WpQuoteServerCallbackReceiverI : WpQuoteServerCallbackReceiver<WpQuoteServerCallbackReceiver>
 //@end
@@ -53,9 +53,9 @@
 @property (nonatomic) NSString* strUserId;
 @property (nonatomic) NSString* loginStrCmd;
 
-@property (nonatomic) id<NpTradeAPIServerCallbackReceiverPrx> twowayR;
+@property (nonatomic) id<WpTradeAPIServerCallbackReceiverPrx> twowayR;
 
-@property (nonatomic) id<NpTradeAPIServerClientApiPrx> NpTrade;
+@property (nonatomic) id<WpTradeAPIServerClientApiPrx> WpTrade;
 @end
 
 @implementation HomeVC
@@ -219,10 +219,10 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
         NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
         NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-        NpTradeAPIServerMutableSTRLIST* outList = [[NpTradeAPIServerMutableSTRLIST alloc]initWithCapacity:0];
+        WpTradeAPIServerMutableSTRLIST* outList = [[WpTradeAPIServerMutableSTRLIST alloc]initWithCapacity:0];
         //[self.NpTrade QueryFund:@"" strCmd:self.loginStrCmd ListEntrust:&outList strOut:&strOut strErrInfo:&strErroInfo];
         @try{
-            [self.NpTrade QueryOrder:@"" strCmd:self.loginStrCmd ListEntrust:&outList strOut:&strOut strErrInfo:&strErroInfo];
+            [self.WpTrade QueryOrder:@"" strCmd:self.loginStrCmd ListEntrust:&outList strOut:&strOut strErrInfo:&strErroInfo];
             NSLog(@"%@",outList);
         }
         @catch(ICEException* s){
@@ -246,11 +246,11 @@
 
 -(void)activate:(id<ICECommunicator>)c
          router:(id<GLACIER2RouterPrx>)r
-NpTradeAPIServerClientApiPrx:(id<NpTradeAPIServerClientApiPrx>)N
+WpTradeAPIServerClientApiPrx:(id<WpTradeAPIServerClientApiPrx>)N
 loginCmd:(NSString *)l{
     self.communicator = c;
     self.router = r;
-    self.NpTrade = N;
+    self.WpTrade = N;
     self.loginStrCmd = l;
     NSLog(@"%@",l);
 }

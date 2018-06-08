@@ -11,7 +11,7 @@
 #import <objc/Glacier2.h>
 #import <objc/Ice.h>
 #import <NpTrade.h>
-
+#import <WpTrade.h>
 @class ICEInitializationData;
 @protocol ICECommunicator;
 @protocol GLACIER2RouterPrx;
@@ -39,7 +39,7 @@
 
 -(void)activate:(id<ICECommunicator>)communicator
          router:(id<GLACIER2RouterPrx>)router
-NpTradeAPIServerClientApiPrx:(id<NpTradeAPIServerClientApiPrx>)NpTradeAPIServerclientApiPrx
+WpTradeAPIServerClientApiPrx:(id<WpTradeAPIServerClientApiPrx>)NpTradeAPIServerclientApiPrx
        loginCmd:(NSString*)loginStrCmd;
 
 @end

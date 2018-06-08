@@ -12,9 +12,8 @@
 
 #import <objc/Ice.h>
 #import <objc/Glacier2.h>
-#import <WpQuote.h>
-
-#import "NpTrade.h"
+//#import <WpQuote.h>
+//#import "NpTrade.h"
 #import "WpTrade.h"
 
 
@@ -58,7 +57,7 @@
 @property (nonatomic,strong) UILabel *label;
 @property (nonatomic,strong) UIActivityIndicatorView *activeId;
 @property (nonatomic,strong) HomeVC* homeVC;
-@property (nonatomic,strong) WpTradeAPIServerMutableSTRLIST* outList;
+
 //ICE
 @property (nonatomic) id<ICECommunicator> communicator;
 //@property (nonatomic) id<WpQuoteServerCallbackReceiverPrx> twowayR;
@@ -105,6 +104,8 @@
     self.LoginButton = [self addLoginButton];
     self.UserNameTextField = [self addTextField:@"UserName" PositionX:100 PositionY:70];
     self.PassWordTextField = [self addTextField:@"Password" PositionX:100 PositionY:10];
+    self.UserNameTextField.text = @"200172";
+    self.PassWordTextField.text = @"BS401885";
     self.PassWordTextField.secureTextEntry = YES;
     //[self connect2Server];
     // Do any additional setup after loading the view.
@@ -133,13 +134,13 @@
             [self Reconnect];//连接服务器
             [self initiateCallback];
             [self Login];
-            self.outList = [self queryOrder];
+            //[self queryOrder];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self setHeartbeat];
                 [self.activeId removeFromSuperview];
                 [self.label removeFromSuperview];
                 if(self.homeVC == nil){
-                   // [self addHomeVC];
+                   [self addHomeVC];
                 }
              });
         }
@@ -260,6 +261,13 @@
         }
     }
 }
+- (void)addHomeVC{
+    self.homeVC = [[HomeVC alloc]init];
+    [self.homeVC activate:self.communicator router:self.router WpTradeAPIServerClientApiPrx:self.WpTrade loginCmd:self.loginStrCmd];
+   // self.homeVC activate:self.communicator router:self.router NpTradeAPIServerClientApiPrx:<#(id<WpTradeAPIServerClientApiPrx>)#> loginCmd:<#(NSString *)#>
+    BaseNavigationController *nav = [[BaseNavigationController alloc] initWithRootViewController:self.homeVC];
+    [self presentViewController:nav animated:NO completion:nil];
+}
 //- (void)addHomeVC{
 //    self.homeVC = [[HomeVC alloc]init];
 //    [self.homeVC activate:self.communicator router:self.router NpTradeAPIServerClientApiPrx:self.NpTrade loginCmd:self.loginStrCmd];
@@ -277,7 +285,6 @@
     return outList;
 }
 - (void)initiateCallback{
-    
     self.strAcc = [[NSMutableString alloc]initWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId ];
     NSLog(@"_strACC %@",_strAcc);
     [self.WpTrade initiateCallback:self.strAcc proxy:self.twowayR];
