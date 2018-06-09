@@ -130,7 +130,7 @@
     WpQuoteServerDayKLineList* DLL = [[WpQuoteServerDayKLineList alloc]init];
     NSMutableString* sExchangeID = [[NSMutableString alloc]initWithString:@"SHFE"];
     @try{
-        //[self reconnect];
+        [self reconnect];
         _iRet = [self.WpQuoteServerclientApiPrx GetDayKLine:sExchangeID DKLL:&DLL strErrInfo:&strErr2];
     }
     @catch(ICEException* s)
