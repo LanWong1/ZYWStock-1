@@ -217,6 +217,7 @@
 		BA51D57920B6880E00B34DA7 /* config.client in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57820B6880E00B34DA7 /* config.client */; };
 		BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
 		BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
+		BA6A04F020CDFD8A00859A05 /* ICETool.m in Sources */ = {isa = PBXBuildFile; fileRef = BA6A04EF20CDFD8A00859A05 /* ICETool.m */; };
 		BA8209C320C66E5700A5BCAE /* BuyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA8209C220C66E5700A5BCAE /* BuyVC.m */; };
 		BAE5985720C7718000524CB7 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985620C7718000524CB7 /* LoginVC.m */; };
 		BAE5985920C7CDE000524CB7 /* NpTrade.ice in Resources */ = {isa = PBXBuildFile; fileRef = BAE5985820C7CDE000524CB7 /* NpTrade.ice */; };
@@ -521,6 +522,8 @@
 		BA0EF4C720BD3D3300E5F974 /* CodeListVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeListVC.m; sourceTree = "<group>"; };
 		BA51D57820B6880E00B34DA7 /* config.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.client; sourceTree = "<group>"; };
 		BA51D57A20B6881F00B34DA7 /* WpQuote.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WpQuote.ice; sourceTree = "<group>"; };
+		BA6A04EE20CDFD8A00859A05 /* ICETool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICETool.h; sourceTree = "<group>"; };
+		BA6A04EF20CDFD8A00859A05 /* ICETool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICETool.m; sourceTree = "<group>"; };
 		BA8209C120C66E5700A5BCAE /* BuyVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BuyVC.h; sourceTree = "<group>"; };
 		BA8209C220C66E5700A5BCAE /* BuyVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BuyVC.m; sourceTree = "<group>"; };
 		BAE5985520C7718000524CB7 /* LoginVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginVC.h; sourceTree = "<group>"; };
@@ -618,6 +621,8 @@
 				422787841E04F18600DB5CEC /* AppDelegate.m */,
 				BAE5985520C7718000524CB7 /* LoginVC.h */,
 				BAE5985620C7718000524CB7 /* LoginVC.m */,
+				BA6A04EE20CDFD8A00859A05 /* ICETool.h */,
+				BA6A04EF20CDFD8A00859A05 /* ICETool.m */,
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
 				4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */,
 				BA51D57820B6880E00B34DA7 /* config.client */,
@@ -1233,6 +1238,7 @@
 				423942831E2B6D0300F2A873 /* ta_retcode.c in Sources */,
 				423943261E2B6D0300F2A873 /* ta_WMA.c in Sources */,
 				423942D31E2B6D0300F2A873 /* ta_CDLXSIDEGAP3METHODS.c in Sources */,
+				BA6A04F020CDFD8A00859A05 /* ICETool.m in Sources */,
 				423942FF1E2B6D0300F2A873 /* ta_MULT.c in Sources */,
 				423942941E2B6D0300F2A873 /* ta_BETA.c in Sources */,
 				4239428F1E2B6D0300F2A873 /* ta_ASIN.c in Sources */,

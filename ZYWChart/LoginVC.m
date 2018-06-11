@@ -288,7 +288,7 @@
     self.strAcc = [[NSMutableString alloc]initWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId ];
     NSLog(@"_strACC %@",_strAcc);
     [self.WpTrade initiateCallback:self.strAcc proxy:self.twowayR];
-     //[self.NpTrade initiateCallback:self.strAcc proxy:self.twowayR];
+  //[self.NpTrade initiateCallback:self.strAcc proxy:self.twowayR];
 }
 - (void)Login{
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
