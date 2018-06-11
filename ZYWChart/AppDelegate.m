@@ -7,10 +7,9 @@
 //
 
 #import "AppDelegate.h"
-//#import "HomeVC.h"
 #import "FHHFPSIndicator.h"
 #import "BaseNavigationController.h"
-#import "LoginVC.h"
+#import "HomeVC.h"
 @interface AppDelegate ()
 
 @end
@@ -23,9 +22,6 @@
 
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
-    LoginVC* loginVC = [[LoginVC alloc]init];
-    [self.window setRootViewController:loginVC];
-    [self.window makeKeyAndVisible];
     
 #if defined(DEBUG) || defined(_DEBUG)
 
@@ -33,9 +29,10 @@
 
 #endif
 
-//    HomeVC *Controller = [[HomeVC alloc] init];
-//    BaseNavigationController *nav = [[BaseNavigationController alloc] initWithRootViewController:Controller];
-//    self.window.rootViewController = nav;
+    HomeVC *Controller = [[HomeVC alloc] init];
+    BaseNavigationController *nav = [[BaseNavigationController alloc] initWithRootViewController:Controller];
+    self.window.rootViewController = nav;
+    [self.window makeKeyAndVisible];
     return YES;
 }
 

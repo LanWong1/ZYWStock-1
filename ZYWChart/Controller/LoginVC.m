@@ -107,7 +107,6 @@
     self.UserNameTextField.text = @"200172";
     self.PassWordTextField.text = @"BS401885";
     self.PassWordTextField.secureTextEntry = YES;
-    //[self connect2Server];
     // Do any additional setup after loading the view.
 }
 - (void)addActiveId{
@@ -134,7 +133,7 @@
             [self Reconnect];//连接服务器
             [self initiateCallback];
             [self Login];
-            //[self queryOrder];
+            [self queryOrder];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self setHeartbeat];
                 [self.activeId removeFromSuperview];
@@ -179,7 +178,6 @@
             [alert addAction:[UIAlertAction actionWithTitle:@"OK"
                                                       style:UIAlertActionStyleDefault
                                                     handler:nil]];
-            
             [self presentViewController:alert animated:YES completion:nil];
             [self.communicator destroy];
             self.communicator = nil;
@@ -240,7 +238,7 @@
     [self.view addSubview:btn];
     return btn;
 }
-
+//login button pressed
 -(void)ButtonPressed{
   
     if(self.UserNameTextField.text.length ==0|self.PassWordTextField.text.length == 0)
@@ -254,7 +252,9 @@
             [self setAlertWithMessage:@"用户名或者密码错误"];
         }
         else
-        {   _loginStrCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
+        {
+            
+            _loginStrCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
             NSLog(@"login strcmd %@",_loginStrCmd);
             self.strFundAcc = [[NSMutableString alloc]initWithString:self.UserNameTextField.text];
             [self connect2Server];
@@ -263,17 +263,12 @@
 }
 - (void)addHomeVC{
     self.homeVC = [[HomeVC alloc]init];
-    [self.homeVC activate:self.communicator router:self.router WpTradeAPIServerClientApiPrx:self.WpTrade loginCmd:self.loginStrCmd];
+    //[self.homeVC activate:self.communicator router:self.router WpTradeAPIServerClientApiPrx:self.WpTrade loginCmd:self.loginStrCmd];
    // self.homeVC activate:self.communicator router:self.router NpTradeAPIServerClientApiPrx:<#(id<WpTradeAPIServerClientApiPrx>)#> loginCmd:<#(NSString *)#>
     BaseNavigationController *nav = [[BaseNavigationController alloc] initWithRootViewController:self.homeVC];
     [self presentViewController:nav animated:NO completion:nil];
 }
-//- (void)addHomeVC{
-//    self.homeVC = [[HomeVC alloc]init];
-//    [self.homeVC activate:self.communicator router:self.router NpTradeAPIServerClientApiPrx:self.NpTrade loginCmd:self.loginStrCmd];
-//    BaseNavigationController *nav = [[BaseNavigationController alloc] initWithRootViewController:self.homeVC];
-//    [self presentViewController:nav animated:NO completion:nil];
-//}
+
 - (WpTradeAPIServerMutableSTRLIST*)queryOrder{
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
@@ -288,7 +283,11 @@
     self.strAcc = [[NSMutableString alloc]initWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId ];
     NSLog(@"_strACC %@",_strAcc);
     [self.WpTrade initiateCallback:self.strAcc proxy:self.twowayR];
+<<<<<<< HEAD:ZYWChart/LoginVC.m
   //[self.NpTrade initiateCallback:self.strAcc proxy:self.twowayR];
+=======
+    //[self.NpTrade initiateCallback:self.strAcc proxy:self.twowayR];
+>>>>>>> ead2cbdb9c5af074c8f26c969071bbb0ed618e6a:ZYWChart/Controller/LoginVC.m
 }
 - (void)Login{
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
@@ -312,10 +311,9 @@
 - (void)setHeartbeat{
     // 创建GCD定时器
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-     dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
     dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), 20 * NSEC_PER_SEC, 0); //每秒执行
     // 事件回调
-
     NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
     
     dispatch_source_set_event_handler(timer, ^{

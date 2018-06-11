@@ -619,10 +619,13 @@
 				424347141EF69C570021F2C5 /* BaseNavigationController.h */,
 				424347151EF69C570021F2C5 /* BaseNavigationController.m */,
 				422787841E04F18600DB5CEC /* AppDelegate.m */,
+<<<<<<< HEAD
 				BAE5985520C7718000524CB7 /* LoginVC.h */,
 				BAE5985620C7718000524CB7 /* LoginVC.m */,
 				BA6A04EE20CDFD8A00859A05 /* ICETool.h */,
 				BA6A04EF20CDFD8A00859A05 /* ICETool.m */,
+=======
+>>>>>>> ead2cbdb9c5af074c8f26c969071bbb0ed618e6a
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
 				4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */,
 				BA51D57820B6880E00B34DA7 /* config.client */,
@@ -681,6 +684,8 @@
 				423B9A2A1EC15EE300A2B49A /* CandleCrossScreenVC.m */,
 				BA8209C120C66E5700A5BCAE /* BuyVC.h */,
 				BA8209C220C66E5700A5BCAE /* BuyVC.m */,
+				BAE5985520C7718000524CB7 /* LoginVC.h */,
+				BAE5985620C7718000524CB7 /* LoginVC.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
