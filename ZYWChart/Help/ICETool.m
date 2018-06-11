@@ -14,7 +14,7 @@
 @end
 @implementation WpTradeAPIServerCallbackReceiverI
 - (void)SendMsg:(NSMutableString *)stype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current {
-    NSLog(@"哈哈哈  %@",strMessage);
+    NSLog(@"%@",strMessage);
 }
 @end
 
@@ -52,22 +52,36 @@
 - (void)queryOrder:(NSString*)StrCmd{
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-    // NpTradeAPIServerMutableSTRLIST* outList = [[NpTradeAPIServerMutableSTRLIST alloc]initWithCapacity:0];
     WpTradeAPIServerMutableSTRLIST* outList= [[WpTradeAPIServerMutableSTRLIST alloc]initWithCapacity:0];
-    //[self.NpTrade QueryFund:@"" strCmd:self.loginStrCmd ListEntrust:&outList strOut:&strOut strErrInfo:&strErroInfo];
+    //[self.WpTrade QueryOrder:@"" strCmd:StrCmd ListFund:&outList strOut:&strOut strErrInfo:&strErroInfo];
+    [self.WpTrade QueryOrder:@"" strCmd:StrCmd ListEntrust:&outList strOut:&strOut strErrInfo:&strErroInfo];
+ 
+}
+- (void)queryFund:(NSString*)StrCmd{
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    WpTradeAPIServerMutableSTRLIST* outList= [[WpTradeAPIServerMutableSTRLIST alloc]initWithCapacity:0];
+    //[self.WpTrade QueryOrder:@"" strCmd:StrCmd ListFund:&outList strOut:&strOut strErrInfo:&strErroInfo];
     [self.WpTrade QueryFund:@"" strCmd:StrCmd ListFund:&outList strOut:&strOut strErrInfo:&strErroInfo];
-    // [self.NpTrade QueryFund:@"" strCmd:self.loginStrCmd ListFund:&outList strOut:&strOut strErrInfo:&strErroInfo];
-   // return outList;
 }
 - (void)initiateCallback:(NSString*)strAcc{
-    self.strAcc = [[NSMutableString alloc]initWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId ];
+
     [self.WpTrade initiateCallback:strAcc proxy:self.twowayR];
+    
 }
 - (void)Login:(NSString*)StrCmd{
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     //[self.NpTrade Login:@"" strCmd:_loginStrCmd strOut:&strOut strErrInfo:&strErroInfo];
     [self.WpTrade Login:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
+}
+- (int)HeartBeat:(NSString*)strCmd{
+    int iRet = -2;
+    NSLog(@"hearbeat");
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    iRet = [self.WpTrade HeartBeat:@"" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+    return iRet;
 }
 
 

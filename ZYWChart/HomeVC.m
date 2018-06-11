@@ -17,19 +17,21 @@
 #import "BuyVC.h"
 #import "WpTrade.h"
 #import "LoginVC.h"
+#import "ICEQuote.h"
 
-@interface WpQuoteServerCallbackReceiverI : WpQuoteServerCallbackReceiver<WpQuoteServerCallbackReceiver>
-@end
-
-@implementation WpQuoteServerCallbackReceiverI
-- (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current
-{
-    NSLog(@"%@",strMessage);
-}
-@end
+//@interface WpQuoteServerCallbackReceiverI : WpQuoteServerCallbackReceiver<WpQuoteServerCallbackReceiver>
+//@end
+//
+//@implementation WpQuoteServerCallbackReceiverI
+//- (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current
+//{
+//    NSLog(@"%@",strMessage);
+//}
+//@end
 
 @interface HomeVC () 
 
+@property (nonatomic) ICEQuote* iceQuote;
 @property (nonatomic,strong) UILabel *label;
 @property (nonatomic,strong) UIActivityIndicatorView *activeId;
 @property (nonatomic,strong) UIButton *homeButton;
@@ -48,64 +50,40 @@
 @property (nonatomic) id<GLACIER2RouterPrx> router;
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
 @property (nonatomic) WpQuoteServerDayKLineList *KlineList;
-@property (nonatomic) NSString* _Acc;
-@property (nonatomic) NSString* _Pass;
-@property (nonatomic) NSString* _IP;
-@property (nonatomic) NSString* _Mac;
-@property (nonatomic) NSString* strUserId;
-@property (nonatomic) NSString* loginStrCmd;
-
-//@property (nonatomic) id<WpTradeAPIServerCallbackReceiverPrx> twowayR;
-
-@property (nonatomic) id<WpTradeAPIServerClientApiPrx> WpTrade;
 @end
 
 @implementation HomeVC
-//ICE
-@synthesize KlineList;
-@synthesize communicator;
-@synthesize twowayR;
-@synthesize router;
-@synthesize WpQuoteServerclientApiPrx;
-@synthesize _Acc;
-@synthesize _Pass;
-@synthesize _IP;
-@synthesize _Mac;
-@synthesize strUserId;
-//@synthesize loginStrCmd;
+
 
 
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    NSLog(@"HomeVC Didload");
     self.navigationItem.title = @"主页";
     UINavigationBar.appearance.translucent = YES;
     self.view.backgroundColor = [UIColor clearColor];
-//    [self addLabel];
-//    [self addActiveId];
     UIButton *lineButton  = [self addBtn:@"看行情" y_Position:self.view.centerY-200];//添加按钮
     lineButton.enabled = NO;
     UIButton *buyButton   = [self addBtn:@"交易" y_Position:self.view.centerY+100];
-    
     lineButton.tag = 1000;
     buyButton.tag  = 1000+1;
-    
     [self.view addSubview:lineButton];
     [self.view addSubview: buyButton];
-   // [self connect2Server];
+    [self connect2Server];
 }
 
 //conncet to server
 - (void) connect2Server{
-
      [self.activeId startAnimating];
     //开线程
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
         @try
         {
 
-            [self Reconnect];
+            self.iceQuote = [[ICEQuote alloc]init];
+            [self.iceQuote Connect2Quote];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self.activeId stopAnimating];
                 [self.label removeFromSuperview];
@@ -144,29 +122,7 @@
         }
     });
 }
-//
-- (void)Reconnect{
-    NSLog(@"hhhhhhhhhhh");
-    ICEInitializationData* initData = [ICEInitializationData initializationData];
-    initData.properties = [ICEUtil createProperties];
-    [initData.properties load:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"config.client"]];
 
-    initData.dispatcher = ^(id<ICEDispatcherCall> call, id<ICEConnection> con)
-    {
-        dispatch_sync(dispatch_get_main_queue(), ^ { [call run]; });
-    };
-    self.communicator = [ICEUtil createCommunicator:initData];//创建communicator
-    //连接
-    //self.router = [GLACIER2RouterPrx checkedCast:[self.communicator getDefaultRouter]];//路由
-    [self.router createSession:@"" password:@""];//创建session
-
-    self.WpQuoteServerclientApiPrx = [WpQuoteServerClientApiPrx uncheckedCast:[self.communicator stringToProxy:@"ClientApiId"]];//返回具有所请求类型代理
-    //启用主推回报
-    ICEIdentity* callbackReceiverIdent= [ICEIdentity identity:@"callbackReceiver" category:[self.router getCategoryForClient]];
-    id<ICEObjectAdapter> adapter = [self.communicator createObjectAdapterWithRouter:@"" router:self.router];
-    [adapter activate];
-    self.twowayR = [WpQuoteServerCallbackReceiverPrx uncheckedCast:[adapter add:[[WpQuoteServerCallbackReceiverI alloc]init] identity:callbackReceiverIdent]];
-}
 
 - (void)addActiveId{
     self.activeId = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -197,62 +153,22 @@
 
 //getData
 - (void)btnPress:(id)sender{
+    
     UIButton* btn = sender;
     if(btn.tag==1000){
         if(self.historyVC == nil){
             self.historyVC = [[CodeListVC alloc]init];
             NSLog(@"historyvc");
-            [self.historyVC activate:self.communicator router:self.router WpQuoteServerclientApiPrx:self.WpQuoteServerclientApiPrx];
+            [self.historyVC activate:self.iceQuote];
         }
         [self.navigationController pushViewController:self.historyVC animated:NO];
     }
     else if(btn.tag==1001){
         if(self.loginVC == nil){
             self.loginVC = [[LoginVC alloc]init];
-            [self.navigationController pushViewController:self.loginVC animated:YES];
         }
+         [self.navigationController pushViewController:self.loginVC animated:NO];
 
     }
 }
-- (void)queryOrder{
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
-        NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-        NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-        WpTradeAPIServerMutableSTRLIST* outList = [[WpTradeAPIServerMutableSTRLIST alloc]initWithCapacity:0];
-        //[self.NpTrade QueryFund:@"" strCmd:self.loginStrCmd ListEntrust:&outList strOut:&strOut strErrInfo:&strErroInfo];
-        @try{
-            [self.WpTrade QueryOrder:@"" strCmd:self.loginStrCmd ListEntrust:&outList strOut:&strOut strErrInfo:&strErroInfo];
-            NSLog(@"%@",outList);
-        }
-        @catch(ICEException* s){
-            NSLog(@"%@",s);
-        }
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            NSLog(@"hhhhhhhhhhhh");
-        });
-    });
-    
-   
-}
-//-(void)activate:(id<ICECommunicator>)c
-//         router:(id<GLACIER2RouterPrx>)r
-//        WpQuoteServerclientApiPrx:(id<WpQuoteServerClientApiPrx>)l
-//{
-//    self.communicator = c;
-//    self.router = r;
-//    self.NpTrade = l;
-//}
-
--(void)activate:(id<ICECommunicator>)c
-         router:(id<GLACIER2RouterPrx>)r
-WpTradeAPIServerClientApiPrx:(id<WpTradeAPIServerClientApiPrx>)N
-loginCmd:(NSString *)l{
-//    self.communicator = c;
-//    self.router = r;
-//    self.WpTrade = N;
-//    self.loginStrCmd = l;
-//    NSLog(@"%@",l);
-}
-
 @end

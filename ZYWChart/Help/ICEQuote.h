@@ -1,5 +1,5 @@
 //
-//  ICETool.h
+//  ICEQuote.h
 //  ZYWChart
 //
 //  Created by zdqh on 2018/6/11.
@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <WpQuote.h>
 #import <objc/Glacier2.h>
 #import <objc/Ice.h>
 
@@ -14,6 +15,8 @@
 @protocol ICECommunicator;
 @protocol GLACIER2RouterPrx;
 
-@interface ICETool : NSObject
-
+@interface ICEQuote : NSObject
+- (void)Connect2Quote;
+- (WpQuoteServerDayKLineList*)GetDayKline;
+- (NSMutableArray*)getTimeData:(NSString*)sCode;
 @end

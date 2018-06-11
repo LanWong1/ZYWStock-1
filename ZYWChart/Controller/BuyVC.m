@@ -7,7 +7,7 @@
 //
 
 #import "BuyVC.h"
-
+#import "ICETool.h"
 @interface BuyVC ()<UITextFieldDelegate>
 
 @property (nonatomic,strong)  UIButton *buyButton;
@@ -15,22 +15,41 @@
 @property (nonatomic,strong)  UITextField *CountTextField;
 @property (nonatomic,strong)  UIButton *OpenButton;
 @property (nonatomic,strong)  UIButton *CloseButton;
+@property (nonatomic,strong)  UIButton *QueryButton;
+@property (nonatomic,strong)  UIButton *FundButton;
+@property (nonatomic) NSString* loginStrCmd;
+@property (nonatomic) ICETool* iceTool;
+
+
 @end
 
 @implementation BuyVC
-
+- (instancetype)initWithICE:(ICETool*)Tool StrCmd:(NSString*)Cmd{
+    if(self = [super init])
+    {
+        self.iceTool = Tool;
+        self.loginStrCmd = Cmd;
+    }
+    return self;
+ 
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     self.ScodeTextField = [self addTextField:@"合约代码" PositionX:100 PositionY:150];
     self.CountTextField = [self addTextField:@"手数" PositionX:100 PositionY:100];
-    self.OpenButton = [self addBuyButton:@"开仓" PositionX:110 PositionY:50];
+    self.OpenButton = [self addBuyButton:@"开仓" PositionX:110 PositionY:-10];
     self.OpenButton.tag = 500;
-    self.CloseButton = [self addBuyButton:@"平仓" PositionX:-30 PositionY:50];
+    self.CloseButton = [self addBuyButton:@"平仓" PositionX:-30 PositionY:-10];
     self.CloseButton.tag = 500+1;
     
+    self.QueryButton = [self addBuyButton:@"查委托" PositionX:110 PositionY:80];
+    self.QueryButton.tag = 502;
+    self.FundButton = [self addBuyButton:@"查资金" PositionX:-30 PositionY:80];
+    self.FundButton.tag = 503;
     // Do any additional setup after loading the view.
 }
+
 -(UITextField*)addTextField:(NSString* )placeholder PositionX:(CGFloat)x PositionY:(CGFloat)y{
     UITextField* TextField = [[UITextField alloc]initWithFrame:CGRectMake(self.view.centerX-x, self.view.centerY-y, 200, 50)];
     [TextField setPlaceholder:placeholder];
@@ -87,6 +106,13 @@
     else if (btn.tag==501){
         NSLog(@"close");
         self.CloseButton.enabled=NO;
+    }
+    else if(btn.tag==502){
+        [self.iceTool queryOrder:self.loginStrCmd];
+    }
+    else if(btn.tag == 503)
+    {
+        [self.iceTool queryFund:self.loginStrCmd];
     }
 }
 - (void)didReceiveMemoryWarning {

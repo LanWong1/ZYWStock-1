@@ -214,10 +214,12 @@
 		42E729341E13CAF200682B3E /* CandleLineVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E729331E13CAF200682B3E /* CandleLineVC.m */; };
 		79715BAE312AE6B07031DB82 /* libPods-ZYWChart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E2B8C997449299EE5E08697 /* libPods-ZYWChart.a */; };
 		BA0EF4C820BD3D3300E5F974 /* CodeListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA0EF4C720BD3D3300E5F974 /* CodeListVC.m */; };
+		BA3EB02320CE08EC008F11E9 /* ICETool.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB02120CE08EB008F11E9 /* ICETool.m */; };
+		BA3EB02520CE21A5008F11E9 /* config1.client in Resources */ = {isa = PBXBuildFile; fileRef = BA3EB02420CE21A4008F11E9 /* config1.client */; };
+		BA3EB02820CE4137008F11E9 /* ICEQuote.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB02720CE4137008F11E9 /* ICEQuote.m */; };
 		BA51D57920B6880E00B34DA7 /* config.client in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57820B6880E00B34DA7 /* config.client */; };
 		BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
 		BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
-		BA6A04F020CDFD8A00859A05 /* ICETool.m in Sources */ = {isa = PBXBuildFile; fileRef = BA6A04EF20CDFD8A00859A05 /* ICETool.m */; };
 		BA8209C320C66E5700A5BCAE /* BuyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA8209C220C66E5700A5BCAE /* BuyVC.m */; };
 		BAE5985720C7718000524CB7 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985620C7718000524CB7 /* LoginVC.m */; };
 		BAE5985920C7CDE000524CB7 /* NpTrade.ice in Resources */ = {isa = PBXBuildFile; fileRef = BAE5985820C7CDE000524CB7 /* NpTrade.ice */; };
@@ -520,9 +522,13 @@
 		A8CBF1D36897BA6C3C8ABB35 /* Pods-ZYWChart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZYWChart.release.xcconfig"; path = "Pods/Target Support Files/Pods-ZYWChart/Pods-ZYWChart.release.xcconfig"; sourceTree = "<group>"; };
 		BA0EF4C620BD3D3300E5F974 /* CodeListVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodeListVC.h; sourceTree = "<group>"; };
 		BA0EF4C720BD3D3300E5F974 /* CodeListVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeListVC.m; sourceTree = "<group>"; };
+		BA3EB02120CE08EB008F11E9 /* ICETool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ICETool.m; sourceTree = "<group>"; };
+		BA3EB02220CE08EB008F11E9 /* ICETool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICETool.h; sourceTree = "<group>"; };
+		BA3EB02420CE21A4008F11E9 /* config1.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config1.client; sourceTree = "<group>"; };
+		BA3EB02620CE4137008F11E9 /* ICEQuote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICEQuote.h; sourceTree = "<group>"; };
+		BA3EB02720CE4137008F11E9 /* ICEQuote.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICEQuote.m; sourceTree = "<group>"; };
 		BA51D57820B6880E00B34DA7 /* config.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.client; sourceTree = "<group>"; };
 		BA51D57A20B6881F00B34DA7 /* WpQuote.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WpQuote.ice; sourceTree = "<group>"; };
-		BA6A04EE20CDFD8A00859A05 /* ICETool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICETool.h; sourceTree = "<group>"; };
 		BA6A04EF20CDFD8A00859A05 /* ICETool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICETool.m; sourceTree = "<group>"; };
 		BA8209C120C66E5700A5BCAE /* BuyVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BuyVC.h; sourceTree = "<group>"; };
 		BA8209C220C66E5700A5BCAE /* BuyVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BuyVC.m; sourceTree = "<group>"; };
@@ -590,6 +596,7 @@
 				4227877E1E04F18600DB5CEC /* Products */,
 				B53DC238BC636AF74FFCC03B /* Pods */,
 				CAE0EB55B1E3F98AE30B25A9 /* Frameworks */,
+				BA3EB02020CE0863008F11E9 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -619,16 +626,10 @@
 				424347141EF69C570021F2C5 /* BaseNavigationController.h */,
 				424347151EF69C570021F2C5 /* BaseNavigationController.m */,
 				422787841E04F18600DB5CEC /* AppDelegate.m */,
-<<<<<<< HEAD
-				BAE5985520C7718000524CB7 /* LoginVC.h */,
-				BAE5985620C7718000524CB7 /* LoginVC.m */,
-				BA6A04EE20CDFD8A00859A05 /* ICETool.h */,
-				BA6A04EF20CDFD8A00859A05 /* ICETool.m */,
-=======
->>>>>>> ead2cbdb9c5af074c8f26c969071bbb0ed618e6a
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
 				4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */,
 				BA51D57820B6880E00B34DA7 /* config.client */,
+				BA3EB02420CE21A4008F11E9 /* config1.client */,
 				422787911E04F18600DB5CEC /* Info.plist */,
 				BAE5985B20CA69B000524CB7 /* WpTrade.ice */,
 				BAE5985820C7CDE000524CB7 /* NpTrade.ice */,
@@ -919,6 +920,10 @@
 				420577581E4AEF8600E8C15E /* ZYWCalcuteTool.m */,
 				4205775D1E4AFAD500E8C15E /* ZYWCalcuteUntil.h */,
 				4205775E1E4AFAD500E8C15E /* ZYWCalcuteUntil.m */,
+				BA3EB02220CE08EB008F11E9 /* ICETool.h */,
+				BA3EB02120CE08EB008F11E9 /* ICETool.m */,
+				BA3EB02620CE4137008F11E9 /* ICEQuote.h */,
+				BA3EB02720CE4137008F11E9 /* ICEQuote.m */,
 			);
 			path = Help;
 			sourceTree = "<group>";
@@ -982,6 +987,14 @@
 				A8CBF1D36897BA6C3C8ABB35 /* Pods-ZYWChart.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		BA3EB02020CE0863008F11E9 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				BA6A04EF20CDFD8A00859A05 /* ICETool.m */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		CAE0EB55B1E3F98AE30B25A9 /* Frameworks */ = {
@@ -1103,6 +1116,7 @@
 			files = (
 				BAE5985920C7CDE000524CB7 /* NpTrade.ice in Resources */,
 				422BF0BA1EC7081400DF8F4A /* data.plist in Resources */,
+				BA3EB02520CE21A5008F11E9 /* config1.client in Resources */,
 				422787901E04F18600DB5CEC /* LaunchScreen.storyboard in Resources */,
 				4227878D1E04F18600DB5CEC /* Assets.xcassets in Resources */,
 				4242362A1EC1ED8400C161A8 /* N225.xml in Resources */,
@@ -1207,6 +1221,7 @@
 				4239431A1E2B6D0300F2A873 /* ta_TANH.c in Sources */,
 				BAE5985720C7718000524CB7 /* LoginVC.m in Sources */,
 				423942901E2B6D0300F2A873 /* ta_ATAN.c in Sources */,
+				BA3EB02820CE4137008F11E9 /* ICEQuote.m in Sources */,
 				4276AC451EA8B82600FD3986 /* UIView+Extension.m in Sources */,
 				423942EB1E2B6D0300F2A873 /* ta_LOG10.c in Sources */,
 				4239428B1E2B6D0300F2A873 /* ta_ADXR.c in Sources */,
@@ -1243,7 +1258,6 @@
 				423942831E2B6D0300F2A873 /* ta_retcode.c in Sources */,
 				423943261E2B6D0300F2A873 /* ta_WMA.c in Sources */,
 				423942D31E2B6D0300F2A873 /* ta_CDLXSIDEGAP3METHODS.c in Sources */,
-				BA6A04F020CDFD8A00859A05 /* ICETool.m in Sources */,
 				423942FF1E2B6D0300F2A873 /* ta_MULT.c in Sources */,
 				423942941E2B6D0300F2A873 /* ta_BETA.c in Sources */,
 				4239428F1E2B6D0300F2A873 /* ta_ASIN.c in Sources */,
@@ -1336,6 +1350,7 @@
 				4248A0471EBC485A0086EAA7 /* ZYWLineView.m in Sources */,
 				423942881E2B6D0300F2A873 /* ta_ADD.c in Sources */,
 				423942BE1E2B6D0300F2A873 /* ta_CDLMARUBOZU.c in Sources */,
+				BA3EB02320CE08EC008F11E9 /* ICETool.m in Sources */,
 				4205775C1E4AF01F00E8C15E /* ZYWLineData.m in Sources */,
 				4204E0D31E12474400A47FCF /* SlipLineVC.m in Sources */,
 				4239428D1E2B6D0300F2A873 /* ta_AROON.c in Sources */,

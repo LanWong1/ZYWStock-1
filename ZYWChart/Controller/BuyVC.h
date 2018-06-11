@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ICETool.h"
 
 @interface BuyVC : UIViewController
-
+- (instancetype)initWithICE:(ICETool*)Tool StrCmd:(NSString*)Cmd;
 @end

@@ -11,6 +11,7 @@
 #import <WpQuote.h>
 #import <objc/Glacier2.h>
 #import <objc/Ice.h>
+#import "ICEQuote.h"
 
 //@class ICEInitializationData;
 //@protocol ICECommunicator;
@@ -31,5 +32,8 @@
 -(void)activate:(id<ICECommunicator>)communicator
          router:(id<GLACIER2RouterPrx>)router
 WpQuoteServerclientApiPrx:(id<WpQuoteServerClientApiPrx>)WpQuoteServerclientApiPrx;
+
+-(void)activate:(ICEQuote*)iceQuote;
+
 
 @end

@@ -12,19 +12,9 @@
 #import <objc/Glacier2.h>
 #import <WpQuote.h>
 #include "TimeLineVC.h"
+#import "ICEQuote.h"
 
 
-//#import "EvenRefresh.h"
-
-//@interface WpQuoteServerCallbackReceiverI : WpQuoteServerCallbackReceiver<WpQuoteServerCallbackReceiver>
-//@end
-//
-//@implementation WpQuoteServerCallbackReceiverI
-//- (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current
-//{
-//    NSLog(@"%@",strMessage);
-//}
-//@end
 
 
 @interface CodeListVC ()<UITableViewDelegate,UITableViewDataSource,UISearchResultsUpdating, UISearchControllerDelegate>
@@ -48,6 +38,7 @@
 @property (nonatomic,strong) UILabel *label;
 @property (nonatomic,strong) UIActivityIndicatorView *activeId;
 @property (nonatomic,strong) UIButton *btn;
+@property (nonatomic) ICEQuote* iceQuote;
 
 //@property (nonatomic,strong) TimeLineVC *timeLineVC;
 
@@ -99,6 +90,9 @@
     self.router = r;
     self.WpQuoteServerclientApiPrx = l;
 }
+-(void)activate:(ICEQuote*)i{
+    self.iceQuote = i;
+}
 
 //getData
 - (void)getData{
@@ -125,19 +119,8 @@
 //GetDayKLine
 - (void)getKline
 {
-    _iRet = -1;
-    NSString* strErr2 = @"";
-    WpQuoteServerDayKLineList* DLL = [[WpQuoteServerDayKLineList alloc]init];
-    NSMutableString* sExchangeID = [[NSMutableString alloc]initWithString:@"SHFE"];
-    @try{
-        [self reconnect];
-        _iRet = [self.WpQuoteServerclientApiPrx GetDayKLine:sExchangeID DKLL:&DLL strErrInfo:&strErr2];
-    }
-    @catch(ICEException* s)
-    {
-        NSLog(@"%@",s);
-    }
-    self.KlineList = DLL;
+    [self.iceQuote Connect2Quote];
+    self.KlineList=[self.iceQuote GetDayKline];
     [self loadData];
 }
 
@@ -276,7 +259,8 @@
         NSInteger tag = btn.tag;
         NSLog(@"分时图 %@",self.searchResult[tag-[self.searchResult count]]);
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-            NSMutableArray* arry =[self getTimeData:self.searchResult[tag-[self.searchResult count]]];
+            [self.iceQuote Connect2Quote];
+            NSMutableArray* arry =[self.iceQuote getTimeData:self.searchResult[tag-[self.searchResult count]]];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 TimeLineVC* timeLineVC = [[TimeLineVC alloc]init];
                 timeLineVC.timeData = arry;
@@ -286,56 +270,8 @@
         });
     }
 }
-//获取timedata
-- (NSMutableArray*)getTimeData:(NSString*)sCode {
-    @try{
-       // [self reconnect];//重连
-        NSMutableString* strOut = [[NSMutableString alloc]init];
-        NSString* Time = [self getCurrentTime];
-        NSString* Code = sCode;
-        NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-        NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,Code,@"=",Time];
-        [self.WpQuoteServerclientApiPrx GetKLine:@"minute" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
-        NSMutableArray* array = [NSMutableArray array];
-        if([strOut length]> 0){
-            array = [NSMutableArray array];
-            array = [[strOut componentsSeparatedByString:@"|"] mutableCopy];
-            [array removeLastObject];
-        }
-        else{
-            array = nil;
-        }
-        return array;
-    }
-    @catch(ICEException* s)
-    {
-        NSLog(@"Fail %@",s);
-    }
-}
-//连接服务器
-- (void)reconnect{
-    ICEInitializationData* initData = [ICEInitializationData initializationData];
-    initData.properties = [ICEUtil createProperties];
-    [initData.properties load:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"config.client"]];
-    initData.dispatcher = ^(id<ICEDispatcherCall> call, id<ICEConnection> con)
-    {
-        dispatch_sync(dispatch_get_main_queue(), ^ { [call run]; });
-    };
-    self.communicator = [ICEUtil createCommunicator:initData];//创建communicator
-    self.router = [GLACIER2RouterPrx checkedCast:[self.communicator getDefaultRouter]];//路由
-    [self.router createSession:@"" password:@""];//创建session
-    self.WpQuoteServerclientApiPrx = [WpQuoteServerClientApiPrx uncheckedCast:[self.communicator stringToProxy:@"ClientApiId"]];//返回具有所请求类型代理
-}
 
-//获取当前时间
-- (NSString*)getCurrentTime{
-    NSDate * date = [NSDate date];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    formatter.dateFormat = @"HHmmss";
-    NSString *string = [formatter stringFromDate:date];
-    return string;
-}
-
+#pragma -mark searchbar delegate
 //search bar 过滤字符串 setter
 - (void)setFilterString:(NSString *)filterString{
     _filterString = filterString;
@@ -351,13 +287,8 @@
     [self.tableView reloadData];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController{
-   
+    
     if(!self.searchController.active){
         return;
     }
@@ -373,4 +304,9 @@
 {
     
 }
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
 @end
