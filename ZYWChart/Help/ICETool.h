@@ -9,10 +9,16 @@
 #import <Foundation/Foundation.h>
 #import <objc/Glacier2.h>
 #import <objc/Ice.h>
+#import "WpTrade.h"
 
 @class ICEInitializationData;
 @protocol ICECommunicator;
 @protocol GLACIER2RouterPrx;
+
+@interface WpTradeAPIServerCallbackReceiverI: WpTradeAPIServerCallbackReceiver
+- (NSMutableArray*)messageForBuyVC;
+@end
+
 
 @interface ICETool : NSObject
 
@@ -21,5 +27,8 @@
 - (void)initiateCallback:(NSString*)strAcc;
 - (void)Login:(NSString*)StrCmd;
 - (int)HeartBeat:(NSString*)strCmd;
-- (void)Connect2ICE;
+- (WpTradeAPIServerCallbackReceiverI*)Connect2ICE;
 @end
+
+
+

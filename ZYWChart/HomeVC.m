@@ -60,7 +60,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSLog(@"HomeVC Didload");
     self.navigationItem.title = @"主页";
     UINavigationBar.appearance.translucent = YES;
     self.view.backgroundColor = [UIColor clearColor];

@@ -8,6 +8,9 @@
 
 #import "BuyVC.h"
 #import "ICETool.h"
+#import "CheckFundVC.h"
+#import "BaseNavigationController.h"
+#import "HomeVC.h"
 @interface BuyVC ()<UITextFieldDelegate>
 
 @property (nonatomic,strong)  UIButton *buyButton;
@@ -19,23 +22,28 @@
 @property (nonatomic,strong)  UIButton *FundButton;
 @property (nonatomic) NSString* loginStrCmd;
 @property (nonatomic) ICETool* iceTool;
-
+@property (nonatomic) WpTradeAPIServerCallbackReceiverI* wpTradeAPIServerCallbackReceiverI;
+@property (nonatomic) NSMutableArray* Msg;
+@property (nonatomic,strong)  UIActivityIndicatorView *activeId;
+@property (nonatomic) CheckFundVC* checkFundVC;
 
 @end
 
 @implementation BuyVC
-- (instancetype)initWithICE:(ICETool*)Tool StrCmd:(NSString*)Cmd{
+- (instancetype)initWithICE:(ICETool*)Tool StrCmd:(NSString*)Cmd wpTradeAPIServerCallbackReceiverI:(WpTradeAPIServerCallbackReceiverI *)wp{
     if(self = [super init])
     {
         self.iceTool = Tool;
         self.loginStrCmd = Cmd;
+        self.wpTradeAPIServerCallbackReceiverI = wp;
     }
     return self;
  
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    self.navigationItem.title = @"交易";
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"行情" style:UIBarButtonItemStylePlain target:self action:@selector(back2Home)];
     self.ScodeTextField = [self addTextField:@"合约代码" PositionX:100 PositionY:150];
     self.CountTextField = [self addTextField:@"手数" PositionX:100 PositionY:100];
     self.OpenButton = [self addBuyButton:@"开仓" PositionX:110 PositionY:-10];
@@ -47,9 +55,16 @@
     self.QueryButton.tag = 502;
     self.FundButton = [self addBuyButton:@"查资金" PositionX:-30 PositionY:80];
     self.FundButton.tag = 503;
+    [self addActiveId];
+   
+    
     // Do any additional setup after loading the view.
 }
-
+-(void)back2Home{
+    HomeVC* homeVC = [[HomeVC alloc]init];
+    [self presentViewController:homeVC animated:NO completion:nil];
+    
+}
 -(UITextField*)addTextField:(NSString* )placeholder PositionX:(CGFloat)x PositionY:(CGFloat)y{
     UITextField* TextField = [[UITextField alloc]initWithFrame:CGRectMake(self.view.centerX-x, self.view.centerY-y, 200, 50)];
     [TextField setPlaceholder:placeholder];
@@ -67,7 +82,11 @@
     return TextField;
 }
 
-
+- (void)addActiveId{
+    self.activeId = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    self.activeId.center = CGPointMake(self.view.centerX ,self.view.centerY+200);
+    [self.view addSubview:self.activeId];
+}
 -(UIButton*)addBuyButton:(NSString*) title PositionX:(CGFloat)x PositionY:(CGFloat)y {
     
     UIButton* btn = [[UIButton alloc]initWithFrame:CGRectMake(self.view.centerX-x, self.view.centerY+y, 80, 50)];
@@ -82,6 +101,7 @@
     [self.view addSubview:btn];
     return btn;
 }
+
 -(void)ButtonPressed:(id)sender{
     UIButton* btn = sender;
     if(btn.tag==500){
@@ -112,8 +132,17 @@
     }
     else if(btn.tag == 503)
     {
-        [self.iceTool queryFund:self.loginStrCmd];
+       [self.iceTool queryFund:self.loginStrCmd];
+       [self.activeId startAnimating];
+       [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addCheckFundVC) userInfo:nil repeats:NO];
     }
+}
+- (void)addCheckFundVC{
+    self.Msg=[self.wpTradeAPIServerCallbackReceiverI messageForBuyVC];
+    NSLog(@"%@",self.Msg);
+    self.checkFundVC = [[CheckFundVC alloc]init];
+    [self.navigationController pushViewController:self.checkFundVC animated:NO];
+    [self.activeId stopAnimating];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

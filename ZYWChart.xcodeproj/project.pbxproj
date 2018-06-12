@@ -217,6 +217,7 @@
 		BA3EB02320CE08EC008F11E9 /* ICETool.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB02120CE08EB008F11E9 /* ICETool.m */; };
 		BA3EB02520CE21A5008F11E9 /* config1.client in Resources */ = {isa = PBXBuildFile; fileRef = BA3EB02420CE21A4008F11E9 /* config1.client */; };
 		BA3EB02820CE4137008F11E9 /* ICEQuote.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB02720CE4137008F11E9 /* ICEQuote.m */; };
+		BA3EB03120CF9D2E008F11E9 /* CheckFundVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB03020CF9D2E008F11E9 /* CheckFundVC.m */; };
 		BA51D57920B6880E00B34DA7 /* config.client in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57820B6880E00B34DA7 /* config.client */; };
 		BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
 		BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
@@ -527,6 +528,8 @@
 		BA3EB02420CE21A4008F11E9 /* config1.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config1.client; sourceTree = "<group>"; };
 		BA3EB02620CE4137008F11E9 /* ICEQuote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICEQuote.h; sourceTree = "<group>"; };
 		BA3EB02720CE4137008F11E9 /* ICEQuote.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICEQuote.m; sourceTree = "<group>"; };
+		BA3EB02F20CF9D2E008F11E9 /* CheckFundVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckFundVC.h; sourceTree = "<group>"; };
+		BA3EB03020CF9D2E008F11E9 /* CheckFundVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckFundVC.m; sourceTree = "<group>"; };
 		BA51D57820B6880E00B34DA7 /* config.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.client; sourceTree = "<group>"; };
 		BA51D57A20B6881F00B34DA7 /* WpQuote.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WpQuote.ice; sourceTree = "<group>"; };
 		BA6A04EF20CDFD8A00859A05 /* ICETool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICETool.m; sourceTree = "<group>"; };
@@ -687,6 +690,8 @@
 				BA8209C220C66E5700A5BCAE /* BuyVC.m */,
 				BAE5985520C7718000524CB7 /* LoginVC.h */,
 				BAE5985620C7718000524CB7 /* LoginVC.m */,
+				BA3EB02F20CF9D2E008F11E9 /* CheckFundVC.h */,
+				BA3EB03020CF9D2E008F11E9 /* CheckFundVC.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1348,6 +1353,7 @@
 				423942E81E2B6D0300F2A873 /* ta_LINEARREG_INTERCEPT.c in Sources */,
 				423942C81E2B6D0300F2A873 /* ta_CDLSHOOTINGSTAR.c in Sources */,
 				4248A0471EBC485A0086EAA7 /* ZYWLineView.m in Sources */,
+				BA3EB03120CF9D2E008F11E9 /* CheckFundVC.m in Sources */,
 				423942881E2B6D0300F2A873 /* ta_ADD.c in Sources */,
 				423942BE1E2B6D0300F2A873 /* ta_CDLMARUBOZU.c in Sources */,
 				BA3EB02320CE08EC008F11E9 /* ICETool.m in Sources */,

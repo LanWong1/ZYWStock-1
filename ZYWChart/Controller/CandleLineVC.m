@@ -519,9 +519,6 @@ typedef enum
             [newMarray addObject:object];
         }
         [self reloadData:newMarray reload:NO];
-    
- 
-
 }
 
 

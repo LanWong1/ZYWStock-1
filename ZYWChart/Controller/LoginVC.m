@@ -30,6 +30,7 @@
 @property (nonatomic) NSMutableString* strUserId;
 @property (nonatomic) NSString* loginStrCmd;
 @property (nonatomic,strong)  BuyVC *buyVC;
+@property (nonatomic) WpTradeAPIServerCallbackReceiverI* wpTradeAPIServerCallbackReceiverI;
 
 @end
 
@@ -41,7 +42,6 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-    NSLog(@"LoginVC didload");
     NSInteger timer_ = (NSInteger) [NSProcessInfo processInfo].systemUptime*100;
     NSString* userId = [NSString stringWithFormat:@"%ld",(long)timer_];
     self.strUserId = [[NSMutableString alloc]initWithString:userId];
@@ -77,7 +77,7 @@
         @try
         {
             self.iceTool = [[ICETool alloc]init];
-            [self.iceTool Connect2ICE];
+            self.wpTradeAPIServerCallbackReceiverI=[self.iceTool Connect2ICE];
             self.strAcc = [[NSMutableString alloc]initWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId ];
             [self.iceTool initiateCallback:self.strAcc];
             [self.iceTool Login:self.loginStrCmd];
@@ -86,8 +86,9 @@
                 [self setHeartbeat];
                 [self.activeId removeFromSuperview];
                 [self.label removeFromSuperview];
-                self.buyVC = [[BuyVC alloc]initWithICE:self.iceTool StrCmd:self.loginStrCmd];
-                [self.navigationController pushViewController:self.buyVC animated:NO];
+                self.buyVC = [[BuyVC alloc]initWithICE:self.iceTool StrCmd:self.loginStrCmd wpTradeAPIServerCallbackReceiverI:self.wpTradeAPIServerCallbackReceiverI];
+                UINavigationController* nav = [[UINavigationController alloc]initWithRootViewController:self.buyVC];
+                [self presentViewController:nav animated:YES completion:nil];
              });
         }
         @catch(GLACIER2CannotCreateSessionException* ex)
@@ -171,7 +172,8 @@
                 [self connect2Server];
             }
             else{
-                [self.navigationController pushViewController:self.buyVC animated:NO];
+                [self presentViewController:self.buyVC animated:YES completion:nil];
+                //[self.navigationController pushViewController:self.buyVC animated:NO];
             }
             
         }
@@ -211,7 +213,8 @@
         }
         if(iRet == -2){
             //重新连接
-            dispatch_source_cancel(_timer);
+            dispatch_source_cancel(self->_timer);
+            
             [self connect2Server];
         }
     });

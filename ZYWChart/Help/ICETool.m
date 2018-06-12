@@ -8,14 +8,41 @@
 
 #import "ICETool.h"
 #import "WpTrade.h"
+#import "BuyVC.h"
 
+@interface WpTradeAPIServerCallbackReceiverI()<WpTradeAPIServerCallbackReceiver>
+@property (nonatomic) NSMutableArray* Msg;
+@property (nonatomic) BuyVC* buy;
 
-@interface WpTradeAPIServerCallbackReceiverI : WpTradeAPIServerCallbackReceiver<WpTradeAPIServerCallbackReceiver>
 @end
+
+
 @implementation WpTradeAPIServerCallbackReceiverI
+
 - (void)SendMsg:(NSMutableString *)stype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current {
-    NSLog(@"%@",strMessage);
+    //NSLog(@"%@%@",stype,strMessage);
+   
+    if([stype isEqualToString:@"OnQryMoney"]){
+        NSArray* arry=[strMessage componentsSeparatedByString:@"="];
+        NSLog(@"%@",arry);
+        if(self.Msg==nil){
+            self.Msg = [[NSMutableArray alloc]initWithCapacity:0];
+        }
+        [self.Msg addObject: strMessage];
+    }
+    else if([stype isEqualToString:@"OnLogin"]){
+        NSLog(@"Login");
+    }
+        
+
 }
+- (NSMutableArray*)messageForBuyVC{
+    NSMutableArray* arry = [[NSMutableArray alloc]initWithCapacity:0];;
+    arry = self.Msg;
+    self.Msg = nil;
+    return arry;
+}
+
 @end
 
 
@@ -24,12 +51,15 @@
 @property (nonatomic) id<WpTradeAPIServerCallbackReceiverPrx> twowayR;
 @property (nonatomic) id<GLACIER2RouterPrx> router;
 @property (nonatomic) id<WpTradeAPIServerClientApiPrx> WpTrade;
+@property (nonatomic) NSMutableString* Message;
+@property (nonatomic)  WpTradeAPIServerCallbackReceiverI* wpTradeAPIServerCallbackReceiverI;
 
 @end
 
 @implementation ICETool
 
-- (void)Connect2ICE{
+
+- (WpTradeAPIServerCallbackReceiverI*)Connect2ICE{
     ICEInitializationData* initData = [ICEInitializationData initializationData];
     initData.properties = [ICEUtil createProperties];
     [initData.properties load:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"config.client"]];
@@ -47,7 +77,10 @@
     ICEIdentity* callbackReceiverIdent= [ICEIdentity identity:@"callbackReceiver" category:[self.router getCategoryForClient]];
     id<ICEObjectAdapter> adapter = [self.communicator createObjectAdapterWithRouter:@"" router:self.router];
     [adapter activate];
-    self.twowayR = [WpTradeAPIServerCallbackReceiverPrx uncheckedCast:[adapter add:[[WpTradeAPIServerCallbackReceiverI alloc]init] identity:callbackReceiverIdent]];
+    self.wpTradeAPIServerCallbackReceiverI = [[WpTradeAPIServerCallbackReceiverI alloc]init];
+
+    self.twowayR = [WpTradeAPIServerCallbackReceiverPrx uncheckedCast:[adapter add:_wpTradeAPIServerCallbackReceiverI identity:callbackReceiverIdent]];
+    return self.wpTradeAPIServerCallbackReceiverI;
 }
 - (void)queryOrder:(NSString*)StrCmd{
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
