@@ -62,7 +62,8 @@
 }
 -(void)back2Home{
     HomeVC* homeVC = [[HomeVC alloc]init];
-    [self presentViewController:homeVC animated:NO completion:nil];
+    BaseNavigationController* nav = [[BaseNavigationController alloc]initWithRootViewController:homeVC];
+    [self presentViewController:nav animated:NO completion:nil];
     
 }
 -(UITextField*)addTextField:(NSString* )placeholder PositionX:(CGFloat)x PositionY:(CGFloat)y{

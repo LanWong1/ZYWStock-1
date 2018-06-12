@@ -31,7 +31,8 @@
 
     HomeVC *Controller = [[HomeVC alloc] init];
     BaseNavigationController *nav = [[BaseNavigationController alloc] initWithRootViewController:Controller];
-    self.window.rootViewController = nav;
+    [self.window setRootViewController:nav];
+    //self.window.rootViewController = Controller;
     [self.window makeKeyAndVisible];
     return YES;
 }

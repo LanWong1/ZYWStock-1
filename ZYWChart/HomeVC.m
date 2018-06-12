@@ -155,19 +155,22 @@
     
     UIButton* btn = sender;
     if(btn.tag==1000){
+        
         if(self.historyVC == nil){
             self.historyVC = [[CodeListVC alloc]init];
-            NSLog(@"historyvc");
             [self.historyVC activate:self.iceQuote];
         }
+//        UINavigationController* nav = [[UINavigationController alloc]initWithRootViewController:_historyVC];
+//        [self presentViewController:nav animated:NO completion:nil];
         [self.navigationController pushViewController:self.historyVC animated:NO];
     }
     else if(btn.tag==1001){
         if(self.loginVC == nil){
             self.loginVC = [[LoginVC alloc]init];
         }
+//        UINavigationController* nav = [[UINavigationController alloc]initWithRootViewController:_loginVC];
+//        [self presentViewController:nav animated:NO completion:nil];
          [self.navigationController pushViewController:self.loginVC animated:NO];
-
     }
 }
 @end
