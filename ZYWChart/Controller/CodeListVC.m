@@ -18,15 +18,15 @@
 
 
 @interface CodeListVC ()<UITableViewDelegate,UITableViewDataSource,UISearchResultsUpdating, UISearchControllerDelegate>
-@property (nonatomic,strong) UISearchController *searchController;
+@property (nonatomic,strong)  UISearchController *searchController;
 @property (nonatomic, retain) UIRefreshControl * refreshControl;
-@property (nonatomic, copy) NSString *filterString;
-@property (nonatomic,strong) UITableView    *tableView;
-@property (nonatomic,copy)   NSMutableArray *titlesArray;
-@property (nonatomic,copy)   NSMutableArray *titlesMArray;
-@property (nonatomic,strong) UISearchBar *search;
-@property (nonatomic,copy)   NSArray* searchResult;
-@property (nonatomic,copy)   NSMutableArray* array;
+@property (nonatomic, copy)   NSString *filterString;
+@property (nonatomic,strong)  UITableView    *tableView;
+@property (nonatomic,copy)    NSMutableArray *titlesArray;
+@property (nonatomic,copy)    NSMutableArray *titlesMArray;
+@property (nonatomic,strong)  UISearchBar *search;
+@property (nonatomic,copy)    NSArray* searchResult;
+@property (nonatomic,copy)    NSMutableArray* array;
 @property (nonatomic) WpQuoteServerDayKLineList *KlineList;
 @property (nonatomic)        ICEInt iRet;
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
@@ -214,6 +214,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
+    
     NSString* title = _searchResult[indexPath.row];
 
     UIButton* btn = [[UIButton alloc]init];

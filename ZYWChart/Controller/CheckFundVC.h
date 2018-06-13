@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface CheckFundVC : UIViewController
-
+@property (nonatomic,copy) NSMutableArray* fundDataArray;
 @end

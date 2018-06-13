@@ -218,6 +218,8 @@
 		BA3EB02520CE21A5008F11E9 /* config1.client in Resources */ = {isa = PBXBuildFile; fileRef = BA3EB02420CE21A4008F11E9 /* config1.client */; };
 		BA3EB02820CE4137008F11E9 /* ICEQuote.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB02720CE4137008F11E9 /* ICEQuote.m */; };
 		BA3EB03120CF9D2E008F11E9 /* CheckFundVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB03020CF9D2E008F11E9 /* CheckFundVC.m */; };
+		BA3EB03420D0AB5C008F11E9 /* FundDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB03320D0AB5C008F11E9 /* FundDataModel.m */; };
+		BA3EB03720D10255008F11E9 /* CheckOrderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB03620D10255008F11E9 /* CheckOrderVC.m */; };
 		BA51D57920B6880E00B34DA7 /* config.client in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57820B6880E00B34DA7 /* config.client */; };
 		BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
 		BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
@@ -530,6 +532,10 @@
 		BA3EB02720CE4137008F11E9 /* ICEQuote.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICEQuote.m; sourceTree = "<group>"; };
 		BA3EB02F20CF9D2E008F11E9 /* CheckFundVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckFundVC.h; sourceTree = "<group>"; };
 		BA3EB03020CF9D2E008F11E9 /* CheckFundVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckFundVC.m; sourceTree = "<group>"; };
+		BA3EB03220D0AB5C008F11E9 /* FundDataModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FundDataModel.h; sourceTree = "<group>"; };
+		BA3EB03320D0AB5C008F11E9 /* FundDataModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FundDataModel.m; sourceTree = "<group>"; };
+		BA3EB03520D10255008F11E9 /* CheckOrderVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckOrderVC.h; sourceTree = "<group>"; };
+		BA3EB03620D10255008F11E9 /* CheckOrderVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckOrderVC.m; sourceTree = "<group>"; };
 		BA51D57820B6880E00B34DA7 /* config.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.client; sourceTree = "<group>"; };
 		BA51D57A20B6881F00B34DA7 /* WpQuote.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WpQuote.ice; sourceTree = "<group>"; };
 		BA6A04EF20CDFD8A00859A05 /* ICETool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICETool.m; sourceTree = "<group>"; };
@@ -586,6 +592,8 @@
 				4274010E1E768B2300864702 /* ZYWMacdPostionModel.m */,
 				422BF0BB1EC70C0100DF8F4A /* ZYWTimeLineModel.h */,
 				422BF0BC1EC70C0100DF8F4A /* ZYWTimeLineModel.m */,
+				BA3EB03220D0AB5C008F11E9 /* FundDataModel.h */,
+				BA3EB03320D0AB5C008F11E9 /* FundDataModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -692,6 +700,8 @@
 				BAE5985620C7718000524CB7 /* LoginVC.m */,
 				BA3EB02F20CF9D2E008F11E9 /* CheckFundVC.h */,
 				BA3EB03020CF9D2E008F11E9 /* CheckFundVC.m */,
+				BA3EB03520D10255008F11E9 /* CheckOrderVC.h */,
+				BA3EB03620D10255008F11E9 /* CheckOrderVC.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1208,6 +1218,7 @@
 				423943161E2B6D0300F2A873 /* ta_SUB.c in Sources */,
 				423942891E2B6D0300F2A873 /* ta_ADOSC.c in Sources */,
 				423943121E2B6D0300F2A873 /* ta_STDDEV.c in Sources */,
+				BA3EB03420D0AB5C008F11E9 /* FundDataModel.m in Sources */,
 				423942C21E2B6D0300F2A873 /* ta_CDLMORNINGSTAR.c in Sources */,
 				4239428E1E2B6D0300F2A873 /* ta_AROONOSC.c in Sources */,
 				423942971E2B6D0300F2A873 /* ta_CDL2CROWS.c in Sources */,
@@ -1313,6 +1324,7 @@
 				423942FB1E2B6D0300F2A873 /* ta_MINMAXINDEX.c in Sources */,
 				423942C11E2B6D0300F2A873 /* ta_CDLMORNINGDOJISTAR.c in Sources */,
 				423942E71E2B6D0300F2A873 /* ta_LINEARREG_ANGLE.c in Sources */,
+				BA3EB03720D10255008F11E9 /* CheckOrderVC.m in Sources */,
 				423943071E2B6D0300F2A873 /* ta_ROC.c in Sources */,
 				4239429D1E2B6D0300F2A873 /* ta_CDL3WHITESOLDIERS.c in Sources */,
 				423942EE1E2B6D0300F2A873 /* ta_MACDEXT.c in Sources */,

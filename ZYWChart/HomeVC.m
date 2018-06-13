@@ -42,7 +42,7 @@
 @property (nonatomic,strong) UISearchController *searchController;
 @property (nonatomic) CodeListVC *historyVC;
 @property (nonatomic) LoginVC *loginVC;
-
+@property (nonatomic) int connectFlag;
 
 //ICE
 @property (nonatomic) id<ICECommunicator> communicator;
@@ -166,11 +166,9 @@
     }
     else if(btn.tag==1001){
         if(self.loginVC == nil){
-            self.loginVC = [[LoginVC alloc]init];
+            self.loginVC = [[LoginVC alloc]init];  
         }
-//        UINavigationController* nav = [[UINavigationController alloc]initWithRootViewController:_loginVC];
-//        [self presentViewController:nav animated:NO completion:nil];
-         [self.navigationController pushViewController:self.loginVC animated:NO];
+        [self.navigationController pushViewController:self.loginVC animated:NO];
     }
 }
 @end

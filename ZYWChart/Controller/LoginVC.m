@@ -86,9 +86,10 @@
                 [self setHeartbeat];
                 [self.activeId removeFromSuperview];
                 [self.label removeFromSuperview];
-                self.buyVC = [[BuyVC alloc]initWithICE:self.iceTool StrCmd:self.loginStrCmd wpTradeAPIServerCallbackReceiverI:self.wpTradeAPIServerCallbackReceiverI];
+                //self.buyVC = [[BuyVC alloc]initWithICE:self.iceTool StrCmd:self.loginStrCmd wpTradeAPIServerCallbackReceiverI:self.wpTradeAPIServerCallbackReceiverI];
                 UINavigationController* nav = [[UINavigationController alloc]initWithRootViewController:self.buyVC];
-                [self presentViewController:nav animated:YES completion:nil];
+                [self presentViewController:nav animated:NO completion:nil];
+                
              });
         }
         @catch(GLACIER2CannotCreateSessionException* ex)
@@ -168,18 +169,11 @@
         {
             _loginStrCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
             self.strFundAcc = [[NSMutableString alloc]initWithString:self.UserNameTextField.text];
-            if(self.buyVC == nil){
-                [self connect2Server];
-            }
-            else{
-                [self presentViewController:self.buyVC animated:YES completion:nil];
-                //[self.navigationController pushViewController:self.buyVC animated:NO];
-            }
-            
+            [self connect2Server];
+ 
         }
     }
 }
-
 
 - (void)setAlertWithMessage:(NSString*)msg{
     UIAlertController* alert=[UIAlertController alertControllerWithTitle:@"警告"
@@ -213,6 +207,7 @@
         }
         if(iRet == -2){
             //重新连接
+            NSLog(@"hhhkkkkkkkkkkllll");
             dispatch_source_cancel(self->_timer);
             
             [self connect2Server];

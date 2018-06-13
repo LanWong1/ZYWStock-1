@@ -11,6 +11,7 @@
 #import "CheckFundVC.h"
 #import "BaseNavigationController.h"
 #import "HomeVC.h"
+#import "CheckOrderVC.h"
 @interface BuyVC ()<UITextFieldDelegate>
 
 @property (nonatomic,strong)  UIButton *buyButton;
@@ -130,6 +131,8 @@
     }
     else if(btn.tag==502){
         [self.iceTool queryOrder:self.loginStrCmd];
+        [self.activeId startAnimating];
+        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addCheckOrderVC) userInfo:nil repeats:NO];
     }
     else if(btn.tag == 503)
     {
@@ -138,13 +141,38 @@
        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addCheckFundVC) userInfo:nil repeats:NO];
     }
 }
+- (void)addCheckOrderVC{
+    [self getMSg];
+    CheckOrderVC* orderVC = [[CheckOrderVC alloc]init];
+    orderVC.orderDataArray=self.Msg;
+    [self.navigationController pushViewController:orderVC animated:NO];
+    [self.activeId stopAnimating];
+}
+
 - (void)addCheckFundVC{
-    self.Msg=[self.wpTradeAPIServerCallbackReceiverI messageForBuyVC];
-    NSLog(@"%@",self.Msg);
+    [self getMSg];
     self.checkFundVC = [[CheckFundVC alloc]init];
+    self.checkFundVC.fundDataArray=self.Msg;
     [self.navigationController pushViewController:self.checkFundVC animated:NO];
     [self.activeId stopAnimating];
 }
+
+- (void)getMSg{
+    
+    self.Msg = [NSMutableArray array];
+    
+    NSEnumerator *enumerator = [[self.wpTradeAPIServerCallbackReceiverI messageForBuyVC] objectEnumerator];
+    id obj = nil;
+    while (obj = [enumerator nextObject]){
+        NSMutableString *Message = [[NSMutableString alloc]initWithCapacity:0];
+        Message = obj;
+        NSArray* arry=[Message componentsSeparatedByString:@"="];
+        [self.Msg addObject:arry];
+    }
+    NSLog(@"%@",self.Msg);
+}
+
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

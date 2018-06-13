@@ -94,7 +94,6 @@ typedef enum
         //NSLog(@"sCode = %@",_sCode);
     }
     return self;
-    
 }
 
 #pragma mark 添加视图

@@ -23,18 +23,23 @@
     //NSLog(@"%@%@",stype,strMessage);
    
     if([stype isEqualToString:@"OnQryMoney"]){
-        NSArray* arry=[strMessage componentsSeparatedByString:@"="];
-        NSLog(@"%@",arry);
+
         if(self.Msg==nil){
             self.Msg = [[NSMutableArray alloc]initWithCapacity:0];
         }
         [self.Msg addObject: strMessage];
     }
+    else if([stype isEqualToString:@"OnQryOrder"])
+    {
+        if(self.Msg==nil){
+            self.Msg = [[NSMutableArray alloc]initWithCapacity:0];
+        }
+        [self.Msg addObject: strMessage];
+    }
+ 
     else if([stype isEqualToString:@"OnLogin"]){
         NSLog(@"Login");
     }
-        
-
 }
 - (NSMutableArray*)messageForBuyVC{
     NSMutableArray* arry = [[NSMutableArray alloc]initWithCapacity:0];;
