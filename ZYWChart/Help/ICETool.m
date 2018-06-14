@@ -22,21 +22,12 @@
 - (void)SendMsg:(NSMutableString *)stype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current {
     //NSLog(@"%@%@",stype,strMessage);
    
-    if([stype isEqualToString:@"OnQryMoney"]){
-
+    if([stype isEqualToString:@"OnQryMoney"]|[stype isEqualToString:@"OnQryOrder"]|[stype isEqualToString:@"OnQryHold"]){
         if(self.Msg==nil){
             self.Msg = [[NSMutableArray alloc]initWithCapacity:0];
         }
         [self.Msg addObject: strMessage];
     }
-    else if([stype isEqualToString:@"OnQryOrder"])
-    {
-        if(self.Msg==nil){
-            self.Msg = [[NSMutableArray alloc]initWithCapacity:0];
-        }
-        [self.Msg addObject: strMessage];
-    }
- 
     else if([stype isEqualToString:@"OnLogin"]){
         NSLog(@"Login");
     }
@@ -47,7 +38,6 @@
     self.Msg = nil;
     return arry;
 }
-
 @end
 
 
@@ -93,13 +83,17 @@
     WpTradeAPIServerMutableSTRLIST* outList= [[WpTradeAPIServerMutableSTRLIST alloc]initWithCapacity:0];
     //[self.WpTrade QueryOrder:@"" strCmd:StrCmd ListFund:&outList strOut:&strOut strErrInfo:&strErroInfo];
     [self.WpTrade QueryOrder:@"" strCmd:StrCmd ListEntrust:&outList strOut:&strOut strErrInfo:&strErroInfo];
- 
+}
+- (void)queryHold:(NSString*)StrCmd{
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    WpTradeAPIServerMutableSTRLIST* outList= [[WpTradeAPIServerMutableSTRLIST alloc]initWithCapacity:0];
+    [self.WpTrade QueryHold:@"" strCmd:StrCmd ListHold:&outList strOut:&strOut strErrInfo:&strErroInfo];
 }
 - (void)queryFund:(NSString*)StrCmd{
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     WpTradeAPIServerMutableSTRLIST* outList= [[WpTradeAPIServerMutableSTRLIST alloc]initWithCapacity:0];
-    //[self.WpTrade QueryOrder:@"" strCmd:StrCmd ListFund:&outList strOut:&strOut strErrInfo:&strErroInfo];
     [self.WpTrade QueryFund:@"" strCmd:StrCmd ListFund:&outList strOut:&strOut strErrInfo:&strErroInfo];
 }
 - (void)initiateCallback:(NSString*)strAcc{

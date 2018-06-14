@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CheckFundVC.h"
 
 @interface CheckOrderVC : UIViewController
 @property (nonatomic,copy) NSMutableArray* orderDataArray;

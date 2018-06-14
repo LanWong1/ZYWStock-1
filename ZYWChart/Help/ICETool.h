@@ -27,6 +27,7 @@
 - (void)initiateCallback:(NSString*)strAcc;
 - (void)Login:(NSString*)StrCmd;
 - (int)HeartBeat:(NSString*)strCmd;
+- (void)queryHold:(NSString*)StrCmd;
 - (WpTradeAPIServerCallbackReceiverI*)Connect2ICE;
 @end
 

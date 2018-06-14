@@ -5,7 +5,7 @@
 //  Created by 张有为 on 2016/12/17.
 //  Copyright © 2016年 zyw113. All rights reserved.
 //
-
+#import "AppDelegate.h"
 #import "HomeVC.h"
 #import "CandleLineVC.h"
 //ICE
@@ -70,17 +70,17 @@
     buyButton.tag  = 1000+1;
     [self.view addSubview:lineButton];
     [self.view addSubview: buyButton];
-    [self connect2Server];
+    
+    [self connectQuoteServer];
 }
 
 //conncet to server
-- (void) connect2Server{
+- (void) connectQuoteServer{
      [self.activeId startAnimating];
     //开线程
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
         @try
         {
-
             self.iceQuote = [[ICEQuote alloc]init];
             [self.iceQuote Connect2Quote];
             dispatch_sync(dispatch_get_main_queue(), ^{
@@ -165,10 +165,18 @@
         [self.navigationController pushViewController:self.historyVC animated:NO];
     }
     else if(btn.tag==1001){
-        if(self.loginVC == nil){
-            self.loginVC = [[LoginVC alloc]init];  
+        AppDelegate* app =(AppDelegate*) [UIApplication sharedApplication].delegate;
+        if(app.loginFlag == 0){
+            app.loginFlag = 1;
+            app.loginVC = [[LoginVC alloc]init];
+            [self.navigationController pushViewController:app.loginVC animated:NO];
         }
-        [self.navigationController pushViewController:self.loginVC animated:NO];
+        else{
+            BuyVC* buyVC = [[BuyVC alloc]init];
+            UINavigationController* nav = [[UINavigationController alloc]initWithRootViewController:buyVC];
+            [self presentViewController:nav animated:NO completion:nil];
+        }
+        
     }
 }
 @end

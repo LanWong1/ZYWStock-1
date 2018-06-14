@@ -10,4 +10,5 @@
 
 @interface CheckFundVC : UIViewController
 @property (nonatomic,copy) NSMutableArray* fundDataArray;
+- (UILabel*)addLableWithName:(NSString*)name PositonX:(CGFloat)x PositionY:(CGFloat)y Type:(int)type;
 @end

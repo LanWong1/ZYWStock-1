@@ -1,46 +1,46 @@
 //
-//  CheckFundVC.m
+//  checkHoldVC.m
 //  ZYWChart
 //
-//  Created by zdqh on 2018/6/12.
+//  Created by zdqh on 2018/6/14.
 //  Copyright © 2018 zyw113. All rights reserved.
 //
 
-#import "CheckFundVC.h"
-#import "FundDataModel.h"
+#import "checkHoldVC.h"
+#import "HoldDataModel.h"
 
-@interface CheckFundVC ()<UITableViewDelegate,UITableViewDataSource>
+@interface checkHoldVC ()<UITableViewDelegate,UITableViewDataSource>
 
-@property (nonatomic,strong)  NSMutableArray<__kindof FundDataModel*> *modleArray;
+@property (nonatomic,strong)  NSMutableArray<__kindof HoldDataModel*> *modleArray;
 @end
 
-@implementation CheckFundVC
+@implementation checkHoldVC
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationItem.title = @"资金";
-    [self addLableWithName:@"货币编号" PositonX:0 PositionY:62 Type:0];
-    [self addLableWithName:@"今资金"  PositonX:70 PositionY:62 Type:0];
-    [self addLableWithName:@"今权益" PositonX:140 PositionY:62 Type:0];
-    [self addLableWithName:@"今可提" PositonX:210 PositionY:62 Type:0];
-    [self addLableWithName:@"风险率" PositonX:280 PositionY:62 Type:0];
-    [self addLableWithName:@"账户市值" PositonX:70*5 PositionY:62 Type:0];
+    self.navigationItem.title = @"持仓";
+    [self addLableWithName:@"商品编号" PositonX:0 PositionY:62 Type:0];
+    [self addLableWithName:@"合约号"  PositonX:70 PositionY:62 Type:0];
+    [self addLableWithName:@"买卖方向" PositonX:140 PositionY:62 Type:0];
+    [self addLableWithName:@"持仓量" PositonX:210 PositionY:62 Type:0];
+    [self addLableWithName:@"保证金" PositonX:280 PositionY:62 Type:0];
+    [self addLableWithName:@"昨结算价" PositonX:70*5 PositionY:62 Type:0];
     self.modleArray = [NSMutableArray array];
-    NSEnumerator* enumerator = [self.fundDataArray objectEnumerator];
+   NSEnumerator* enumerator = [self.holdDataArray objectEnumerator];
     id obj = nil;
     while(obj = [enumerator nextObject]){
         NSArray * arry = obj;
-        FundDataModel *M = [[FundDataModel alloc]init];
-        M.CurrencyNo = arry[6];
-        M.TMoney     = arry[37];
-        M.TBalance   = arry[38];
-        M.TCanCashOut = arry[39];
-        M.RiskRate   = arry[40];
-        M.AccountMarketValue = arry[41];
+        HoldDataModel *M = [[HoldDataModel alloc]init];
+        M.CommodityNo = arry[7];
+        M.ContractNo = arry[8];
+        M.Direct = arry[9];
+        M.TradeVol = arry[12];
+        M.YSettlePrice = arry[13];
+        M.Deposit = arry[17];
         [self.modleArray addObject:M];
     }
     if([self.modleArray count] == 1){
-        [self setAlertWithMessage:@"无资金"];
+        [self setAlertWithMessage:@"无持仓"];
     }
     [self addTableView];
     // Do any additional setup after loading the view.
@@ -82,7 +82,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-   
+    
     return [self.modleArray count]-1;
 }
 
@@ -101,18 +101,18 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     
-    NSString* currencyCode = [self.modleArray objectAtIndex:indexPath.row].CurrencyNo;
-    NSString* Tmoney = [self.modleArray objectAtIndex:indexPath.row].TMoney;
-    NSString* Tbalance = [self.modleArray objectAtIndex:indexPath.row].TBalance;
-    NSString* TcanCashOut = [self.modleArray objectAtIndex:indexPath.row].TCanCashOut;
-    NSString* riskRate = [self.modleArray objectAtIndex:indexPath.row].RiskRate;
-    NSString* accountMarketValue = [self.modleArray objectAtIndex:indexPath.row].AccountMarketValue;
-    [cell addSubview: [self addLableWithName:currencyCode PositonX:0 PositionY:5 Type:1]];
-    [cell addSubview:[self addLableWithName:Tmoney PositonX:70 PositionY:5 Type:1]];
-    [cell addSubview:[self addLableWithName:Tbalance PositonX:140 PositionY:5 Type:1]];
-    [cell addSubview:[self addLableWithName:TcanCashOut PositonX:210 PositionY:5 Type:1]];
-    [cell addSubview:[self addLableWithName:riskRate PositonX:280 PositionY:5 Type:1]];
-    [cell addSubview:[self addLableWithName:accountMarketValue PositonX:350 PositionY:5 Type:1]];
+    NSString* CommodityNo = [self.modleArray objectAtIndex:indexPath.row].CommodityNo;
+    NSString* ContractNo = [self.modleArray objectAtIndex:indexPath.row].ContractNo;
+    NSString* Direct = [self.modleArray objectAtIndex:indexPath.row].Direct;
+    NSString* TradeVol = [self.modleArray objectAtIndex:indexPath.row].TradeVol;
+    NSString* Deposit = [self.modleArray objectAtIndex:indexPath.row].Deposit;
+    NSString* YSettlePrice = [self.modleArray objectAtIndex:indexPath.row].YSettlePrice;
+    [cell addSubview: [self addLableWithName:CommodityNo PositonX:0 PositionY:5 Type:1]];
+    [cell addSubview:[self addLableWithName:ContractNo PositonX:70 PositionY:5 Type:1]];
+    [cell addSubview:[self addLableWithName:Direct PositonX:140 PositionY:5 Type:1]];
+    [cell addSubview:[self addLableWithName:TradeVol PositonX:210 PositionY:5 Type:1]];
+    [cell addSubview:[self addLableWithName:Deposit PositonX:280 PositionY:5 Type:1]];
+    [cell addSubview:[self addLableWithName:YSettlePrice PositonX:350 PositionY:5 Type:1]];
     return cell;
 }
 - (void)didReceiveMemoryWarning {
@@ -121,13 +121,16 @@
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end
+
+
+

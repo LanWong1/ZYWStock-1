@@ -13,8 +13,10 @@
 #import "WpTrade.h"
 #import "ICETool.h"
 #import "BuyVC.h"
+#import "AppDelegate.h"
 
-
+#define USERNAME @"200172"
+#define PASSWORD @"BS401885"
 
 @interface LoginVC ()<UITextFieldDelegate>
 
@@ -28,10 +30,11 @@
 @property (nonatomic) NSMutableString* strFundAcc;
 @property (nonatomic) NSMutableString* strAcc;
 @property (nonatomic) NSMutableString* strUserId;
-@property (nonatomic) NSString* loginStrCmd;
+
 @property (nonatomic,strong)  BuyVC *buyVC;
 @property (nonatomic) WpTradeAPIServerCallbackReceiverI* wpTradeAPIServerCallbackReceiverI;
-
+@property (nonatomic) int connectFlag;
+@property (nonatomic) AppDelegate* app;
 @end
 
 @implementation LoginVC
@@ -48,9 +51,15 @@
     self.LoginButton = [self addLoginButton];
     self.UserNameTextField = [self addTextField:@"UserName" PositionX:100 PositionY:70];
     self.PassWordTextField = [self addTextField:@"Password" PositionX:100 PositionY:10];
-    self.UserNameTextField.text = @"200172";
-    self.PassWordTextField.text = @"BS401885";
+    self.UserNameTextField.text = USERNAME;
+    self.PassWordTextField.text = PASSWORD;
     self.PassWordTextField.secureTextEntry = YES;
+    self.connectFlag = 0;
+    [self addLabel];
+    AppDelegate* app = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    app.userName = USERNAME;
+    app.passWord = PASSWORD;
+    app.userID = self.strUserId;
     // Do any additional setup after loading the view.
 }
 - (void)addActiveId{
@@ -62,34 +71,34 @@
     self.label = [[UILabel alloc]initWithFrame:CGRectMake(self.view.centerX-80, self.view.centerY-200, 160, 20)];
     self.label.adjustsFontSizeToFitWidth = YES;
     self.label.text = @"Connect to server,Please wait";
-    [self.view addSubview:self.label];
 }
-
-
 //conncet to server
 - (void) connect2Server{
-    [self addLabel];
+
+    [self.view addSubview:self.label];
     [self addActiveId];
     [self.activeId startAnimating];
-   // self.LoginButton.enabled = NO;
     //开线程
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
         @try
         {
-            self.iceTool = [[ICETool alloc]init];
-            self.wpTradeAPIServerCallbackReceiverI=[self.iceTool Connect2ICE];
+            AppDelegate* app = (AppDelegate*)[UIApplication sharedApplication].delegate;
+            app.iceTool = [[ICETool alloc]init];
+            app.wpTradeAPIServerCallbackReceiverI = [app.iceTool Connect2ICE];
             self.strAcc = [[NSMutableString alloc]initWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId ];
-            [self.iceTool initiateCallback:self.strAcc];
-            [self.iceTool Login:self.loginStrCmd];
+            [app.iceTool initiateCallback:self.strAcc];
+            [app.iceTool Login:app.strCmd];
             dispatch_sync(dispatch_get_main_queue(), ^{
-                
                 [self setHeartbeat];
                 [self.activeId removeFromSuperview];
                 [self.label removeFromSuperview];
-                //self.buyVC = [[BuyVC alloc]initWithICE:self.iceTool StrCmd:self.loginStrCmd wpTradeAPIServerCallbackReceiverI:self.wpTradeAPIServerCallbackReceiverI];
-                UINavigationController* nav = [[UINavigationController alloc]initWithRootViewController:self.buyVC];
-                [self presentViewController:nav animated:NO completion:nil];
-                
+                //判断是否重新连接 若是重新连接 无需跳转页面
+                if(self.connectFlag == 0){
+                    self.connectFlag = 1;
+                    self.buyVC = [[BuyVC alloc]init];
+                    UINavigationController* nav = [[UINavigationController alloc]initWithRootViewController:self.buyVC];
+                    [self presentViewController:nav animated:NO completion:nil];
+                }
              });
         }
         @catch(GLACIER2CannotCreateSessionException* ex)
@@ -161,16 +170,16 @@
     }
     else
     {
-        if([self.UserNameTextField.text isEqualToString:@"200172"]==NO | [self.PassWordTextField.text isEqualToString:@"BS401885"]==NO)
+        if([self.UserNameTextField.text isEqualToString:USERNAME]==NO | [self.PassWordTextField.text isEqualToString:PASSWORD]==NO)
         {
             [self setAlertWithMessage:@"用户名或者密码错误"];
         }
         else
         {
-            _loginStrCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
+            AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+            app.strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
             self.strFundAcc = [[NSMutableString alloc]initWithString:self.UserNameTextField.text];
             [self connect2Server];
- 
         }
     }
 }
@@ -192,15 +201,16 @@
     // 创建GCD定时器
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
-    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 20 * NSEC_PER_SEC, 0); //每秒执行
+    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行
     // 事件回调
     NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
     
     dispatch_source_set_event_handler(_timer, ^{
         int iRet = -2;
         @try{
-
-            iRet = [self.iceTool HeartBeat:strCmd];
+            AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+            //iRet = [self.iceTool HeartBeat:strCmd];
+            iRet = [app.iceTool HeartBeat:strCmd];
         }
         @catch(ICEException* s){
             NSLog(@"heart beat fail");
@@ -209,7 +219,6 @@
             //重新连接
             NSLog(@"hhhkkkkkkkkkkllll");
             dispatch_source_cancel(self->_timer);
-            
             [self connect2Server];
         }
     });
