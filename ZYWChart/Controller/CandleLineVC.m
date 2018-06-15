@@ -28,7 +28,7 @@ typedef enum
 }DataLineType;
 
 #define ScrollScale 0.98
-#define CandleChartScale 0.6
+#define CandleChartScale 0.5
 #define TechnicalViewScale 0.05
 #define BottomViewScale 0.33
 
@@ -91,7 +91,6 @@ typedef enum
     if(self){
         _sCode = sCodeSelect;
         self.KlineData = KlineDataList;
-        //NSLog(@"sCode = %@",_sCode);
     }
     return self;
 }
@@ -192,6 +191,8 @@ typedef enum
 
 - (void)addBottomView
 {
+
+    
     _bottomView = [UIView new];
     [_scrollView addSubview:_bottomView];
     [_bottomView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -248,6 +249,7 @@ typedef enum
     [self addBottomView];
     [self addBottomBoxView];
     [self addGestureToCandleView];
+    [self addButtonView];
 }
 
 #pragma mark 添加手势
@@ -266,7 +268,53 @@ typedef enum
 }
 
 #pragma mark 指标视图
+-(void)addButtonView{
+    UIButton* buyBtn = [[UIButton alloc]init];
+    buyBtn.backgroundColor = RoseColor;
+    [buyBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
+    [buyBtn setTitle:@"买入" forState:UIControlStateNormal];
+    [buyBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [buyBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    [buyBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
+    buyBtn.tag = 2000;
+    UIButton* sellBtn = [[UIButton alloc]init];
+    sellBtn.backgroundColor = DropColor;
+    [sellBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
+    [sellBtn setTitle:@"卖出" forState:UIControlStateNormal];
+    [sellBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [sellBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    sellBtn.tag = 2001;
+    [sellBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:buyBtn];
+    [self.view addSubview:sellBtn];
+    
+    [buyBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_bottomBoxView.mas_bottom).offset(5*heightradio);
+        make.left.equalTo(self.view.mas_left).offset(5);
+        make.right.equalTo(self.view.mas_left).offset(201);
+        make.bottom.equalTo(self.view.mas_bottom);
+    }];
+    [sellBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_bottomBoxView.mas_bottom).offset(5*heightradio);
+        make.left.equalTo(buyBtn.mas_right).offset(6);
+        make.right.equalTo(self.view.mas_right).offset(-6);
+        make.bottom.equalTo(self.view.mas_bottom);
+    }];
 
+}
+- (void)btnPressed:(id)sender{
+    UIButton* btn = sender;
+    switch (btn.tag){
+        case 2000:
+            NSLog(@"buy in");
+            break;
+        case 2001:
+            NSLog(@"sell out");
+        default:
+            NSLog(@"dddddd");
+            break;
+    }
+}
 - (void)addBottomViews
 {
     _macdView = [ZYWMacdView new];
@@ -682,5 +730,10 @@ typedef enum
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
+
+
+//-(void)viewWillAppear:(BOOL)animated{
+//    self.tabBarController.tabBar.hidden = YES;
+//}
 
 @end

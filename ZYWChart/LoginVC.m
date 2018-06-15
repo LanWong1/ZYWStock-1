@@ -14,7 +14,8 @@
 #import "ICETool.h"
 #import "BuyVC.h"
 #import "AppDelegate.h"
-
+#import "TabVC.h"
+#import "CodeListVC.h"
 #define USERNAME @"200172"
 #define PASSWORD @"BS401885"
 
@@ -38,8 +39,6 @@
 @end
 
 @implementation LoginVC
-
-
 
 
 - (void)viewDidLoad {
@@ -95,9 +94,17 @@
                 //判断是否重新连接 若是重新连接 无需跳转页面
                 if(self.connectFlag == 0){
                     self.connectFlag = 1;
-                    self.buyVC = [[BuyVC alloc]init];
-                    UINavigationController* nav = [[UINavigationController alloc]initWithRootViewController:self.buyVC];
-                    [self presentViewController:nav animated:NO completion:nil];
+                    TabVC* tab = [[TabVC alloc]init];
+                    BuyVC* buy = [[BuyVC alloc]init];
+                    CodeListVC* list = [[CodeListVC alloc]init];
+                    UINavigationController* listNav = [[UINavigationController alloc]initWithRootViewController:list];
+                    UINavigationController* buyNav = [[UINavigationController alloc]initWithRootViewController:buy];
+                    buyNav.tabBarItem.title = @"交易";
+                    buyNav.tabBarItem.image = [[UIImage imageNamed:@"coin.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    listNav.tabBarItem.title = @"行情";
+                    listNav.tabBarItem.image = [[UIImage imageNamed:@"quo.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    tab.viewControllers = @[listNav,buyNav];
+                    [self presentViewController:tab animated:NO completion:nil];
                 }
              });
         }
@@ -132,7 +139,6 @@
 
 
 -(UITextField*)addTextField:(NSString* )placeholder PositionX:(CGFloat)x PositionY:(CGFloat)y{
-    
     UITextField* TextField = [[UITextField alloc]initWithFrame:CGRectMake(self.view.centerX-x, self.view.centerY-y, 200, 30)];
     [TextField setPlaceholder:placeholder];
     [TextField setTextColor:[UIColor redColor]];
@@ -148,8 +154,8 @@
     [self.view addSubview:TextField];
     return TextField;
 }
+
 -(UIButton*)addLoginButton{
-    
     UIButton* btn = [[UIButton alloc]initWithFrame:CGRectMake(self.view.centerX-50, self.view.centerY+50, 100, 30)];
     [btn setTitle:@"Login" forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -217,7 +223,6 @@
         }
         if(iRet == -2){
             //重新连接
-            NSLog(@"hhhkkkkkkkkkkllll");
             dispatch_source_cancel(self->_timer);
             [self connect2Server];
         }

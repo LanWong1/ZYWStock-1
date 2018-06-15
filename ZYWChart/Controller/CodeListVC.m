@@ -58,40 +58,70 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationItem.title = @"看行情";
-    if(self.KlineList == nil)
-    {
-        [self getData];
-    }
-    else{
-        [self addSearch];
-    }
+    self.navigationItem.title = @"合约代码";
+    [self connectQuoteServer];
     // Do any additional setup after loading the view.
 }
+//conncet to server
+- (void) connectQuoteServer{
+    [self.activeId startAnimating];
+    //开线程
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
+        @try
+        {
+            self.iceQuote = [[ICEQuote alloc]init];
+            [self.iceQuote Connect2Quote];
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                [self.activeId stopAnimating];
+                [self.label removeFromSuperview];
+                if(self.KlineList == nil)
+                {
+                    [self getData];
+                }
+                else{
+                    [self addSearch];
+                }
+            });
+        }
+        @catch(GLACIER2CannotCreateSessionException* ex)
+        {
+            NSString* s = [NSString stringWithFormat:@"Session creation failed: %@", ex.reason_];
+            dispatch_async(dispatch_get_main_queue(), ^ {
+                NSLog(@"%@",s);
+            });
+        }
+        @catch(GLACIER2PermissionDeniedException* ex)
+        {
+            NSString* s = [NSString stringWithFormat:@"Login failed: %@", ex.reason_];
+            dispatch_async(dispatch_get_main_queue(), ^ {
+                NSLog(@"%@",s);
+            });
+        }
+        @catch(ICEEndpointParseException* ex)
+        {
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error parsing config"
+                                                                           message:ex.reason
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+            [self presentViewController:alert animated:YES completion:nil];
+            [self.communicator destroy];
+            self.communicator = nil;
+            return;
+        }
+    });
+}
+
 - (void)addActiveId{
     self.activeId = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.activeId.center = CGPointMake(self.view.centerX ,self.view.centerY+200);
     [self.view addSubview:self.activeId];
 }
-
 - (void)addLabel{
-    self.label = [[UILabel alloc]initWithFrame:CGRectMake(self.view.centerX-80, self.view.centerY-50, 160, 20)];
+    self.label = [[UILabel alloc]initWithFrame:CGRectMake(self.view.centerX-40, self.view.centerY-200, 80, 20)];
     self.label.adjustsFontSizeToFitWidth = YES;
-    self.label.text = @"Loading data,Please wait...";
+    self.label.textAlignment  = NSTextAlignmentCenter;
+    self.label.text = @"Please Wait";
     [self.view addSubview:self.label];
-}
-
-
--(void)activate:(id<ICECommunicator>)c
-         router:(id<GLACIER2RouterPrx>)r
-        WpQuoteServerclientApiPrx:(id<WpQuoteServerClientApiPrx>)l
-{
-    self.communicator = c;
-    self.router = r;
-    self.WpQuoteServerclientApiPrx = l;
-}
--(void)activate:(ICEQuote*)i{
-    self.iceQuote = i;
 }
 
 //getData
@@ -121,11 +151,13 @@
 {
     [self.iceQuote Connect2Quote];
     self.KlineList=[self.iceQuote GetDayKline];
+    NSLog(@"%@",self.KlineList);
     [self loadData];
 }
 
 //get titlesArray
 - (void)loadData{
+    NSLog(@"load data");
     NSMutableArray* sCodeAll = [[NSMutableArray alloc]init];
     _titlesArray = [[NSMutableArray alloc]init];
     _searchResult = [[NSMutableArray alloc]init];
@@ -143,6 +175,7 @@
         }
     }
     _searchResult = _titlesArray;
+    NSLog(@"%@",_searchResult);
 }
 //添加searchbar
 - (void)addSearch{
@@ -201,9 +234,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *klinesCode = _searchResult[indexPath.row];
-    CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList];
-    [self.navigationController pushViewController:vc animated:YES];
+//    NSString *klinesCode = _searchResult[indexPath.row];
+//    CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList];
+//    [self.navigationController pushViewController:vc animated:YES];
 }
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -247,12 +280,14 @@
 //按下行情或者分时按钮
 - (void)btnPress:(id)sender{
     UIButton*btn  = (UIButton*)sender;
+    
     //行情button按下
     if(btn.tag<[_searchResult count])
     {
         NSString *klinesCode = _searchResult[btn.tag];
         NSLog(@"历史行情 %@",_searchResult[btn.tag]);
         CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList];
+        vc.hidesBottomBarWhenPushed = YES;
         [self.navigationController pushViewController:vc animated:YES];
     }
     //分时按钮按下
@@ -260,7 +295,7 @@
         NSInteger tag = btn.tag;
         NSLog(@"分时图 %@",self.searchResult[tag-[self.searchResult count]]);
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-            [self.iceQuote Connect2Quote];
+            //[self.iceQuote Connect2Quote];
             NSMutableArray* arry =[self.iceQuote getTimeData:self.searchResult[tag-[self.searchResult count]]];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 TimeLineVC* timeLineVC = [[TimeLineVC alloc]init];
@@ -309,5 +344,12 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+//- (void)viewWillAppear:(BOOL)animated{
+//    self.tabBarController.tabBar.hidden = NO;
+//}
+//- (void)viewWillDisappear:(BOOL)animated{
+//    self.tabBarController.tabBar.hidden = YES;
+//}
 
 @end

@@ -1,12 +1,13 @@
 //
-//  ViewController.m
+//  TabVC.m
 //  ZYWChart
 //
-//  Created by 张有为 on 2016/12/17.
-//  Copyright © 2016年 zyw113. All rights reserved.
+//  Created by zdqh on 2018/6/15.
+//  Copyright © 2018 zyw113. All rights reserved.
 //
+
+#import "TabVC.h"
 #import "AppDelegate.h"
-#import "HomeVC.h"
 #import "CandleLineVC.h"
 //ICE
 #import <objc/Ice.h>
@@ -19,18 +20,8 @@
 #import "LoginVC.h"
 #import "ICEQuote.h"
 
-//@interface WpQuoteServerCallbackReceiverI : WpQuoteServerCallbackReceiver<WpQuoteServerCallbackReceiver>
-//@end
-//
-//@implementation WpQuoteServerCallbackReceiverI
-//- (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current
-//{
-//    NSLog(@"%@",strMessage);
-//}
-//@end
 
-@interface HomeVC () 
-
+@interface TabVC ()
 @property (nonatomic) ICEQuote* iceQuote;
 @property (nonatomic,strong) UILabel *label;
 @property (nonatomic,strong) UIActivityIndicatorView *activeId;
@@ -52,31 +43,21 @@
 @property (nonatomic) WpQuoteServerDayKLineList *KlineList;
 @end
 
-@implementation HomeVC
+@implementation TabVC
 
-
-
-
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationItem.title = @"主页";
-    UINavigationBar.appearance.translucent = YES;
-    self.view.backgroundColor = [UIColor clearColor];
-    UIButton *lineButton  = [self addBtn:@"看行情" y_Position:self.view.centerY-200];//添加按钮
-    lineButton.enabled = NO;
-    UIButton *buyButton   = [self addBtn:@"交易" y_Position:self.view.centerY+100];
-    lineButton.tag = 1000;
-    buyButton.tag  = 1000+1;
-    [self.view addSubview:lineButton];
-    [self.view addSubview: buyButton];
-    
-    [self connectQuoteServer];
+   // [self connectQuoteServer];
+   // Do any additional setup after loading the view.
 }
 
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
 //conncet to server
 - (void) connectQuoteServer{
-     [self.activeId startAnimating];
+    //[self.activeId startAnimating];
     //开线程
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
         @try
@@ -84,14 +65,7 @@
             self.iceQuote = [[ICEQuote alloc]init];
             [self.iceQuote Connect2Quote];
             dispatch_sync(dispatch_get_main_queue(), ^{
-                [self.activeId stopAnimating];
-                [self.label removeFromSuperview];
-                UIButton *lineButton=[self addBtn:@"看行情" y_Position:self.view.centerY-200];//添加按钮
-                UIButton *buyButton = [self addBtn:@"交易" y_Position:self.view.centerY+100];
-                lineButton.tag = 1000;
-                buyButton.tag  = 1000+1;
-                [self.view addSubview:lineButton];
-                [self.view addSubview: buyButton];
+
             });
         }
         @catch(GLACIER2CannotCreateSessionException* ex)
@@ -134,49 +108,14 @@
     self.label.text = @"Connect to server,Please wait";
     [self.view addSubview:self.label];
 }
-- (UIButton*)addBtn:(NSString*)name y_Position:(CGFloat)Y
-{
-    UIButton* btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    btn.backgroundColor = RoseColor;
-    btn.layer.cornerRadius=20;
-    btn.frame = CGRectMake(self.view.centerX-50, Y, 100, 50);
-    [btn setTitle:name forState:UIControlStateNormal];
-    [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [btn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
-    [btn addTarget:self action:@selector(btnPress:) forControlEvents:UIControlEventTouchUpInside];
-    return btn;
-    //[self.view addSubview:self.homeButton];
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
 }
+*/
 
-
-
-//getData
-- (void)btnPress:(id)sender{
-    
-    UIButton* btn = sender;
-    if(btn.tag==1000){
-        
-        if(self.historyVC == nil){
-            self.historyVC = [[CodeListVC alloc]init];
-           // [self.historyVC activate:self.iceQuote];
-        }
-//        UINavigationController* nav = [[UINavigationController alloc]initWithRootViewController:_historyVC];
-//        [self presentViewController:nav animated:NO completion:nil];
-        [self.navigationController pushViewController:self.historyVC animated:NO];
-    }
-    else if(btn.tag==1001){
-        AppDelegate* app =(AppDelegate*) [UIApplication sharedApplication].delegate;
-        if(app.loginFlag == 0){
-            app.loginFlag = 1;
-            app.loginVC = [[LoginVC alloc]init];
-            [self.navigationController pushViewController:app.loginVC animated:NO];
-        }
-        else{
-            BuyVC* buyVC = [[BuyVC alloc]init];
-            UINavigationController* nav = [[UINavigationController alloc]initWithRootViewController:buyVC];
-            [self presentViewController:nav animated:NO completion:nil];
-        }
-        
-    }
-}
 @end

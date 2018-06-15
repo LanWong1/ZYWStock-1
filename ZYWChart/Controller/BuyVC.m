@@ -39,7 +39,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"交易";
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"行情" style:UIBarButtonItemStylePlain target:self action:@selector(back2Home)];
     self.ScodeTextField = [self addTextField:@"合约代码" PositionX:100 PositionY:150];
     self.CountTextField = [self addTextField:@"手数" PositionX:100 PositionY:100];
     
@@ -145,6 +144,7 @@
     }
     else if(btn.tag == 504)
     {
+        
         AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
         [app.iceTool queryHold:app.strCmd];
         [self.activeId startAnimating];
@@ -154,28 +154,32 @@
 - (void)addCheckOrderVC{
     [self getMSg];
     CheckOrderVC* orderVC = [[CheckOrderVC alloc]init];
+    orderVC.hidesBottomBarWhenPushed = YES;
     orderVC.orderDataArray=self.Msg;
     [self.navigationController pushViewController:orderVC animated:NO];
     [self.activeId stopAnimating];
 }
 - (void)addCheckHoldVC{
+   
     [self getMSg];
     checkHoldVC* orderVC = [[checkHoldVC alloc]init];
     orderVC.holdDataArray=self.Msg;
- 
+    orderVC.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:orderVC animated:NO];
     [self.activeId stopAnimating];
 }
 - (void)addCheckFundVC{
+    self.tabBarController.tabBar.hidden = YES;
     [self getMSg];
     self.checkFundVC = [[CheckFundVC alloc]init];
+     self.checkFundVC.hidesBottomBarWhenPushed = YES;
     self.checkFundVC.fundDataArray=self.Msg;
     [self.navigationController pushViewController:self.checkFundVC animated:NO];
     [self.activeId stopAnimating];
 }
 
 - (void)getMSg{
-    
+    self.tabBarController.tabBar.hidden = YES;
     self.Msg = [NSMutableArray array];
     AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     NSEnumerator *enumerator = [[app.wpTradeAPIServerCallbackReceiverI messageForBuyVC] objectEnumerator];
@@ -193,7 +197,13 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+- (void)viewDidAppear:(BOOL)animated{
+    self.tabBarController.tabBar.hidden = NO;
+}
 
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [self.view endEditing:YES];
+}
 /*
 #pragma mark - Navigation
 
@@ -205,13 +215,13 @@
 */
 //-(BOOL)textFieldShouldReturn:(UITextField *)textField{
 //    [textField resignFirstResponder];
-//    if(textField.text.length>0)
-//    {
-//       self.OpenButton.enabled = YES;
-//    }
-//    else{
-//         self.OpenButton.enabled = NO;
-//    }
+////    if(textField.text.length>0)
+////    {
+////       self.OpenButton.enabled = YES;
+////    }
+////    else{
+////         self.OpenButton.enabled = NO;
+////    }
 //
 //    //NSLog(@"%@",textField.text);
 //    return YES;

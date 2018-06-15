@@ -29,11 +29,11 @@
 
 @property (nonatomic,copy)   NSMutableArray *scodeArray;
 
--(void)activate:(id<ICECommunicator>)communicator
-         router:(id<GLACIER2RouterPrx>)router
-WpQuoteServerclientApiPrx:(id<WpQuoteServerClientApiPrx>)WpQuoteServerclientApiPrx;
-
--(void)activate:(ICEQuote*)iceQuote;
+//-(void)activate:(id<ICECommunicator>)communicator
+//         router:(id<GLACIER2RouterPrx>)router
+//WpQuoteServerclientApiPrx:(id<WpQuoteServerClientApiPrx>)WpQuoteServerclientApiPrx;
+//
+//-(void)activate:(ICEQuote*)iceQuote;
 
 
 @end
