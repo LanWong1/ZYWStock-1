@@ -19,6 +19,12 @@
 #import "ZYWCandleProtocol.h"
 #import "CandleCrossScreenVC.h"
 #import "ZYWCandlePostionModel.h"
+#import "ZYWTimeLineView.h"
+#import "ICEQuote.h"
+
+
+
+
 
 typedef enum
 {
@@ -36,6 +42,9 @@ typedef enum
 #define MaxCount 100
 
 @interface CandleLineVC ()<NSXMLParserDelegate,ZYWCandleProtocol,ZYWTecnnicalViewDelegate,CandleCrossScreenVCDeleate>
+@property (nonatomic,strong) ZYWTimeLineView *timeLineView;
+
+
 
 @property (nonatomic,strong) ZYWQuotaView *quotaView;
 @property (nonatomic,strong) UIScrollView *scrollView;
@@ -44,6 +53,7 @@ typedef enum
 @property (nonatomic,strong) ZYWCandleModel *model;
 @property (nonatomic,strong) UIView *topBoxView;
 @property (nonatomic,strong) UIView *bottomBoxView;
+@property (nonatomic,strong) UIView *timeLineBoxView;
 @property (nonatomic,strong) ZYWTecnnicalView *technicalView;
 @property (nonatomic,strong) UIView *bottomView;
 @property (nonatomic,assign) DataLineType type;
@@ -65,6 +75,13 @@ typedef enum
 @property (nonatomic, assign) NSInteger displayCount;
 @property (nonatomic, copy) NSString* sCode;
 @property (nonatomic, copy) WpQuoteServerDayKLineList* KlineData;
+@property (nonatomic, strong) NSArray* timeData;
+@property (nonatomic) ICEQuote* iceQuote;
+@property (nonatomic,strong) UIButton *sellBtn;
+
+@property (nonatomic,strong) UIButton* buyBtn;
+@property (nonatomic,strong) UIButton* klineBtn;
+@property (nonatomic,strong) UIButton* TlineBtn;
 @end
 
 @implementation CandleLineVC
@@ -75,6 +92,19 @@ typedef enum
     [super viewDidLoad];
     self.navigationItem.title  = _sCode;
     _type = MACD;
+
+    [self addQuotaView];
+    [self addScrollView];
+    [self addCandleChartView];
+    [self addTopBoxView];
+    
+    [self addButtonView];
+    [self addTopView];
+    
+    //[self addButtonView];
+}
+- (void)addTopView{
+    
     [self addSubViews];
     [self addBottomViews];
     [self initCrossLine];
@@ -82,21 +112,20 @@ typedef enum
     [self addActivityView];
     self.view.backgroundColor = [UIColor whiteColor];
     self.dataSource = [NSMutableArray array];
-    
     [self loadData];
 }
--(instancetype)initWithScode:(NSString *)sCodeSelect KlineDataList:(WpQuoteServerDayKLineList *)KlineDataList{
+
+#pragma mark 添加视图
+-(instancetype)initWithScode:(NSString *)sCodeSelect KlineDataList:(WpQuoteServerDayKLineList *)KlineDataList TimeData:(NSArray*)TimeData{
     
     self = [super init];
     if(self){
         _sCode = sCodeSelect;
         self.KlineData = KlineDataList;
+        self.timeData = TimeData;
     }
     return self;
 }
-
-#pragma mark 添加视图
-
 - (void)addActivityView
 {
     _activityView = [UIActivityIndicatorView new];
@@ -131,7 +160,7 @@ typedef enum
     _scrollView.showsHorizontalScrollIndicator = YES;
     _scrollView.backgroundColor = [UIColor whiteColor];
     [_scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_quotaView.mas_bottom);
+        make.top.equalTo(_quotaView.mas_bottom).offset(30);
         make.left.equalTo(self.view.mas_left).offset(5);
         make.right.equalTo(self.view.mas_right).offset(-60);
         make.height.equalTo(@((DEVICE_HEIGHT - 64 - 100)*ScrollScale));
@@ -182,6 +211,7 @@ typedef enum
         make.top.equalTo(_topBoxView.mas_bottom);
         make.left.right.equalTo(_scrollView);
         make.height.equalTo(@((DEVICE_HEIGHT-64-100)*TechnicalViewScale));
+        //make.bottom.equalTo(self.sellBtn.mas_top);
     }];
     
     [_technicalView.macdButton setTitle:@"MACD" forState:UIControlStateNormal];
@@ -191,8 +221,6 @@ typedef enum
 
 - (void)addBottomView
 {
-
-    
     _bottomView = [UIView new];
     [_scrollView addSubview:_bottomView];
     [_bottomView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -217,7 +245,17 @@ typedef enum
         make.height.equalTo(@((DEVICE_HEIGHT - 64 - 100)*BottomViewScale));
     }];
 }
-
+- (void)addTimeLineBox
+{
+    _timeLineBoxView = [UIView new];
+    [self.timeLineView addSubview:_timeLineBoxView];
+    _timeLineBoxView.userInteractionEnabled = NO;
+    _timeLineBoxView.layer.borderWidth = 1*widthradio;
+    _timeLineBoxView.layer.borderColor = [UIColor blackColor].CGColor;
+    [_timeLineBoxView mas_makeConstraints:^(MASConstraintMaker *make) {
+       make.left.right.top.height.equalTo(_timeLineView);
+    }];
+}
 - (void)addPriceView
 {
     _topPriceView = [ZYWPriceView new];
@@ -241,15 +279,10 @@ typedef enum
 
 - (void)addSubViews
 {
-    [self addQuotaView];
-    [self addScrollView];
-    [self addCandleChartView];
-    [self addTopBoxView];
     [self addTechnicalView];
     [self addBottomView];
     [self addBottomBoxView];
     [self addGestureToCandleView];
-    [self addButtonView];
 }
 
 #pragma mark 添加手势
@@ -267,41 +300,129 @@ typedef enum
     [self.candleChartView addGestureRecognizer:_tapGesture];
 }
 
-#pragma mark 指标视图
+#pragma mark 按键视图
 -(void)addButtonView{
-    UIButton* buyBtn = [[UIButton alloc]init];
-    buyBtn.backgroundColor = RoseColor;
-    [buyBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
-    [buyBtn setTitle:@"买入" forState:UIControlStateNormal];
-    [buyBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [buyBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-    [buyBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
-    buyBtn.tag = 2000;
-    UIButton* sellBtn = [[UIButton alloc]init];
-    sellBtn.backgroundColor = DropColor;
-    [sellBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
-    [sellBtn setTitle:@"卖出" forState:UIControlStateNormal];
-    [sellBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [sellBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-    sellBtn.tag = 2001;
-    [sellBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:buyBtn];
-    [self.view addSubview:sellBtn];
     
-    [buyBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_bottomBoxView.mas_bottom).offset(5*heightradio);
+    self.buyBtn = [[UIButton alloc]init];
+    self.buyBtn.backgroundColor = RoseColor;
+    [self.buyBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
+    [self.buyBtn setTitle:@"买入" forState:UIControlStateNormal];
+    [self.buyBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.buyBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    [self.buyBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
+    self.buyBtn.tag = 2000;
+    [self.view addSubview:self.buyBtn];
+    [self.buyBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        //make.top.equalTo(_bottomBoxView.mas_bottom).offset(5);
         make.left.equalTo(self.view.mas_left).offset(5);
         make.right.equalTo(self.view.mas_left).offset(201);
         make.bottom.equalTo(self.view.mas_bottom);
+        make.height.equalTo(@(50));
     }];
-    [sellBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_bottomBoxView.mas_bottom).offset(5*heightradio);
-        make.left.equalTo(buyBtn.mas_right).offset(6);
+    
+    
+    
+    self.sellBtn = [[UIButton alloc]init];
+    self.sellBtn.backgroundColor = DropColor;
+    [self.sellBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
+    [self.sellBtn setTitle:@"卖出" forState:UIControlStateNormal];
+    [self.sellBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.sellBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    [self.sellBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
+    self.sellBtn.tag = 2001;
+    [self.view addSubview:self.sellBtn];
+    [self.sellBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        //make.top.equalTo(_bottomBoxView.mas_bottom).offset(5);
+        make.left.equalTo(self.buyBtn.mas_right).offset(6);
         make.right.equalTo(self.view.mas_right).offset(-6);
         make.bottom.equalTo(self.view.mas_bottom);
+        make.height.equalTo(@(50));
+    }];
+    
+    
+    self.klineBtn = [[UIButton alloc]init];
+    self.klineBtn.backgroundColor = RoseColor;
+    [self.klineBtn.titleLabel setFont:[UIFont systemFontOfSize:16]];
+    [self.klineBtn setTitle:@"K-Line" forState:UIControlStateNormal];
+    [self.klineBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.klineBtn setTitleColor:RoseColor forState:UIControlStateHighlighted];
+    self.klineBtn.tag = 2002;
+    [self.klineBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.klineBtn];
+    [self.klineBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_quotaView.mas_bottom).offset(2);
+        make.left.equalTo(self.view.mas_left).offset(5);
+        make.width.equalTo(@(60));
+        //make.right.equalTo(self.view.mas_right).offset(-6);
+        //make.bottom.equalTo(_topBoxView.mas_top);
+        make.bottom.equalTo(_topBoxView.mas_top).offset(-2);
+    }];
+    
+    self.TlineBtn = [[UIButton alloc]init];
+     self.TlineBtn.backgroundColor = DropColor;;
+    [ self.TlineBtn.titleLabel setFont:[UIFont systemFontOfSize:16]];
+    [ self.TlineBtn setTitle:@"T-Line" forState:UIControlStateNormal];
+    [ self.TlineBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [ self.TlineBtn setTitleColor:RoseColor forState:UIControlStateHighlighted];
+     self.TlineBtn. tag = 2003;
+    [ self.TlineBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.TlineBtn];
+    [ self.TlineBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_quotaView.mas_bottom).offset(2);
+        make.left.equalTo(self.klineBtn.mas_right);
+        make.width.equalTo(@(60));
+        //make.right.equalTo(self.view.mas_right).offset(-6);
+        make.bottom.equalTo(_topBoxView.mas_top).offset(-2);
     }];
 
 }
+
+
+- (void)addTlineView{
+   
+    _timeLineView = [ZYWTimeLineView new];
+    _timeLineView.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:_timeLineView];
+    [_timeLineView mas_makeConstraints:^(MASConstraintMaker *make) {
+       
+       
+        //make.left.right.equalTo(self.view);
+        //make.height.equalTo(@(200));
+        make.left.equalTo(self.view.mas_left).offset(5);
+        make.right.equalTo(self.view.mas_right).offset(-5);
+        make.top.equalTo(_candleChartView);
+        make.bottom.equalTo(_bottomBoxView.mas_bottom);
+    }];
+    [_timeLineView layoutIfNeeded];
+
+    if([self.timeData count]>0)
+    {
+        NSMutableArray * timeArray = [NSMutableArray array];
+        //[self.timeData removeLastObject];
+        NSEnumerator *enumerator =[self.timeData objectEnumerator];
+        id obj = nil;
+        while (obj = [enumerator nextObject]){
+            NSString *string = obj;
+            NSArray* array1 = [string componentsSeparatedByString:@","];
+            ZYWTimeLineModel * e = [[ZYWTimeLineModel alloc]init];
+            e.currtTime = array1[1];
+            e.preClosePx = [array1[6] doubleValue];
+            e.avgPirce = 0;
+            e.lastPirce = [array1[3] doubleValue];
+            e.volume = [array1[7] doubleValue];
+            e.rate = array1[8];
+            [timeArray addObject:e];
+        }
+        _timeLineView.leftMargin =10;
+        _timeLineView.rightMargin  = 10;
+        _timeLineView.lineColor = [UIColor whiteColor];
+        _timeLineView.fillColor = DropColor;
+        _timeLineView.timesCount = 243;
+        _timeLineView.dataArray = timeArray.mutableCopy;
+        [_timeLineView stockFill];
+    }
+}
+
 - (void)btnPressed:(id)sender{
     UIButton* btn = sender;
     switch (btn.tag){
@@ -310,11 +431,31 @@ typedef enum
             break;
         case 2001:
             NSLog(@"sell out");
+            break;
+        case 2002:
+            btn.enabled = NO;
+            btn.backgroundColor = RoseColor;
+            self.TlineBtn.enabled = YES;
+            self.TlineBtn.backgroundColor = DropColor;
+            [self.timeLineView removeFromSuperview];
+            //[self addTopView];
+            break;
+        case 2003:
+            btn.enabled = NO;
+            btn.backgroundColor = RoseColor;
+            self.klineBtn.backgroundColor = DropColor;
+            self.klineBtn.enabled = YES;
+            [self addTlineView];
+            [self addTimeLineBox];
+            break;
         default:
             NSLog(@"dddddd");
             break;
     }
 }
+
+#pragma mark 指标视图
+
 - (void)addBottomViews
 {
     _macdView = [ZYWMacdView new];
@@ -730,7 +871,6 @@ typedef enum
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
-
 
 //-(void)viewWillAppear:(BOOL)animated{
 //    self.tabBarController.tabBar.hidden = YES;

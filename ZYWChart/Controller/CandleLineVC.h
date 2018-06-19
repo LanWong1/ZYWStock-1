@@ -14,8 +14,8 @@
 
 @interface CandleLineVC : UIViewController
     
-    
+
 
 //-(instancetype)initWithScode:(NSString*)sCodeSelect;
--(instancetype)initWithScode:(NSString *)sCodeSelect KlineDataList:(WpQuoteServerDayKLineList *)KlineDataList;
+-(instancetype)initWithScode:(NSString *)sCodeSelect KlineDataList:(WpQuoteServerDayKLineList *)KlineDataList TimeData:(NSArray*)timeData;
 @end

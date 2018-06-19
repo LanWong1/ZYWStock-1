@@ -54,6 +54,7 @@
     [adapter activate];
     self.twowayR = [WpQuoteServerCallbackReceiverPrx uncheckedCast:[adapter add:[[WpQuoteServerCallbackReceiverI alloc]init] identity:callbackReceiverIdent]];
 }
+
 - (WpQuoteServerDayKLineList*)GetDayKline{
     NSString* strErr2 = @"";
     WpQuoteServerDayKLineList* DLL = [[WpQuoteServerDayKLineList alloc]init];
@@ -67,6 +68,8 @@
     }
     return DLL;
 }
+
+
 //获取timedata
 - (NSMutableArray*)getTimeData:(NSString*)sCode {
     @try{

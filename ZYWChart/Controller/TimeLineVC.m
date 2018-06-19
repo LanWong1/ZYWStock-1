@@ -31,8 +31,6 @@
         make.top.equalTo(@(100));
     }];
     [_timeLineView layoutIfNeeded];
-    
-
     if([self.timeData count]>0)
     {
         NSMutableArray * timeArray = [NSMutableArray array];

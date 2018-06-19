@@ -68,7 +68,7 @@
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.tag = tag;
     [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    //[button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [button.titleLabel setFont:[UIFont systemFontOfSize:13.f]];
      button.backgroundColor = [UIColor colorWithHexString:@"EE6363"];
     [button addTarget:self action:@selector(didClick:) forControlEvents:UIControlEventTouchUpInside];

@@ -26,7 +26,7 @@
 @property (nonatomic,copy)    NSMutableArray *titlesMArray;
 @property (nonatomic,strong)  UISearchBar *search;
 @property (nonatomic,copy)    NSArray* searchResult;
-@property (nonatomic,copy)    NSMutableArray* array;
+@property (nonatomic,copy)    NSMutableArray* TimeData;
 @property (nonatomic) WpQuoteServerDayKLineList *KlineList;
 @property (nonatomic)        ICEInt iRet;
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
@@ -59,11 +59,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"合约代码";
-    [self connectQuoteServer];
+    [self GetData];
     // Do any additional setup after loading the view.
 }
 //conncet to server
-- (void) connectQuoteServer{
+- (void) GetData{
     [self.activeId startAnimating];
     //开线程
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
@@ -132,9 +132,11 @@
         [self addLabel];
         [self.activeId startAnimating];
     }
+    self.TimeData = [NSMutableArray array];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
         
         [self getKline];
+        
         dispatch_sync(dispatch_get_main_queue(), ^{
             [self.activeId stopAnimating];
             [self.activeId removeFromSuperview];
@@ -150,8 +152,8 @@
 - (void)getKline
 {
     [self.iceQuote Connect2Quote];
+    
     self.KlineList=[self.iceQuote GetDayKline];
-    NSLog(@"%@",self.KlineList);
     [self loadData];
 }
 
@@ -175,7 +177,7 @@
         }
     }
     _searchResult = _titlesArray;
-    NSLog(@"%@",_searchResult);
+    
 }
 //添加searchbar
 - (void)addSearch{
@@ -234,7 +236,21 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    NSString *klinesCode = _searchResult[indexPath.row];
+    NSString *klinesCode = _searchResult[indexPath.row];
+    //NSString *klinesCode = _searchResult[btn.tag];
+    NSLog(@"历史行情 %@",klinesCode);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
+        [self.iceQuote Connect2Quote];
+        self.TimeData =[self.iceQuote getTimeData:klinesCode];
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList TimeData:self.TimeData];
+            vc.hidesBottomBarWhenPushed = YES;
+            [self.navigationController pushViewController:vc animated:YES];
+        });
+    });
+    
+    
+//
 //    CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList];
 //    [self.navigationController pushViewController:vc animated:YES];
 }
@@ -248,23 +264,22 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     
-    NSString* title = _searchResult[indexPath.row];
-
-    UIButton* btn = [[UIButton alloc]init];
-    btn = [self setButton:@"历史行情" xPosition:200];
-    btn.tag = indexPath.row;
-    btn.backgroundColor = DropColor;
-    [btn addTarget:self action:@selector(btnPress:) forControlEvents:UIControlEventTouchUpInside];
+    NSString* title = [_searchResult[indexPath.row] uppercaseString];//_searchResult[indexPath.row];
+//    UIButton* btn = [[UIButton alloc]init];
+//    btn = [self setButton:@"历史行情" xPosition:100];
+//    btn.tag = indexPath.row;
+//    btn.backgroundColor = DropColor;
+    //[btn addTarget:self action:@selector(btnPress:) forControlEvents:UIControlEventTouchUpInside];
     
-    UIButton *btn1 = [[UIButton alloc]init];
-    btn1 = [self setButton:@"分时图" xPosition:100];
-    btn1.backgroundColor = RoseColor;
-    btn1.tag = indexPath.row+[_searchResult count];
-    [btn1 addTarget:self action:@selector(btnPress:) forControlEvents:UIControlEventTouchUpInside];
-
+//    UIButton *btn1 = [[UIButton alloc]init];
+//    btn1 = [self setButton:@"分时图" xPosition:100];
+//    btn1.backgroundColor = RoseColor;
+//    btn1.tag = indexPath.row+[_searchResult count];
+//    [btn1 addTarget:self action:@selector(btnPress:) forControlEvents:UIControlEventTouchUpInside];
+    UILabel* lable = [[UILabel alloc]initWithFrame:CGRectMake(DEVICE_WIDTH-100, 10, 80, 35)];
+    lable.text = @"点击查看";
     cell.textLabel.text = title;
-    [cell addSubview:btn];
-    [cell addSubview:btn1];
+    [cell addSubview:lable];
     return cell;
 }
 //button设置
@@ -277,35 +292,27 @@
     [btn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
     return btn;
 }
-//按下行情或者分时按钮
-- (void)btnPress:(id)sender{
-    UIButton*btn  = (UIButton*)sender;
-    
-    //行情button按下
-    if(btn.tag<[_searchResult count])
-    {
-        NSString *klinesCode = _searchResult[btn.tag];
-        NSLog(@"历史行情 %@",_searchResult[btn.tag]);
-        CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList];
-        vc.hidesBottomBarWhenPushed = YES;
-        [self.navigationController pushViewController:vc animated:YES];
-    }
-    //分时按钮按下
-    else{
-        NSInteger tag = btn.tag;
-        NSLog(@"分时图 %@",self.searchResult[tag-[self.searchResult count]]);
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-            //[self.iceQuote Connect2Quote];
-            NSMutableArray* arry =[self.iceQuote getTimeData:self.searchResult[tag-[self.searchResult count]]];
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                TimeLineVC* timeLineVC = [[TimeLineVC alloc]init];
-                timeLineVC.timeData = arry;
-                timeLineVC.sCode = self.searchResult[tag-[self.searchResult count]];
-                [self.navigationController pushViewController:timeLineVC animated:YES];
-            });
-        });
-    }
-}
+////按下行情或者分时按钮
+//- (void)btnPress:(id)sender{
+//    UIButton*btn  = (UIButton*)sender;
+//
+//    //行情button按下
+//    if(btn.tag<[_searchResult count])
+//    {
+//        NSString *klinesCode = _searchResult[btn.tag];
+//        NSLog(@"历史行情 %@",_searchResult[btn.tag]);
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
+//            [self.iceQuote Connect2Quote];
+//            self.TimeData =[self.iceQuote getTimeData:klinesCode];
+//            dispatch_sync(dispatch_get_main_queue(), ^{
+//                CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList TimeData:self.TimeData];
+//                vc.hidesBottomBarWhenPushed = YES;
+//                [self.navigationController pushViewController:vc animated:YES];
+//            });
+//        });
+//    }
+//
+//}
 
 #pragma -mark searchbar delegate
 //search bar 过滤字符串 setter
@@ -344,12 +351,5 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-//- (void)viewWillAppear:(BOOL)animated{
-//    self.tabBarController.tabBar.hidden = NO;
-//}
-//- (void)viewWillDisappear:(BOOL)animated{
-//    self.tabBarController.tabBar.hidden = YES;
-//}
 
 @end
