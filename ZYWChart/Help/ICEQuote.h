@@ -17,6 +17,6 @@
 
 @interface ICEQuote : NSObject
 - (void)Connect2Quote;
-- (WpQuoteServerDayKLineList*)GetDayKline;
+- (WpQuoteServerDayKLineList*)GetDayKline:(NSString*)ExchangeID;
 - (NSMutableArray*)getTimeData:(NSString*)sCode;
 @end

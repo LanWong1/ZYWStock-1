@@ -12,7 +12,6 @@
 #import <WpQuote.h>
 
 
-
 @interface WpQuoteServerCallbackReceiverI : WpQuoteServerCallbackReceiver<WpQuoteServerCallbackReceiver>
 @end
 
@@ -55,10 +54,10 @@
     self.twowayR = [WpQuoteServerCallbackReceiverPrx uncheckedCast:[adapter add:[[WpQuoteServerCallbackReceiverI alloc]init] identity:callbackReceiverIdent]];
 }
 
-- (WpQuoteServerDayKLineList*)GetDayKline{
+- (WpQuoteServerDayKLineList*)GetDayKline:(NSString*) ExchangeID{
     NSString* strErr2 = @"";
     WpQuoteServerDayKLineList* DLL = [[WpQuoteServerDayKLineList alloc]init];
-    NSMutableString* sExchangeID = [[NSMutableString alloc]initWithString:@"SHFE"];
+    NSMutableString* sExchangeID = [[NSMutableString alloc]initWithString:ExchangeID];
     @try{
         [self.WpQuoteServerclientApiPrx GetDayKLine:sExchangeID DKLL:&DLL strErrInfo:&strErr2];
     }

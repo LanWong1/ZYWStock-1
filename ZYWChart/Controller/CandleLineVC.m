@@ -21,7 +21,7 @@
 #import "ZYWCandlePostionModel.h"
 #import "ZYWTimeLineView.h"
 #import "ICEQuote.h"
-
+#import "BuyVC.h"
 
 
 
@@ -82,6 +82,7 @@ typedef enum
 @property (nonatomic,strong) UIButton* buyBtn;
 @property (nonatomic,strong) UIButton* klineBtn;
 @property (nonatomic,strong) UIButton* TlineBtn;
+@property (nonatomic,strong) BuyVC* buyVC;
 @end
 
 @implementation CandleLineVC
@@ -97,7 +98,6 @@ typedef enum
     [self addScrollView];
     [self addCandleChartView];
     [self addTopBoxView];
-    
     [self addButtonView];
     [self addTopView];
     
@@ -306,7 +306,7 @@ typedef enum
     self.buyBtn = [[UIButton alloc]init];
     self.buyBtn.backgroundColor = RoseColor;
     [self.buyBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
-    [self.buyBtn setTitle:@"买入" forState:UIControlStateNormal];
+    [self.buyBtn setTitle:@"开仓" forState:UIControlStateNormal];
     [self.buyBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.buyBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [self.buyBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -319,13 +319,13 @@ typedef enum
         make.bottom.equalTo(self.view.mas_bottom);
         make.height.equalTo(@(50));
     }];
-    
-    
-    
+
+
+
     self.sellBtn = [[UIButton alloc]init];
     self.sellBtn.backgroundColor = DropColor;
     [self.sellBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
-    [self.sellBtn setTitle:@"卖出" forState:UIControlStateNormal];
+    [self.sellBtn setTitle:@"平仓" forState:UIControlStateNormal];
     [self.sellBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.sellBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [self.sellBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -428,6 +428,8 @@ typedef enum
     switch (btn.tag){
         case 2000:
             NSLog(@"buy in");
+            self.buyVC = [[BuyVC alloc]init];
+            [self.navigationController pushViewController:self.buyVC animated:NO];
             break;
         case 2001:
             NSLog(@"sell out");
@@ -872,8 +874,8 @@ typedef enum
     [super didReceiveMemoryWarning];
 }
 
-//-(void)viewWillAppear:(BOOL)animated{
-//    self.tabBarController.tabBar.hidden = YES;
-//}
+-(void)viewWillAppear:(BOOL)animated{
+    self.tabBarController.tabBar.hidden = YES;
+}
 
 @end

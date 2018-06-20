@@ -229,6 +229,11 @@
 		BA51D57920B6880E00B34DA7 /* config.client in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57820B6880E00B34DA7 /* config.client */; };
 		BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
 		BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
+		BA78AC7C20D9E3DA00F07D40 /* search.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC7B20D9E3D900F07D40 /* search.png */; };
+		BA78AC8220D9ECE800F07D40 /* searchSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8120D9ECE800F07D40 /* searchSelected.png */; };
+		BA78AC8420D9ED0100F07D40 /* searchNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8320D9ED0100F07D40 /* searchNormal.png */; };
+		BA78AC8720D9F23700F07D40 /* searchController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA78AC8620D9F23700F07D40 /* searchController.m */; };
+		BA78AC8920D9F52F00F07D40 /* goto.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8820D9F52F00F07D40 /* goto.png */; };
 		BA8209C320C66E5700A5BCAE /* BuyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA8209C220C66E5700A5BCAE /* BuyVC.m */; };
 		BAE5985720C7718000524CB7 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985620C7718000524CB7 /* LoginVC.m */; };
 		BAE5985920C7CDE000524CB7 /* NpTrade.ice in Resources */ = {isa = PBXBuildFile; fileRef = BAE5985820C7CDE000524CB7 /* NpTrade.ice */; };
@@ -555,6 +560,12 @@
 		BA51D57820B6880E00B34DA7 /* config.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.client; sourceTree = "<group>"; };
 		BA51D57A20B6881F00B34DA7 /* WpQuote.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WpQuote.ice; sourceTree = "<group>"; };
 		BA6A04EF20CDFD8A00859A05 /* ICETool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICETool.m; sourceTree = "<group>"; };
+		BA78AC7B20D9E3D900F07D40 /* search.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = search.png; sourceTree = "<group>"; };
+		BA78AC8120D9ECE800F07D40 /* searchSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchSelected.png; sourceTree = "<group>"; };
+		BA78AC8320D9ED0100F07D40 /* searchNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = searchNormal.png; path = ../../../../Downloads/searchNormal.png; sourceTree = "<group>"; };
+		BA78AC8520D9F23700F07D40 /* searchController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = searchController.h; sourceTree = "<group>"; };
+		BA78AC8620D9F23700F07D40 /* searchController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = searchController.m; sourceTree = "<group>"; };
+		BA78AC8820D9F52F00F07D40 /* goto.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goto.png; sourceTree = "<group>"; };
 		BA8209C120C66E5700A5BCAE /* BuyVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BuyVC.h; sourceTree = "<group>"; };
 		BA8209C220C66E5700A5BCAE /* BuyVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BuyVC.m; sourceTree = "<group>"; };
 		BAE5985520C7718000524CB7 /* LoginVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginVC.h; sourceTree = "<group>"; };
@@ -659,7 +670,11 @@
 				424347151EF69C570021F2C5 /* BaseNavigationController.m */,
 				422787841E04F18600DB5CEC /* AppDelegate.m */,
 				422787831E04F18600DB5CEC /* AppDelegate.h */,
+				BA78AC8820D9F52F00F07D40 /* goto.png */,
+				BA78AC7B20D9E3D900F07D40 /* search.png */,
 				BA24DD9520D3883A008A1B9C /* coin.png */,
+				BA78AC8120D9ECE800F07D40 /* searchSelected.png */,
+				BA78AC8320D9ED0100F07D40 /* searchNormal.png */,
 				BA24DD9920D38BBE008A1B9C /* quo.png */,
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
 				4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */,
@@ -728,6 +743,8 @@
 				BA3EB03620D10255008F11E9 /* CheckOrderVC.m */,
 				BA3EB03820D24F2D008F11E9 /* checkHoldVC.h */,
 				BA3EB03920D24F2D008F11E9 /* checkHoldVC.m */,
+				BA78AC8520D9F23700F07D40 /* searchController.h */,
+				BA78AC8620D9F23700F07D40 /* searchController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1157,12 +1174,16 @@
 			files = (
 				BAE5985920C7CDE000524CB7 /* NpTrade.ice in Resources */,
 				BA24DD9620D3883A008A1B9C /* coin.png in Resources */,
+				BA78AC8420D9ED0100F07D40 /* searchNormal.png in Resources */,
+				BA78AC8220D9ECE800F07D40 /* searchSelected.png in Resources */,
+				BA78AC8920D9F52F00F07D40 /* goto.png in Resources */,
 				422BF0BA1EC7081400DF8F4A /* data.plist in Resources */,
 				BA3EB02520CE21A5008F11E9 /* config1.client in Resources */,
 				422787901E04F18600DB5CEC /* LaunchScreen.storyboard in Resources */,
 				4227878D1E04F18600DB5CEC /* Assets.xcassets in Resources */,
 				4242362A1EC1ED8400C161A8 /* N225.xml in Resources */,
 				BAE5985C20CA69B000524CB7 /* WpTrade.ice in Resources */,
+				BA78AC7C20D9E3DA00F07D40 /* search.png in Resources */,
 				423942841E2B6D0300F2A873 /* ta_retcode.csv in Resources */,
 				BA51D57920B6880E00B34DA7 /* config.client in Resources */,
 				BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */,
@@ -1367,6 +1388,7 @@
 				423943131E2B6D0300F2A873 /* ta_STOCH.c in Sources */,
 				423942C01E2B6D0300F2A873 /* ta_CDLMATHOLD.c in Sources */,
 				423942A41E2B6D0300F2A873 /* ta_CDLCOUNTERATTACK.c in Sources */,
+				BA78AC8720D9F23700F07D40 /* searchController.m in Sources */,
 				4264501C1EA7680900B792A6 /* UIColor+YW.m in Sources */,
 				423942BD1E2B6D0300F2A873 /* ta_CDLLONGLINE.c in Sources */,
 				423942BB1E2B6D0300F2A873 /* ta_CDLLADDERBOTTOM.c in Sources */,

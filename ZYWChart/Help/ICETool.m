@@ -77,6 +77,26 @@
     self.twowayR = [WpTradeAPIServerCallbackReceiverPrx uncheckedCast:[adapter add:_wpTradeAPIServerCallbackReceiverI identity:callbackReceiverIdent]];
     return self.wpTradeAPIServerCallbackReceiverI;
 }
+- (void)initiateCallback:(NSString*)strAcc{
+    
+    [self.WpTrade initiateCallback:strAcc proxy:self.twowayR];
+    
+}
+- (void)Login:(NSString*)StrCmd{
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    //[self.NpTrade Login:@"" strCmd:_loginStrCmd strOut:&strOut strErrInfo:&strErroInfo];
+    [self.WpTrade Login:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
+}
+- (int)HeartBeat:(NSString*)strCmd{
+    int iRet = -2;
+    NSLog(@"hearbeat");
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    iRet = [self.WpTrade HeartBeat:@"" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+    return iRet;
+}
+
 - (void)queryOrder:(NSString*)StrCmd{
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
@@ -96,25 +116,26 @@
     WpTradeAPIServerMutableSTRLIST* outList= [[WpTradeAPIServerMutableSTRLIST alloc]initWithCapacity:0];
     [self.WpTrade QueryFund:@"" strCmd:StrCmd ListFund:&outList strOut:&strOut strErrInfo:&strErroInfo];
 }
-- (void)initiateCallback:(NSString*)strAcc{
+- (void)QueryBusi:(NSString*)strCmd{
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    WpTradeAPIServerMutableSTRLIST* outList= [[WpTradeAPIServerMutableSTRLIST alloc]initWithCapacity:0];
+    [self.WpTrade QueryBusi:@"" strCmd:strCmd ListBusi:&outList strOut:&strOut strErrInfo:&strErroInfo];
+}
 
-    [self.WpTrade initiateCallback:strAcc proxy:self.twowayR];
-    
-}
-- (void)Login:(NSString*)StrCmd{
+- (void)SendOrder:(NSString*)StrCmd{
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-    //[self.NpTrade Login:@"" strCmd:_loginStrCmd strOut:&strOut strErrInfo:&strErroInfo];
-    [self.WpTrade Login:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
+    [self.WpTrade SendOrder:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
 }
-- (int)HeartBeat:(NSString*)strCmd{
-    int iRet = -2;
-    NSLog(@"hearbeat");
+
+- (void)CancelOrder:(NSString*)StrCmd{
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-    iRet = [self.WpTrade HeartBeat:@"" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
-    return iRet;
+    [self.WpTrade CancelOrder:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
 }
+
+
 
 
 @end
