@@ -29,7 +29,7 @@
 #define DropColor  [UIColor colorWithHexString:@"7fb80e"]
 
 #define ContentOffSet @"contentOffset"
-
+#define NpTradeTest 0
 #endif
 
 #endif /* ZYWChart_Prefix_pch */

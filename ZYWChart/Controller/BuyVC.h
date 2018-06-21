@@ -7,5 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-@interface BuyVC : UIViewController
+@interface BuyVC : UIViewController{
+    //(NSString*) Scode;
+}
+@property (nonatomic,strong)  NSString* Scode;
 @end

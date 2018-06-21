@@ -13,7 +13,7 @@
 #import <WpQuote.h>
 #include "TimeLineVC.h"
 #import "ICEQuote.h"
-
+#import "AppDelegate.h"
 
 
 
@@ -22,8 +22,8 @@
 @property (nonatomic, retain) UIRefreshControl * refreshControl;
 @property (nonatomic, copy)   NSString *filterString;
 @property (nonatomic,strong)  UITableView    *tableView;
-@property (nonatomic,copy)    NSMutableArray *titlesArray;
-@property (nonatomic,copy)    NSMutableArray *titlesMArray;
+@property (nonatomic,strong)    NSMutableArray *titlesArray;
+@property (nonatomic,strong)    NSMutableArray *allTitlesArray;
 @property (nonatomic,strong)  UISearchBar *search;
 
 @property (nonatomic,copy)    NSArray* zjsResult;
@@ -34,6 +34,7 @@
 @property (nonatomic,copy)    NSArray* searchResult;
 @property (nonatomic,copy)    NSMutableArray* TimeData;
 @property (nonatomic) WpQuoteServerDayKLineList *KlineList;
+@property (nonatomic,strong) NSMutableArray *KlineListAll;
 @property (nonatomic) WpQuoteServerDayKLineList *KlineList0;
 @property (nonatomic) WpQuoteServerDayKLineList *KlineList1;
 @property (nonatomic) WpQuoteServerDayKLineList *KlineList2;
@@ -53,6 +54,7 @@
 @property (nonatomic,strong) UISegmentedControl *segment;
 @property (nonatomic,strong) NSString *sExchangeID;//交易所
 @property (nonatomic) int segmentIndex;//
+@property (nonatomic, strong) dispatch_source_t timer;
 //@property (nonatomic,strong) TimeLineVC *timeLineVC;
 
 @property (nonatomic) id<WpQuoteServerCallbackReceiverPrx> twowayR;
@@ -71,6 +73,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.allTitlesArray = [[NSMutableArray alloc]init];
+     self.KlineListAll = [[NSMutableArray alloc]init];
     self.navigationItem.title = @"合约代码";
     [self addSearchButton];
     [self addSementView];
@@ -80,6 +84,9 @@
     
     // Do any additional setup after loading the view.
 }
+
+
+//添加放大镜
 - (void)addSearchButton{
     UIImage* searchImgNormal = [UIImage imageNamed:@"searchNormal.png"];
     UIImage* searchImgSelected = [UIImage imageNamed:@"searchSelected.png"];
@@ -90,16 +97,17 @@
     UIBarButtonItem *searchBtn = [[UIBarButtonItem alloc]initWithCustomView:self.searchBtn];
     self.navigationItem.rightBarButtonItem = searchBtn;
 }
-
+//添加segment
 - (void)addSementView{
     NSArray *titleArray = [[NSArray alloc]initWithObjects:@"中金所",@"郑商所",@"大商所",@"上期所", nil];
     self.segment = [[UISegmentedControl alloc]initWithItems:titleArray];
-    self.segment.selectedSegmentIndex = 0;
+    self.segment.selectedSegmentIndex = 0;//默认显示中金所的数据
     self.segment.tintColor = RoseColor;
     self.segment.frame = CGRectMake(0, 58, DEVICE_WIDTH, 50);
     [self.view addSubview:self.segment];
     [self.segment addTarget:self action:@selector(touchSegment:) forControlEvents:UIControlEventValueChanged];
 }
+//选中segment
 -(void)touchSegment:(UISegmentedControl*)segment{
     [self.tableView removeFromSuperview];
     switch(segment.selectedSegmentIndex){
@@ -109,15 +117,12 @@
                 self.KlineList =  self.KlineList0;
                 _searchResult = _zjsResult;
                 [self addTableView];
-               
             }
             else{
-                
                 self.sExchangeID = @"CFFEX";
                 self.segmentIndex = 0;
-                [self GetData];
+                [self getData];
             }
-       
             break;
         case 1:
             NSLog(@"郑商所");
@@ -125,14 +130,12 @@
                 self.KlineList =  self.KlineList1;
                 _searchResult = _zssResult;
                 [self addTableView];
-                
             }
             else{
                 self.segmentIndex = 1;
                 self.sExchangeID = @"CZCE";
-                [self GetData];
+                [self getData];
             }
-       
             break;
         case 2:
             NSLog(@"大商所");
@@ -144,7 +147,7 @@
             else{
                 self.segmentIndex = 2;
                 self.sExchangeID = @"DCE";
-                [self GetData];
+                [self getData];
             }
             break;
         case 3:
@@ -157,28 +160,35 @@
             else{
                 self.segmentIndex = 3;
                 self.sExchangeID = @"SHFE";
-                [self GetData];
+                [self getData];
             }
             break;
         default:
             break;
     }
-    [self addRefreshControl];
+    [self addRefreshControl];//添加刷新控件
     //[self GetData];
 }
-
+#pragma -mark   获取数据
 //conncet to server
 - (void) GetData{
     [self.activeId startAnimating];
-    //开线程
+    //[self getData];
+    
+    
+//    //开线程
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
         @try
         {
-            self.iceQuote = [[ICEQuote alloc]init];
-            [self.iceQuote Connect2Quote];
+            AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+            app.iceQuote = [[ICEQuote alloc]init];
+            app.wpQuoteServerCallbackReceiverI =  [app.iceQuote Connect2Quote];
+            [app.iceQuote initiateCallback:app.strAcc];
+            [app.iceQuote Login:app.strCmd];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self.activeId stopAnimating];
                 [self.label removeFromSuperview];
+                [self setHeartbeat];
                 [self getData];
 
             });
@@ -211,19 +221,33 @@
     });
 }
 
-- (void)addActiveId{
-    self.activeId = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    self.activeId.center = CGPointMake(self.view.centerX ,self.view.centerY+200);
-    [self.view addSubview:self.activeId];
-}
-- (void)addLabel{
-    self.label = [[UILabel alloc]initWithFrame:CGRectMake(self.view.centerX-40, self.view.centerY-200, 80, 20)];
-    self.label.adjustsFontSizeToFitWidth = YES;
-    self.label.textAlignment  = NSTextAlignmentCenter;
-    self.label.text = @"Please Wait";
-    [self.view addSubview:self.label];
-}
 
+- (void)setHeartbeat{
+    // 创建GCD定时器
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行
+    // 事件回调
+    //NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
+    
+    dispatch_source_set_event_handler(_timer, ^{
+        int iRet = -2;
+        @try{
+            AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+            iRet = [app.iceTool HeartBeat:app.strCmd];
+        }
+        @catch(ICEException* s){
+            NSLog(@"heart beat fail");
+        }
+        if(iRet == -2){
+            //重新连接
+            dispatch_source_cancel(self->_timer);
+            [self GetData];
+        }
+    });
+    // 开启定时器
+    dispatch_resume(_timer);
+}
 //getData
 - (void)getData{
     if(self.refreshFlag!= 1)
@@ -236,14 +260,13 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
         [self getKline];
         dispatch_sync(dispatch_get_main_queue(), ^{
-            
             [self.activeId stopAnimating];
             [self.activeId removeFromSuperview];
             [self.label removeFromSuperview];
             [self addTableView];
             //[self addSearch];
             [self addRefreshControl];
-            });
+        });
     });
 }
 
@@ -251,8 +274,10 @@
 //GetDayKLine
 - (void)getKline
 {
-    [self.iceQuote Connect2Quote];
-    self.KlineList = [self.iceQuote GetDayKline:self.sExchangeID];
+    //[self.iceQuote Connect2Quote];
+    AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+     self.KlineList = [app.iceQuote GetDayKline:self.sExchangeID];
+    //self.KlineList = [self.iceQuote GetDayKline:self.sExchangeID];
     [self loadData];
 }
 
@@ -267,8 +292,10 @@
     while (obj = [enumerator nextObject]){
         WpQuoteServerDayKLineCodeInfo* kline = [[WpQuoteServerDayKLineCodeInfo alloc]init];
         kline = obj;
+        [self.KlineListAll addObject:kline];//将所有数据保存到klinelistall
         [sCodeAll addObject:kline.sCode];
     }
+  
     [_titlesArray addObject:sCodeAll[0]];
     for(int i=1;i<sCodeAll.count;i++){
         if(![sCodeAll[i] isEqual:sCodeAll[i-1]]){
@@ -294,8 +321,35 @@
         default:
             break;
     }
+
+    for(int j = 0;j<_titlesArray.count;j++){
+        [self.allTitlesArray addObject:_titlesArray[j]];
+    }
+//    if(self.allTitlesArray == nil)
+//    {
+//        self.allTitlesArray = _titlesArray;
+//    }
+//    else{
+//        [self.allTitlesArray addObjectsFromArray:_titlesArray];
+//    }
+    
     _searchResult = _titlesArray;
     
+}
+
+#pragma -mark 添加视图
+- (void)addActiveId{
+    self.activeId = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    self.activeId.center = CGPointMake(self.view.centerX ,self.view.centerY+200);
+    [self.view addSubview:self.activeId];
+}
+//"please wait"
+- (void)addLabel{
+    self.label = [[UILabel alloc]initWithFrame:CGRectMake(self.view.centerX-40, self.view.centerY-200, 80, 20)];
+    self.label.adjustsFontSizeToFitWidth = YES;
+    self.label.textAlignment  = NSTextAlignmentCenter;
+    self.label.text = @"Please Wait";
+    [self.view addSubview:self.label];
 }
 //添加searchbar
 - (void)addSearch{
@@ -344,7 +398,8 @@
         make.height.equalTo(@(DEVICE_HEIGHT-120));
     }];
 }
-#pragma 下拉刷新
+
+#pragma -mark 下拉刷新
 - (void)addRefreshControl{
     _refreshControl = [[UIRefreshControl alloc]init];
     _refreshControl.tintColor = [UIColor redColor];
@@ -361,6 +416,7 @@
         
     }
 }
+#pragma -mark tableview 代理协议
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return [_searchResult count];
@@ -371,11 +427,18 @@
     NSString *klinesCode = _searchResult[indexPath.row];
     //NSString *klinesCode = _searchResult[btn.tag];
     NSLog(@"历史行情 %@",klinesCode);
+    //AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    //self.TimeData =[self.iceQuote getTimeData:klinesCode];
+    
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-        [self.iceQuote Connect2Quote];
-        self.TimeData =[self.iceQuote getTimeData:klinesCode];
+        //[self.iceQuote Connect2Quote];
+        //获取分时图数据
+        AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+        self.TimeData =[app.iceQuote getTimeData:klinesCode];
+        //self.TimeData =[self.iceQuote getTimeData:klinesCode];
         dispatch_sync(dispatch_get_main_queue(), ^{
-            CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList TimeData:self.TimeData];
+            CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineListAll TimeData:self.TimeData];
             vc.hidesBottomBarWhenPushed = YES;
             [self.navigationController pushViewController:vc animated:YES];
         });
@@ -449,13 +512,14 @@
 - (void)setFilterString:(NSString *)filterString{
     _filterString = filterString;
     if(!filterString||filterString.length<=0){
-        self.searchResult = self.titlesArray;
+        //self.searchResult = self.titlesArray;
     }
     else{
         
         NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"self contains[c]%@",filterString];
         NSArray* allResult = [[NSArray alloc]init];
-        allResult = self.titlesArray;
+        //allResult = self.searchResult;//self.titlesArray;
+        allResult = self.allTitlesArray;//所有数据 全局搜索
         self.searchResult = [allResult filteredArrayUsingPredicate:filterPredicate];
     }
     [self.tableView reloadData];
@@ -468,12 +532,26 @@
     }
     self.filterString = self.searchController.searchBar.text;
 }
-
+//取消搜索 显示当前表格
 - (void)willDismissSearchController:(UISearchController *)searchController{
     
     [self.searchView removeFromSuperview];
-    self.searchResult = self.titlesArray;
-    //[self.tableView reloadData];
+    switch (_segmentIndex) {
+        case 0:
+           self.searchResult = self.zjsResult;
+            break;
+        case 1:
+            self.searchResult = self.zssResult;
+            break;
+        case 2:
+            self.searchResult = self.dssResult;
+            break;
+        case 3:
+            self.searchResult = self.sqsResult;
+        default:
+            break;
+    }
+    [self.tableView reloadData];
 }
 - (void)didDismissSearchController:(UISearchController *)searchController
 {

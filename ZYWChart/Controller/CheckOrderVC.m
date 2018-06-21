@@ -38,7 +38,7 @@
         M.OrderPrice  = arry[16];
         [self.modleArray addObject:M];
     }
-    if([self.modleArray count] == 1){
+    if([self.modleArray count] == 0){
         [self setAlertWithMessage:@"无委托"];
     }
     [self addTableView];

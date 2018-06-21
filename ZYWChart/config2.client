@@ -1,0 +1,17 @@
+#
+# The IceGrid locator proxy.
+#
+#Ice.Default.Locator=DemoIceGrid/Locator:default -p 4061
+#Ice.Default.Router=DemoGlacier2/router:tcp -p 14066 -h 60.191.97.222
+#Ice.Default.Router=DemoGlacier2/router:tcp -p 14065 -h 124.74.248.27
+#Ice.Default.Router=DemoGlacier2/router:tcp -p 14061 -h 192.168.200.59
+#Ice.Default.Router=DemoGlacier2/router:tcp -p 14065 -h 10.168.123.52
+#Ice.Default.Router=DemoGlacier2/router:tcp -p 14065 -h 101.68.64.36
+#外盘交易的
+#Ice.Default.Router=DemoGlacier2/router:tcp -p 14063 -h 101.68.64.38
+#内盘
+Ice.Default.Router=DemoGlacier2/router:tcp -p 14065 -h 192.168.214.6
+#Ice.Default.Router=DemoGlacier2/router:tcp -p 8087 -h 128.1.210.81
+#Ice.Default.Router=DemoGlacier2/router:tcp -p 8088 -h 218.108.50.205
+
+Ice.Trace.Locator=1

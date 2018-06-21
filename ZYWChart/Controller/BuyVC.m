@@ -14,7 +14,7 @@
 #import "CheckOrderVC.h"
 #import "AppDelegate.h"
 #import "checkHoldVC.h"
-
+#import "ICENpTrade.h"
 @interface BuyVC ()<UITextFieldDelegate>
 
 @property (nonatomic,strong)  UIButton *buyButton;
@@ -27,6 +27,7 @@
 @property (nonatomic,strong)  UIButton *HoldButton;
 @property (nonatomic) NSString* loginStrCmd;
 @property (nonatomic) ICETool* iceTool;
+@property (nonatomic) NpTradeAPIServerCallbackReceiverI* npTradeAPIServerCallbackReceiverI;
 @property (nonatomic) WpTradeAPIServerCallbackReceiverI* wpTradeAPIServerCallbackReceiverI;
 @property (nonatomic) NSMutableArray* Msg;
 @property (nonatomic,strong)  UIActivityIndicatorView *activeId;
@@ -40,6 +41,7 @@
     [super viewDidLoad];
     self.navigationItem.title = @"交易";
     self.ScodeTextField = [self addTextField:@"合约代码" PositionX:100 PositionY:150];
+    self.ScodeTextField.text = self.Scode;
     self.CountTextField = [self addTextField:@"手数" PositionX:100 PositionY:100];
     
     self.OpenButton = [self addBuyButton:@"开仓" PositionX:110 PositionY:-10];
@@ -107,13 +109,14 @@
 
 -(void)ButtonPressed:(id)sender{
     UIButton* btn = sender;
+    
     if(btn.tag==500){
         NSLog(@"open");
         self.CloseButton.enabled=YES;
         if(self.ScodeTextField.text.length==0){
             UIAlertController* alert=[UIAlertController alertControllerWithTitle:@"Erro" message:@"合约代码不能为空" preferredStyle:UIAlertControllerStyleAlert];
             [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                NSLog(@"ssss");
+                
             }]];
             [self presentViewController:alert animated:YES completion:nil];
         }
@@ -131,14 +134,22 @@
     }
     else if(btn.tag==502){
         AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+#if NpTradeTest
+        [app.iceNpTrade queryOrder:app.strCmd];
+#else
         [app.iceTool queryOrder:app.strCmd];
+#endif
         [self.activeId startAnimating];
         [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addCheckOrderVC) userInfo:nil repeats:NO];
     }
     else if(btn.tag == 503)
     {
        AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+#if NpTradeTest
+       [app.iceNpTrade queryFund:app.strCmd];
+#else
        [app.iceTool queryFund:app.strCmd];
+#endif
        [self.activeId startAnimating];
        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addCheckFundVC) userInfo:nil repeats:NO];
     }
@@ -146,7 +157,11 @@
     {
         
         AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+#if NpTradeTest
+        [app.iceNpTrade queryHold:app.strCmd];
+#else
         [app.iceTool queryHold:app.strCmd];
+#endif
         [self.activeId startAnimating];
         [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addCheckHoldVC) userInfo:nil repeats:NO];
     }
@@ -182,7 +197,12 @@
     self.tabBarController.tabBar.hidden = YES;
     self.Msg = [NSMutableArray array];
     AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+#if NpTradeTest
+    NSEnumerator *enumerator = [[app.npTradeAPIServerCallbackReceiverI messageForBuyVC] objectEnumerator];
+#else
     NSEnumerator *enumerator = [[app.wpTradeAPIServerCallbackReceiverI messageForBuyVC] objectEnumerator];
+#endif
+    //
     id obj = nil;
     while (obj = [enumerator nextObject]){
         NSMutableString *Message = [[NSMutableString alloc]initWithCapacity:0];

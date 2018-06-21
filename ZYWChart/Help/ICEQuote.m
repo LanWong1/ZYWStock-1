@@ -12,13 +12,13 @@
 #import <WpQuote.h>
 
 
-@interface WpQuoteServerCallbackReceiverI : WpQuoteServerCallbackReceiver<WpQuoteServerCallbackReceiver>
+@interface WpQuoteServerCallbackReceiverI()<WpQuoteServerCallbackReceiver>
 @end
 
 @implementation WpQuoteServerCallbackReceiverI
 - (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current
 {
-    NSLog(@"%@",strMessage);
+    NSLog(@"hahahah:%@",strMessage);
 }
 @end
 
@@ -27,13 +27,13 @@
 @property (nonatomic) id<WpQuoteServerCallbackReceiverPrx> twowayR;
 @property (nonatomic) id<GLACIER2RouterPrx> router;
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
+@property (nonatomic)  WpQuoteServerCallbackReceiverI* wpQuoteServerCallbackReceiverI;
 @end
 
 @implementation ICEQuote
 
 
-- (void)Connect2Quote{
-
+- (WpQuoteServerCallbackReceiverI*)Connect2Quote{
     ICEInitializationData* initData = [ICEInitializationData initializationData];
     initData.properties = [ICEUtil createProperties];
     [initData.properties load:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"config1.client"]];
@@ -51,7 +51,11 @@
     ICEIdentity* callbackReceiverIdent= [ICEIdentity identity:@"callbackReceiver" category:[self.router getCategoryForClient]];
     id<ICEObjectAdapter> adapter = [self.communicator createObjectAdapterWithRouter:@"" router:self.router];
     [adapter activate];
-    self.twowayR = [WpQuoteServerCallbackReceiverPrx uncheckedCast:[adapter add:[[WpQuoteServerCallbackReceiverI alloc]init] identity:callbackReceiverIdent]];
+    self.wpQuoteServerCallbackReceiverI = [[WpQuoteServerCallbackReceiverI alloc]init];
+    self.twowayR = [WpQuoteServerCallbackReceiverPrx uncheckedCast:[adapter add:_wpQuoteServerCallbackReceiverI identity:callbackReceiverIdent]];
+    return self.wpQuoteServerCallbackReceiverI;
+    
+    
 }
 
 - (WpQuoteServerDayKLineList*)GetDayKline:(NSString*) ExchangeID{
@@ -68,6 +72,32 @@
     return DLL;
 }
 
+- (void)initiateCallback:(NSString*)strAcc{
+    
+    [self.WpQuoteServerclientApiPrx initiateCallback:strAcc proxy:self.twowayR];
+    
+}
+- (void)Login:(NSString*)StrCmd{
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    [self.WpQuoteServerclientApiPrx Login:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
+}
+
+- (int)HeartBeat:(NSString*)strCmd{
+    int iRet = -2;
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    iRet = [self.WpQuoteServerclientApiPrx HeartBeat:@"" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+    return iRet;
+}
+- (void)SubscribeQuote:(NSString *)strCmdType strCmd:(NSString *)strCmd{
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    [self.WpQuoteServerclientApiPrx SubscribeQuote:strCmdType strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+}
+
+
+
 
 //获取timedata
 - (NSMutableArray*)getTimeData:(NSString*)sCode {
@@ -78,9 +108,7 @@
         NSString* Code = sCode;
         NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
         NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,Code,@"=",Time];
-
         [self.WpQuoteServerclientApiPrx GetKLine:@"minute" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
-
         NSMutableArray* array = [NSMutableArray array];
         if([strOut length]> 0){
             array = [NSMutableArray array];

@@ -39,7 +39,7 @@
         M.Deposit = arry[17];
         [self.modleArray addObject:M];
     }
-    if([self.modleArray count] == 1){
+    if([self.modleArray count] == 0){
         [self setAlertWithMessage:@"无持仓"];
     }
     [self addTableView];

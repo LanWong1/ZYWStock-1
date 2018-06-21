@@ -91,7 +91,7 @@ typedef enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.navigationItem.title  = _sCode;
+    self.navigationItem.title  = [_sCode uppercaseString];
     _type = MACD;
 
     [self addQuotaView];
@@ -415,8 +415,9 @@ typedef enum
         }
         _timeLineView.leftMargin =10;
         _timeLineView.rightMargin  = 10;
-        _timeLineView.lineColor = [UIColor whiteColor];
-        _timeLineView.fillColor = DropColor;
+        _timeLineView.lineWidth = 0.1;
+        _timeLineView.lineColor = [UIColor colorWithHexString:@"0033F0"];//[UIColor blackColor];
+        _timeLineView.fillColor = [UIColor colorWithHexString:@"CCFFFF"];
         _timeLineView.timesCount = 243;
         _timeLineView.dataArray = timeArray.mutableCopy;
         [_timeLineView stockFill];
@@ -429,6 +430,7 @@ typedef enum
         case 2000:
             NSLog(@"buy in");
             self.buyVC = [[BuyVC alloc]init];
+            self.buyVC.Scode = [_sCode uppercaseString];
             [self.navigationController pushViewController:self.buyVC animated:NO];
             break;
         case 2001:

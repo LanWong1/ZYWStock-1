@@ -9,6 +9,8 @@
 #import "AppDelegate.h"
 #import "FHHFPSIndicator.h"
 #import "LoginVC.h"
+#import "LoginVC1.h"
+
 @interface AppDelegate ()
 
 @end
@@ -33,7 +35,13 @@
 #if defined(DEBUG) || defined(_DEBUG)
     [[FHHFPSIndicator sharedFPSIndicator] show];
 #endif
+
+#if NpTradeTest
+    LoginVC1* Controller = [[LoginVC1 alloc]init];
+#else
     LoginVC* Controller = [[LoginVC alloc]init];
+#endif
+    
     [self.window setRootViewController:Controller];
     [self.window makeKeyAndVisible];
     return YES;

@@ -234,6 +234,9 @@
 		BA78AC8420D9ED0100F07D40 /* searchNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8320D9ED0100F07D40 /* searchNormal.png */; };
 		BA78AC8720D9F23700F07D40 /* searchController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA78AC8620D9F23700F07D40 /* searchController.m */; };
 		BA78AC8920D9F52F00F07D40 /* goto.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8820D9F52F00F07D40 /* goto.png */; };
+		BA78AC8C20DB723000F07D40 /* ICENpTrade.m in Sources */ = {isa = PBXBuildFile; fileRef = BA78AC8B20DB723000F07D40 /* ICENpTrade.m */; };
+		BA78AC8E20DB745400F07D40 /* config2.client in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8D20DB745300F07D40 /* config2.client */; };
+		BA78AC9120DB74E800F07D40 /* LoginVC1.m in Sources */ = {isa = PBXBuildFile; fileRef = BA78AC9020DB74E800F07D40 /* LoginVC1.m */; };
 		BA8209C320C66E5700A5BCAE /* BuyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA8209C220C66E5700A5BCAE /* BuyVC.m */; };
 		BAE5985720C7718000524CB7 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985620C7718000524CB7 /* LoginVC.m */; };
 		BAE5985920C7CDE000524CB7 /* NpTrade.ice in Resources */ = {isa = PBXBuildFile; fileRef = BAE5985820C7CDE000524CB7 /* NpTrade.ice */; };
@@ -566,6 +569,11 @@
 		BA78AC8520D9F23700F07D40 /* searchController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = searchController.h; sourceTree = "<group>"; };
 		BA78AC8620D9F23700F07D40 /* searchController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = searchController.m; sourceTree = "<group>"; };
 		BA78AC8820D9F52F00F07D40 /* goto.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goto.png; sourceTree = "<group>"; };
+		BA78AC8A20DB723000F07D40 /* ICENpTrade.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICENpTrade.h; sourceTree = "<group>"; };
+		BA78AC8B20DB723000F07D40 /* ICENpTrade.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICENpTrade.m; sourceTree = "<group>"; };
+		BA78AC8D20DB745300F07D40 /* config2.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config2.client; sourceTree = "<group>"; };
+		BA78AC8F20DB74E800F07D40 /* LoginVC1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginVC1.h; sourceTree = "<group>"; };
+		BA78AC9020DB74E800F07D40 /* LoginVC1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginVC1.m; sourceTree = "<group>"; };
 		BA8209C120C66E5700A5BCAE /* BuyVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BuyVC.h; sourceTree = "<group>"; };
 		BA8209C220C66E5700A5BCAE /* BuyVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BuyVC.m; sourceTree = "<group>"; };
 		BAE5985520C7718000524CB7 /* LoginVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginVC.h; sourceTree = "<group>"; };
@@ -664,6 +672,8 @@
 				422787BE1E04F73900DB5CEC /* Controller */,
 				BAE5985520C7718000524CB7 /* LoginVC.h */,
 				BAE5985620C7718000524CB7 /* LoginVC.m */,
+				BA78AC8F20DB74E800F07D40 /* LoginVC1.h */,
+				BA78AC9020DB74E800F07D40 /* LoginVC1.m */,
 				422787861E04F18600DB5CEC /* HomeVC.h */,
 				422787871E04F18600DB5CEC /* HomeVC.m */,
 				424347141EF69C570021F2C5 /* BaseNavigationController.h */,
@@ -679,6 +689,7 @@
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
 				4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */,
 				BA51D57820B6880E00B34DA7 /* config.client */,
+				BA78AC8D20DB745300F07D40 /* config2.client */,
 				BA3EB02420CE21A4008F11E9 /* config1.client */,
 				422787911E04F18600DB5CEC /* Info.plist */,
 				BAE5985B20CA69B000524CB7 /* WpTrade.ice */,
@@ -982,6 +993,8 @@
 				BA3EB02120CE08EB008F11E9 /* ICETool.m */,
 				BA3EB02620CE4137008F11E9 /* ICEQuote.h */,
 				BA3EB02720CE4137008F11E9 /* ICEQuote.m */,
+				BA78AC8A20DB723000F07D40 /* ICENpTrade.h */,
+				BA78AC8B20DB723000F07D40 /* ICENpTrade.m */,
 			);
 			path = Help;
 			sourceTree = "<group>";
@@ -1186,6 +1199,7 @@
 				BA78AC7C20D9E3DA00F07D40 /* search.png in Resources */,
 				423942841E2B6D0300F2A873 /* ta_retcode.csv in Resources */,
 				BA51D57920B6880E00B34DA7 /* config.client in Resources */,
+				BA78AC8E20DB745400F07D40 /* config2.client in Resources */,
 				BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */,
 				BA24DD9A20D38BBE008A1B9C /* quo.png in Resources */,
 			);
@@ -1383,6 +1397,7 @@
 				423943171E2B6D0300F2A873 /* ta_SUM.c in Sources */,
 				423942CD1E2B6D0300F2A873 /* ta_CDLTAKURI.c in Sources */,
 				4248A0481EBC485A0086EAA7 /* ZYWMacdView.m in Sources */,
+				BA78AC8C20DB723000F07D40 /* ICENpTrade.m in Sources */,
 				423942B51E2B6D0300F2A873 /* ta_CDLHOMINGPIGEON.c in Sources */,
 				423943231E2B6D0300F2A873 /* ta_VAR.c in Sources */,
 				423943131E2B6D0300F2A873 /* ta_STOCH.c in Sources */,
@@ -1392,6 +1407,7 @@
 				4264501C1EA7680900B792A6 /* UIColor+YW.m in Sources */,
 				423942BD1E2B6D0300F2A873 /* ta_CDLLONGLINE.c in Sources */,
 				423942BB1E2B6D0300F2A873 /* ta_CDLLADDERBOTTOM.c in Sources */,
+				BA78AC9120DB74E800F07D40 /* LoginVC1.m in Sources */,
 				423942FA1E2B6D0300F2A873 /* ta_MINMAX.c in Sources */,
 				4239431B1E2B6D0300F2A873 /* ta_TEMA.c in Sources */,
 				423942DB1E2B6D0300F2A873 /* ta_DX.c in Sources */,
