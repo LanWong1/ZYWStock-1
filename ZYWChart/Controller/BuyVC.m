@@ -127,6 +127,14 @@
             //}]];
             [self presentViewController:alert animated:YES completion:nil];  
         }
+        else{
+            AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+            NSString* orderRef =  [app.iceTool SendCmd:app.strCmd strCmdType:@"GetOrderRef"];
+            NSString* strcmd = [[NSString alloc]initWithFormat:@"%@%@%@%@",app.strCmd,@"=",orderRef,@"=C=1905=1=1=395=2=9999=1"];
+            [app.iceTool SendOrder:strcmd];
+            //NSLog(@"orderRef = %@",orderRef);
+            
+        }
     }
     else if (btn.tag==501){
         NSLog(@"close");
@@ -155,7 +163,6 @@
     }
     else if(btn.tag == 504)
     {
-        
         AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
 #if NpTradeTest
         [app.iceNpTrade queryHold:app.strCmd];

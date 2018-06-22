@@ -43,6 +43,7 @@
 
 - (void)draw
 {
+    NSLog(@"jkkkkllllll");
     [self initConfig];
     [self initModelPostion];
     [self drawLineLayer];
@@ -54,11 +55,13 @@
 
 - (void)stockFill
 {
+    NSLog(@"ssdsadfdgdfg");
     [self setNeedsDisplay];
 }
 
 - (void)drawRect:(CGRect)rect
 {
+    NSLog(@"dddffgfgfghf");
     [super drawRect:rect];
     [self draw];
 }
@@ -287,16 +290,20 @@
     for (NSInteger i = 0; i < _dataArray.count; i++)
     {
         ZYWTimeLineModel *model = [_dataArray objectAtIndex:i];
-        offset = offset >fabs(model.lastPirce-model.preClosePx) ? offset:fabs(model.lastPirce-model.preClosePx);
+        offset = offset >fabs(model.lastPirce-model.preClosePx) ? offset:fabs(model.lastPirce-model.preClosePx);//相差最高的两个点
     }
-    
     self.maxY =((ZYWTimeLineModel *)[_dataArray firstObject]).preClosePx + offset;
     self.minY =((ZYWTimeLineModel*)[_dataArray firstObject]).preClosePx - offset;
     self.scaleY = (self.height - self.topMargin - self.bottomMargin - self.boxLineWidth*2 - self.timeLayerHeight)/(self.maxY-self.minY);
-
-    self.longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(LongPressGesture:)];
-    [self addGestureRecognizer:self.longPress];
+    NSLog(@"%d",self.flag);
+    if(self.flag == 0){
+        self.longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(LongPressGesture:)];
+        [self addGestureRecognizer:self.longPress];
+    }
+    
 }
+
+
 
 #pragma mark 长按手势
 

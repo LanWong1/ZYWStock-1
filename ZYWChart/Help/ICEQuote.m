@@ -18,7 +18,7 @@
 @implementation WpQuoteServerCallbackReceiverI
 - (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current
 {
-    NSLog(@"hahahah:%@",strMessage);
+    NSLog(@"hahahah:%d   %@",itype,strMessage);
 }
 @end
 
@@ -28,6 +28,7 @@
 @property (nonatomic) id<GLACIER2RouterPrx> router;
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
 @property (nonatomic)  WpQuoteServerCallbackReceiverI* wpQuoteServerCallbackReceiverI;
+//@property (nonatomic) WpQuoteServerDayKLineList* DLL;
 @end
 
 @implementation ICEQuote
@@ -69,6 +70,7 @@
     {
         NSLog(@"%@",s);
     }
+   
     return DLL;
 }
 
@@ -80,7 +82,8 @@
 - (void)Login:(NSString*)StrCmd{
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-    [self.WpQuoteServerclientApiPrx Login:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
+    int ret = [self.WpQuoteServerclientApiPrx Login:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
+    NSLog(@"login %d",ret);
 }
 
 - (int)HeartBeat:(NSString*)strCmd{
@@ -90,10 +93,19 @@
     iRet = [self.WpQuoteServerclientApiPrx HeartBeat:@"" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
     return iRet;
 }
-- (void)SubscribeQuote:(NSString *)strCmdType strCmd:(NSString *)strCmd{
+- (void)SubscribeQuote:(NSString *)strCmdType strCmd:(NSString *)strcmd{
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-    [self.WpQuoteServerclientApiPrx SubscribeQuote:strCmdType strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+    @try{
+        [self.WpQuoteServerclientApiPrx SubscribeQuote:strCmdType strCmd:strcmd strOut:&strOut strErrInfo:&strErroInfo];
+    }
+    @catch(ICEException* s)
+    {
+        NSLog(@"%@",s);
+    }
+    
+    //NSLog(@"strout%@%d",strOut,ret);
+    //NSLog(@"erro %@",strErroInfo);
 }
 
 

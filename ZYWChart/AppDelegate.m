@@ -23,7 +23,7 @@
 @synthesize  wpTradeAPIServerCallbackReceiverI;
 @synthesize loginVC;
 @synthesize loginFlag;
-
+@synthesize  iceQuote;
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {

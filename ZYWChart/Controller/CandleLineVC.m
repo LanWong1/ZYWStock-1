@@ -83,6 +83,8 @@ typedef enum
 @property (nonatomic,strong) UIButton* klineBtn;
 @property (nonatomic,strong) UIButton* TlineBtn;
 @property (nonatomic,strong) BuyVC* buyVC;
+
+@property (nonatomic, strong) dispatch_source_t timer;
 @end
 
 @implementation CandleLineVC
@@ -379,13 +381,12 @@ typedef enum
 
 
 - (void)addTlineView{
-   
+    NSLog(@"add tlinf");
     _timeLineView = [ZYWTimeLineView new];
     _timeLineView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:_timeLineView];
     [_timeLineView mas_makeConstraints:^(MASConstraintMaker *make) {
-       
-       
+
         //make.left.right.equalTo(self.view);
         //make.height.equalTo(@(200));
         make.left.equalTo(self.view.mas_left).offset(5);
@@ -397,9 +398,11 @@ typedef enum
 
     if([self.timeData count]>0)
     {
+        NSLog(@"aasdsddfdsfgdfgfdgfd");
         NSMutableArray * timeArray = [NSMutableArray array];
         //[self.timeData removeLastObject];
         NSEnumerator *enumerator =[self.timeData objectEnumerator];
+        
         id obj = nil;
         while (obj = [enumerator nextObject]){
             NSString *string = obj;
@@ -416,12 +419,26 @@ typedef enum
         _timeLineView.leftMargin =10;
         _timeLineView.rightMargin  = 10;
         _timeLineView.lineWidth = 0.1;
-        _timeLineView.lineColor = [UIColor colorWithHexString:@"0033F0"];//[UIColor blackColor];
+        _timeLineView.lineColor = [UIColor colorWithHexString:@"0033F0"];
         _timeLineView.fillColor = [UIColor colorWithHexString:@"CCFFFF"];
         _timeLineView.timesCount = 243;
         _timeLineView.dataArray = timeArray.mutableCopy;
         [_timeLineView stockFill];
+        //[self freshTLine];
     }
+    else{
+        
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                       message:@"No data"
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK"
+                                                  style:UIAlertActionStyleDefault
+                                                handler:nil]];
+        [self presentViewController:alert animated:YES completion:nil];
+        
+    }
+    
 }
 
 - (void)btnPressed:(id)sender{
@@ -449,14 +466,58 @@ typedef enum
             btn.backgroundColor = RoseColor;
             self.klineBtn.backgroundColor = DropColor;
             self.klineBtn.enabled = YES;
+            //[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addTlineView) userInfo:nil repeats:NO];
             [self addTlineView];
             [self addTimeLineBox];
+            [self freshTLine];
             break;
         default:
             NSLog(@"dddddd");
             break;
     }
 }
+
+- (void)freshTLine{
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 5 * NSEC_PER_SEC, 0); //每3秒执行
+    // 事件回调
+    dispatch_source_set_event_handler(_timer, ^{
+        NSLog(@"aasdsddfdsfgdfgfdgfd");
+        _timeLineView.flag = 1;
+        NSMutableArray * timeArray = [NSMutableArray array];
+        //[self.timeData removeLastObject];
+        NSEnumerator *enumerator =[self.timeData objectEnumerator];
+        
+        id obj = nil;
+        while (obj = [enumerator nextObject]){
+            NSString *string = obj;
+            NSArray* array1 = [string componentsSeparatedByString:@","];
+            ZYWTimeLineModel * e = [[ZYWTimeLineModel alloc]init];
+            e.currtTime = array1[1];
+            e.preClosePx = [array1[6] doubleValue];
+            e.avgPirce = 0;
+            e.lastPirce = [array1[3] doubleValue];
+            e.volume = [array1[7] doubleValue];
+            e.rate = array1[8];
+            [timeArray addObject:e];
+        }
+        self->_timeLineView.leftMargin =10;
+        _timeLineView.rightMargin  = 10;
+        _timeLineView.lineWidth = 0.1;
+        _timeLineView.lineColor = [UIColor colorWithHexString:@"0033F0"];
+        _timeLineView.fillColor = [UIColor colorWithHexString:@"CCFFFF"];
+        _timeLineView.timesCount = 243;
+        _timeLineView.dataArray = timeArray.mutableCopy;
+        [_timeLineView stockFill];
+    });
+    // 开启定时器
+    dispatch_resume(_timer);
+}
+
+
+
+
 
 #pragma mark 指标视图
 
@@ -496,7 +557,7 @@ typedef enum
     self.verticalView = [UIView new];
     self.verticalView.clipsToBounds = YES;
     [self.scrollView addSubview:self.verticalView];
-    self.verticalView.backgroundColor = [UIColor colorWithHexString:@"666666"];
+    self.verticalView.backgroundColor = [UIColor blueColor];// [UIColor colorWithHexString:@"666666"];
     [self.verticalView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.topBoxView);
         make.width.equalTo(@(_candleChartView.lineWidth));

@@ -174,9 +174,7 @@
 - (void) GetData{
     [self.activeId startAnimating];
     //[self getData];
-    
-    
-//    //开线程
+    //开线程
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
         @try
         {
@@ -185,12 +183,12 @@
             app.wpQuoteServerCallbackReceiverI =  [app.iceQuote Connect2Quote];
             [app.iceQuote initiateCallback:app.strAcc];
             [app.iceQuote Login:app.strCmd];
+            
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self.activeId stopAnimating];
                 [self.label removeFromSuperview];
                 [self setHeartbeat];
                 [self getData];
-
             });
         }
         @catch(GLACIER2CannotCreateSessionException* ex)
@@ -250,6 +248,8 @@
 }
 //getData
 - (void)getData{
+    //[self getKline];
+    //[self addTableView];
     if(self.refreshFlag!= 1)
     {
         [self addActiveId];
@@ -263,6 +263,7 @@
             [self.activeId stopAnimating];
             [self.activeId removeFromSuperview];
             [self.label removeFromSuperview];
+             [self loadData];
             [self addTableView];
             //[self addSearch];
             [self addRefreshControl];
@@ -274,11 +275,14 @@
 //GetDayKLine
 - (void)getKline
 {
-    //[self.iceQuote Connect2Quote];
     AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-     self.KlineList = [app.iceQuote GetDayKline:self.sExchangeID];
-    //self.KlineList = [self.iceQuote GetDayKline:self.sExchangeID];
-    [self loadData];
+    [app.iceQuote Connect2Quote];
+    NSString* cmdType = @"CTP,";
+    cmdType =  [cmdType stringByAppendingString:app.strAcc];
+    [app.iceQuote SubscribeQuote:cmdType strCmd:@"c1809"];
+    [app.iceQuote Connect2Quote];
+    self.KlineList = [app.iceQuote GetDayKline:self.sExchangeID];
+    //[self loadData];
 }
 
 //get titlesArray
@@ -435,6 +439,7 @@
         //[self.iceQuote Connect2Quote];
         //获取分时图数据
         AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+        [app.iceQuote Connect2Quote];
         self.TimeData =[app.iceQuote getTimeData:klinesCode];
         //self.TimeData =[self.iceQuote getTimeData:klinesCode];
         dispatch_sync(dispatch_get_main_queue(), ^{

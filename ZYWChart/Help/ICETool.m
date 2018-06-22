@@ -21,7 +21,6 @@
 
 - (void)SendMsg:(NSMutableString *)stype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current {
     NSLog(@"%@%@",stype,strMessage);
-   
     if([stype isEqualToString:@"OnQryMoney"]|[stype isEqualToString:@"OnQryOrder"]|[stype isEqualToString:@"OnQryHold"]){
         if(self.Msg==nil){
             self.Msg = [[NSMutableArray alloc]initWithCapacity:0];
@@ -134,6 +133,12 @@
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     [self.WpTrade CancelOrder:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
+}
+- (NSString*)SendCmd:(NSString*)StrCmd strCmdType:(NSString*)strCmdType{
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    [self.WpTrade SendCmd:strCmdType strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
+    return strOut;
 }
 
 @end
