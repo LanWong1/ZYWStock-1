@@ -48,6 +48,7 @@
     self.lineChartLayer.lineJoin = kCALineJoinRound;
     self.lineChartLayer.contentsScale = [UIScreen mainScreen].scale;
     [self.layer addSublayer:self.lineChartLayer];
+    
     [self startAnimation];
 }
 
@@ -55,7 +56,7 @@
 
 - (void)startAnimation
 {
-    CABasicAnimation*pathAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+    CABasicAnimation* pathAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
     pathAnimation.duration = 2.0f;
     pathAnimation.timingFunction= [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
     pathAnimation.fromValue=@0.0f;

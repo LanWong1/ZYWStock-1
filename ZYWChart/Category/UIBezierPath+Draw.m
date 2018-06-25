@@ -13,12 +13,12 @@
 + (UIBezierPath*)drawLine:(NSMutableArray*)linesArray
 {
     UIBezierPath *path = [UIBezierPath bezierPath];
+    
     [linesArray enumerateObjectsUsingBlock:^(ZYWLineModel* obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if (idx == 0)
         {
             [path moveToPoint:CGPointMake(obj.xPosition,obj.yPosition)];
         }
-        
         else
         {
             [path addLineToPoint:CGPointMake(obj.xPosition,obj.yPosition)];

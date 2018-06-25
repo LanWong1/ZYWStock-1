@@ -14,7 +14,7 @@
 @property (nonatomic,assign) NSInteger timesCount;
 @property (nonatomic,strong) UIColor *fillColor;
 @property (nonatomic,strong) NSArray<__kindof ZYWTimeLineModel*> *dataArray;
-@property (nonatomic) int flag;
+//@property (nonatomic) int flag;
 -(void)stockFill;
 
 @end

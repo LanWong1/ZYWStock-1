@@ -321,9 +321,6 @@ typedef enum
         make.bottom.equalTo(self.view.mas_bottom);
         make.height.equalTo(@(50));
     }];
-
-
-
     self.sellBtn = [[UIButton alloc]init];
     self.sellBtn.backgroundColor = DropColor;
     [self.sellBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
@@ -381,7 +378,7 @@ typedef enum
 
 
 - (void)addTlineView{
-    NSLog(@"add tlinf");
+
     _timeLineView = [ZYWTimeLineView new];
     _timeLineView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:_timeLineView];
@@ -398,11 +395,9 @@ typedef enum
 
     if([self.timeData count]>0)
     {
-        NSLog(@"aasdsddfdsfgdfgfdgfd");
         NSMutableArray * timeArray = [NSMutableArray array];
         //[self.timeData removeLastObject];
         NSEnumerator *enumerator =[self.timeData objectEnumerator];
-        
         id obj = nil;
         while (obj = [enumerator nextObject]){
             NSString *string = obj;
@@ -424,7 +419,6 @@ typedef enum
         _timeLineView.timesCount = 243;
         _timeLineView.dataArray = timeArray.mutableCopy;
         [_timeLineView stockFill];
-        //[self freshTLine];
     }
     else{
         
@@ -454,6 +448,7 @@ typedef enum
             NSLog(@"sell out");
             break;
         case 2002:
+            //self.timeLineView = nil;
             btn.enabled = NO;
             btn.backgroundColor = RoseColor;
             self.TlineBtn.enabled = YES;
@@ -466,59 +461,15 @@ typedef enum
             btn.backgroundColor = RoseColor;
             self.klineBtn.backgroundColor = DropColor;
             self.klineBtn.enabled = YES;
-            //[NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addTlineView) userInfo:nil repeats:NO];
+           
             [self addTlineView];
             [self addTimeLineBox];
-            [self freshTLine];
             break;
         default:
             NSLog(@"dddddd");
             break;
     }
 }
-
-- (void)freshTLine{
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
-    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 5 * NSEC_PER_SEC, 0); //每3秒执行
-    // 事件回调
-    dispatch_source_set_event_handler(_timer, ^{
-        NSLog(@"aasdsddfdsfgdfgfdgfd");
-        _timeLineView.flag = 1;
-        NSMutableArray * timeArray = [NSMutableArray array];
-        //[self.timeData removeLastObject];
-        NSEnumerator *enumerator =[self.timeData objectEnumerator];
-        
-        id obj = nil;
-        while (obj = [enumerator nextObject]){
-            NSString *string = obj;
-            NSArray* array1 = [string componentsSeparatedByString:@","];
-            ZYWTimeLineModel * e = [[ZYWTimeLineModel alloc]init];
-            e.currtTime = array1[1];
-            e.preClosePx = [array1[6] doubleValue];
-            e.avgPirce = 0;
-            e.lastPirce = [array1[3] doubleValue];
-            e.volume = [array1[7] doubleValue];
-            e.rate = array1[8];
-            [timeArray addObject:e];
-        }
-        self->_timeLineView.leftMargin =10;
-        _timeLineView.rightMargin  = 10;
-        _timeLineView.lineWidth = 0.1;
-        _timeLineView.lineColor = [UIColor colorWithHexString:@"0033F0"];
-        _timeLineView.fillColor = [UIColor colorWithHexString:@"CCFFFF"];
-        _timeLineView.timesCount = 243;
-        _timeLineView.dataArray = timeArray.mutableCopy;
-        [_timeLineView stockFill];
-    });
-    // 开启定时器
-    dispatch_resume(_timer);
-}
-
-
-
-
-
 #pragma mark 指标视图
 
 - (void)addBottomViews

@@ -23,6 +23,10 @@
 @property (nonatomic,assign) NSInteger curentModelIndex;
 @property (nonatomic,strong) CAShapeLayer *timeLayer;
 @property (nonatomic,assign) CGFloat timeLayerHeight;
+@property (nonatomic,strong) UIBezierPath *path;
+@property (nonatomic,strong) ZYWLineModel *modle;
+@property (nonatomic,strong) NSMutableArray *array;
+@property (nonatomic,strong) NSTimer *timer;
 
 @end
 
@@ -43,42 +47,63 @@
 
 - (void)draw
 {
-    NSLog(@"jkkkkllllll");
     [self initConfig];
     [self initModelPostion];
     [self drawLineLayer];
-    [self drawBoxLayer];
+    if(self.boxLayer==nil){
+      [self drawBoxLayer];
+    }
     [self addTimeLayer];
-    [self addAxisLayer];
+    if(self.xLayer==nil){
+        [self addAxisLayer];
+    }
+    
     [self addLabels];
+    
 }
+
+
+- (void)changeLineColor{
+
+    [self.timeLayer removeFromSuperlayer];
+//    [self.xLayer removeFromSuperlayer];
+//    [self.yLayer removeFromSuperlayer];
+    [self.lineChartLayer removeFromSuperlayer];
+    [self.boxLayer removeFromSuperlayer];
+    [self.timeLabel removeFromSuperview];
+    [self.valueLabel removeFromSuperview];
+ 
+    [self stockFill];
+}
+
 
 - (void)stockFill
 {
-    NSLog(@"ssdsadfdgdfg");
     [self setNeedsDisplay];
 }
 
 - (void)drawRect:(CGRect)rect
 {
-    NSLog(@"dddffgfgfghf");
+    
     [super drawRect:rect];
     [self draw];
 }
 
 - (void)drawLineLayer
 {
+   
     UIBezierPath *path = [UIBezierPath drawLine:self.modelPostionArray];
     self.lineChartLayer = [CAShapeLayer layer];
     self.lineChartLayer.path = path.CGPath;
     self.lineChartLayer.strokeColor = self.lineColor.CGColor;
     self.lineChartLayer.fillColor = [[UIColor clearColor] CGColor];
-    
     self.lineChartLayer.lineWidth = self.lineWidth;
     self.lineChartLayer.lineCap = kCALineCapRound;
     self.lineChartLayer.lineJoin = kCALineJoinRound;
     self.lineChartLayer.contentsScale = [UIScreen mainScreen].scale;
     [self.layer addSublayer:self.lineChartLayer];
+ 
+    //沿着曲线和x轴画出封闭图形 填充颜色
     ZYWLineModel *lastPoint = _modelPostionArray.lastObject;
     [path addLineToPoint:CGPointMake(lastPoint.xPosition,self.height - self.topMargin - self.timeLayerHeight)];
     [path addLineToPoint:CGPointMake(self.leftMargin, self.height - self.topMargin - self.timeLayerHeight)];
@@ -87,7 +112,12 @@
     [path fill];
     [path stroke];
     [path closePath];
-    [self startRoundAnimation];
+    //[self startRoundAnimation];
+    if(self.timer == nil){
+        NSLog(@"timer begin");
+        self.timer =  [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(changeLineColor) userInfo:nil repeats:YES];
+    }
+   
 }
 
 - (void)drawBoxLayer
@@ -151,7 +181,6 @@
     [self.layer addSublayer:self.yLayer];
     
     CGPoint point = [self getLastModelPostion];
-    
     UIBezierPath *xPath = [UIBezierPath bezierPath];
     [xPath moveToPoint:CGPointMake(point.x,0)];
     [xPath addLineToPoint:CGPointMake(point.x,self.height - self.timeLayerHeight)];
@@ -198,16 +227,17 @@
     self.timeLayer.strokeColor = [UIColor clearColor].CGColor;
     self.timeLayer.fillColor = [UIColor clearColor].CGColor;
     [self.layer addSublayer:self.timeLayer];
-   
-    for (NSInteger i = 1;i<3;i++)
+    for (NSInteger i = 0;i<self.dataArray.count;i++)
     {
-        ZYWTimeLineModel *model = self.dataArray[self.dataArray.count*i/3];
-        CGFloat x = self.width/3*i;
-        CATextLayer *layer = [self getTextLayer];
-        layer.string = model.currtTime;
-        layer.position = CGPointMake(x,self.height - _timeLayerHeight/2);
-        layer.bounds = CGRectMake(0, 0, 60, self.timeLayerHeight);
-        [self.timeLayer addSublayer:layer];
+        if(i%20==0){
+            ZYWTimeLineModel *model = self.dataArray[i];
+            CGFloat x = self.width/self.dataArray.count*i;
+            CATextLayer *layer = [self getTextLayer];
+            layer.string = model.currtTime;
+            layer.position = CGPointMake(x,self.height - _timeLayerHeight/2);
+            layer.bounds = CGRectMake(0, 0, 60, self.timeLayerHeight);
+            [self.timeLayer addSublayer:layer];
+        }
     }
 }
 
@@ -216,7 +246,6 @@
     _timeLabel = [self createLabel];
     [self addSubview:_timeLabel];
     _timeLabel.bounds = CGRectMake(0, 0, 100, 20);
-    
     _valueLabel = [self createLabel];
     [self addSubview:_valueLabel];
     _valueLabel.bounds = CGRectMake(0, 0, 100, 20);
@@ -274,7 +303,7 @@
         ZYWTimeLineModel *model = [_dataArray objectAtIndex:i];
         CGFloat xPostion = (self.lineWidth)*i + self.leftMargin + self.boxLineWidth;
         CGFloat yPostion = (self.maxY - model.lastPirce)*self.scaleY;
-        ZYWLineModel *postitionModel = [ZYWLineModel initPositon:xPostion yPosition:yPostion color:[UIColor redColor]];
+        ZYWLineModel *postitionModel = [ZYWLineModel initPositon:xPostion yPosition:yPostion color:[UIColor blackColor]];
         [_modelPostionArray addObject:postitionModel];
     }
 }
@@ -287,7 +316,7 @@
     self.maxY = CGFLOAT_MIN;
     self.minY = CGFLOAT_MAX;
     CGFloat offset = CGFLOAT_MIN;
-    for (NSInteger i = 0; i < _dataArray.count; i++)
+    for(NSInteger i = 0; i < _dataArray.count; i++)
     {
         ZYWTimeLineModel *model = [_dataArray objectAtIndex:i];
         offset = offset >fabs(model.lastPirce-model.preClosePx) ? offset:fabs(model.lastPirce-model.preClosePx);//相差最高的两个点
@@ -295,12 +324,13 @@
     self.maxY =((ZYWTimeLineModel *)[_dataArray firstObject]).preClosePx + offset;
     self.minY =((ZYWTimeLineModel*)[_dataArray firstObject]).preClosePx - offset;
     self.scaleY = (self.height - self.topMargin - self.bottomMargin - self.boxLineWidth*2 - self.timeLayerHeight)/(self.maxY-self.minY);
-    NSLog(@"%d",self.flag);
-    if(self.flag == 0){
-        self.longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(LongPressGesture:)];
+    if(self.longPress == nil)
+    {
+        NSLog(@"add longpress");
+        self.longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(LongPressGesture:)];//长按手势
         [self addGestureRecognizer:self.longPress];
     }
-    
+
 }
 
 
@@ -356,7 +386,6 @@
 }
 
 #pragma mark 长按获取坐标
-
 - (CGPoint)getLongPressModelPostionWithXPostion:(CGFloat)xPostion
 {
     for (NSInteger i = 0; i<self.modelPostionArray.count; i++) {
@@ -424,8 +453,7 @@
     layer.contentsScale = [UIScreen mainScreen].scale;
     layer.fontSize = 12.f;
     layer.alignmentMode = kCAAlignmentCenter;
-    layer.foregroundColor =
-    [UIColor grayColor].CGColor;
+    layer.foregroundColor = [UIColor grayColor].CGColor;
     return layer;
 }
 @end
