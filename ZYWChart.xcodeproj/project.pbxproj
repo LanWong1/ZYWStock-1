@@ -212,6 +212,7 @@
 		4276AC451EA8B82600FD3986 /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 4276AC441EA8B82600FD3986 /* UIView+Extension.m */; };
 		42E7292F1E13C80200682B3E /* ZYWCandleModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E7292E1E13C80200682B3E /* ZYWCandleModel.m */; };
 		42E729341E13CAF200682B3E /* CandleLineVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E729331E13CAF200682B3E /* CandleLineVC.m */; };
+		4C5E070420E269100053F7CB /* searchNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5E070320E2690F0053F7CB /* searchNormal.png */; };
 		79715BAE312AE6B07031DB82 /* libPods-ZYWChart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E2B8C997449299EE5E08697 /* libPods-ZYWChart.a */; };
 		BA0EF4C820BD3D3300E5F974 /* CodeListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA0EF4C720BD3D3300E5F974 /* CodeListVC.m */; };
 		BA24DD9420D350AE008A1B9C /* TabVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA24DD9320D350AE008A1B9C /* TabVC.m */; };
@@ -236,7 +237,6 @@
 		BA5994C920E20CFC00AB2E76 /* checkVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA5994C820E20CFC00AB2E76 /* checkVC.m */; };
 		BA78AC7C20D9E3DA00F07D40 /* search.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC7B20D9E3D900F07D40 /* search.png */; };
 		BA78AC8220D9ECE800F07D40 /* searchSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8120D9ECE800F07D40 /* searchSelected.png */; };
-		BA78AC8420D9ED0100F07D40 /* searchNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8320D9ED0100F07D40 /* searchNormal.png */; };
 		BA78AC8720D9F23700F07D40 /* searchController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA78AC8620D9F23700F07D40 /* searchController.m */; };
 		BA78AC8920D9F52F00F07D40 /* goto.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8820D9F52F00F07D40 /* goto.png */; };
 		BA78AC8C20DB723000F07D40 /* ICENpTrade.m in Sources */ = {isa = PBXBuildFile; fileRef = BA78AC8B20DB723000F07D40 /* ICENpTrade.m */; };
@@ -540,6 +540,7 @@
 		42E7292E1E13C80200682B3E /* ZYWCandleModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZYWCandleModel.m; sourceTree = "<group>"; };
 		42E729321E13CAF200682B3E /* CandleLineVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CandleLineVC.h; sourceTree = "<group>"; };
 		42E729331E13CAF200682B3E /* CandleLineVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CandleLineVC.m; sourceTree = "<group>"; };
+		4C5E070320E2690F0053F7CB /* searchNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchNormal.png; sourceTree = "<group>"; };
 		4F7C1CFF0292A45235298718 /* Pods-ZYWChart.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZYWChart.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ZYWChart/Pods-ZYWChart.debug.xcconfig"; sourceTree = "<group>"; };
 		A8CBF1D36897BA6C3C8ABB35 /* Pods-ZYWChart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZYWChart.release.xcconfig"; path = "Pods/Target Support Files/Pods-ZYWChart/Pods-ZYWChart.release.xcconfig"; sourceTree = "<group>"; };
 		BA0EF4C620BD3D3300E5F974 /* CodeListVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodeListVC.h; sourceTree = "<group>"; };
@@ -576,7 +577,6 @@
 		BA6A04EF20CDFD8A00859A05 /* ICETool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICETool.m; sourceTree = "<group>"; };
 		BA78AC7B20D9E3D900F07D40 /* search.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = search.png; sourceTree = "<group>"; };
 		BA78AC8120D9ECE800F07D40 /* searchSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchSelected.png; sourceTree = "<group>"; };
-		BA78AC8320D9ED0100F07D40 /* searchNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = searchNormal.png; path = ../../../../Downloads/searchNormal.png; sourceTree = "<group>"; };
 		BA78AC8520D9F23700F07D40 /* searchController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = searchController.h; sourceTree = "<group>"; };
 		BA78AC8620D9F23700F07D40 /* searchController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = searchController.m; sourceTree = "<group>"; };
 		BA78AC8820D9F52F00F07D40 /* goto.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goto.png; sourceTree = "<group>"; };
@@ -700,7 +700,7 @@
 				BA5994BF20E209A600AB2E76 /* tradeNotSelected.png */,
 				BA5994BC20E209A400AB2E76 /* tradeSelected.png */,
 				BA78AC8120D9ECE800F07D40 /* searchSelected.png */,
-				BA78AC8320D9ED0100F07D40 /* searchNormal.png */,
+				4C5E070320E2690F0053F7CB /* searchNormal.png */,
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
 				4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */,
 				BA51D57820B6880E00B34DA7 /* config.client */,
@@ -1204,9 +1204,9 @@
 			files = (
 				BAE5985920C7CDE000524CB7 /* NpTrade.ice in Resources */,
 				BA5994C620E209A700AB2E76 /* checkSelected.png in Resources */,
+				4C5E070420E269100053F7CB /* searchNormal.png in Resources */,
 				BA5994C120E209A700AB2E76 /* quoSelected.png in Resources */,
 				BA5994C320E209A700AB2E76 /* checkNotSelected.png in Resources */,
-				BA78AC8420D9ED0100F07D40 /* searchNormal.png in Resources */,
 				BA78AC8220D9ECE800F07D40 /* searchSelected.png in Resources */,
 				BA78AC8920D9F52F00F07D40 /* goto.png in Resources */,
 				BA5994C520E209A700AB2E76 /* tradeNotSelected.png in Resources */,
