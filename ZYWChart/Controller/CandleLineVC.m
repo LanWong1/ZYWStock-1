@@ -89,6 +89,16 @@ typedef enum
 
 @implementation CandleLineVC
 
+-(instancetype)initWithScode:(NSString *)sCodeSelect KlineDataList:(WpQuoteServerDayKLineList *)KlineDataList TimeData:(NSArray*)TimeData{
+    
+    self = [super init];
+    if(self){
+        _sCode = sCodeSelect;
+        self.KlineData = KlineDataList;
+        self.timeData = TimeData;
+    }
+    return self;
+}
 
 - (void)viewDidLoad
 {
@@ -102,7 +112,6 @@ typedef enum
     [self addTopBoxView];
     [self addButtonView];
     [self addTopView];
-    
     //[self addButtonView];
 }
 - (void)addTopView{
@@ -112,22 +121,14 @@ typedef enum
     [self initCrossLine];
     [self addPriceView];
     [self addActivityView];
+
     self.view.backgroundColor = [UIColor whiteColor];
     self.dataSource = [NSMutableArray array];
     [self loadData];
 }
 
 #pragma mark 添加视图
--(instancetype)initWithScode:(NSString *)sCodeSelect KlineDataList:(WpQuoteServerDayKLineList *)KlineDataList TimeData:(NSArray*)TimeData{
-    
-    self = [super init];
-    if(self){
-        _sCode = sCodeSelect;
-        self.KlineData = KlineDataList;
-        self.timeData = TimeData;
-    }
-    return self;
-}
+
 - (void)addActivityView
 {
     _activityView = [UIActivityIndicatorView new];
@@ -668,6 +669,7 @@ typedef enum
 - (void)tapGesture:(UITapGestureRecognizer*)tapGesture
 {
     _screenVC = [CandleCrossScreenVC new];
+    _screenVC = [[CandleCrossScreenVC alloc]initWithScode:_sCode KlineDataList:self.KlineData TimeData:self.timeData];
     _screenVC.orientation = UIInterfaceOrientationLandscapeRight;
     _screenVC.delegate = self;
     [self presentViewController:_screenVC animated:NO completion:nil];

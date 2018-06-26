@@ -19,6 +19,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"资金";
+    
+    
+    
+    
     [self addLableWithName:@"货币编号" PositonX:0 PositionY:62 Type:0];
     [self addLableWithName:@"今资金"  PositonX:70 PositionY:62 Type:0];
     [self addLableWithName:@"今权益" PositonX:140 PositionY:62 Type:0];

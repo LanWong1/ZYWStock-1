@@ -16,6 +16,7 @@
 #import "AppDelegate.h"
 #import "TabVC.h"
 #import "CodeListVC.h"
+#import "checkVC.h"
 #define USERNAME @"200172"
 #define PASSWORD @"BS401885"
 
@@ -100,14 +101,26 @@
                     self.connectFlag = 1;
                     TabVC* tab = [[TabVC alloc]init];
                     BuyVC* buy = [[BuyVC alloc]init];
+                    checkVC* check = [[checkVC alloc]init];
                     CodeListVC* list = [[CodeListVC alloc]init];
                     UINavigationController* listNav = [[UINavigationController alloc]initWithRootViewController:list];
                     UINavigationController* buyNav = [[UINavigationController alloc]initWithRootViewController:buy];
+                    
+                    UINavigationController* checkNav = [[UINavigationController alloc]initWithRootViewController:check];
+                    
                     buyNav.tabBarItem.title = @"交易";
-                    buyNav.tabBarItem.image = [[UIImage imageNamed:@"coin.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    buyNav.tabBarItem.image = [[UIImage imageNamed:@"tradeNotSelected.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    buyNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"tradeSelected.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    
                     listNav.tabBarItem.title = @"行情";
-                    listNav.tabBarItem.image = [[UIImage imageNamed:@"quo.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-                    tab.viewControllers = @[listNav,buyNav];
+                    listNav.tabBarItem.image = [[UIImage imageNamed:@"quoNotSelected.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    listNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"quoSelected.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    
+                    checkNav.tabBarItem.title = @"账户";
+                    checkNav.tabBarItem.image = [[UIImage imageNamed:@"checkNotSelected.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    checkNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"checkSelected.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    
+                    tab.viewControllers = @[listNav,buyNav,checkNav];
                     [self presentViewController:tab animated:NO completion:nil];
                 }
              });

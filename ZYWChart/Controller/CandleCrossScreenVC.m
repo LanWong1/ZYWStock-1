@@ -19,7 +19,7 @@
 #import "ZYWCandleProtocol.h"
 #import "UIView+Extension.h"
 #import "ZYWCandlePostionModel.h"
-
+#import "ZYWTimeLineView.h"
 typedef enum
 {
     MACD = 1,
@@ -31,12 +31,10 @@ typedef enum
 #define CandleChartScale 0.6
 #define TechnicalViewScale 0.1
 #define BottomViewScale 0.28
-
 #define MinCount 10
 #define MaxCount 200
 
 @interface CandleCrossScreenVC () <NSXMLParserDelegate,ZYWCandleProtocol,ZYWTecnnicalViewDelegate>
-
 @property (nonatomic,strong) ZYWCrossPriceView *quotaView;
 @property (nonatomic,strong) UIScrollView *scrollView;
 @property (nonatomic,strong) ZYWCandleChartView *candleChartView;
@@ -58,11 +56,16 @@ typedef enum
 @property (nonatomic,strong) UIView *verticalView;
 @property (nonatomic,strong) UIView *leavView;
 @property (nonatomic,strong) UIActivityIndicatorView *activityView;
-
 @property (nonatomic, assign) NSUInteger zoomRightIndex;
 @property (nonatomic, assign) CGFloat currentZoom;
 @property (nonatomic, assign) NSInteger displayCount;
-
+@property (nonatomic, copy) NSString* sCode;
+@property (nonatomic, copy) WpQuoteServerDayKLineList* KlineData;
+@property (nonatomic, strong) NSArray* timeData;
+@property (nonatomic,strong) UIButton* klineBtn;
+@property (nonatomic,strong) UIButton* TlineBtn;
+@property (nonatomic,strong) ZYWTimeLineView *timeLineView;
+@property (nonatomic,strong) UIView *timeLineBoxView;
 @end
 
 @implementation CandleCrossScreenVC
@@ -80,23 +83,227 @@ typedef enum
     basicAnimation.fillMode = kCAFillModeForwards;
     [self.view.layer addAnimation:basicAnimation forKey:nil];
 }
-
+#pragma mark 初始化
+-(instancetype)initWithScode:(NSString *)sCodeSelect KlineDataList:(WpQuoteServerDayKLineList *)KlineDataList TimeData:(NSArray*)TimeData{
+    
+    self = [super init];
+    if(self){
+        _sCode = sCodeSelect;
+        self.KlineData = KlineDataList;
+        self.timeData = TimeData;
+    }
+    return self;
+}
+#pragma mark viewDidload
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     _type = MACD;
+    [self addQuotaView];
+    [self addScrollView];
+    [self addCandleChartView];
+    [self addTopBoxView];
+    [self addButtonView];
+    [self addTopView];
+
+}
+- (void)addTopView{
+    
     [self addSubViews];
     [self addBottomViews];
     [self initCrossLine];
     [self addPriceView];
     [self addActivityView];
+    
     self.view.backgroundColor = [UIColor whiteColor];
     self.dataSource = [NSMutableArray array];
     [self loadData];
 }
+- (void)addSubViews
+{
+    [self addTechnicalView];
+    [self addBottomView];
+    [self addBottomBoxView];
+    [self addGestureToCandleView];
+}
 
-#pragma mark 添加视图
+#pragma mark 按键视图
+-(void)addButtonView{
+    
+//    self.buyBtn = [[UIButton alloc]init];
+//    self.buyBtn.backgroundColor = RoseColor;
+//    [self.buyBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
+//    [self.buyBtn setTitle:@"开仓" forState:UIControlStateNormal];
+//    [self.buyBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    [self.buyBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+//    [self.buyBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
+//    self.buyBtn.tag = 2000;
+//    [self.view addSubview:self.buyBtn];
+//    [self.buyBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+//        //make.top.equalTo(_bottomBoxView.mas_bottom).offset(5);
+//        make.left.equalTo(self.view.mas_left).offset(5);
+//        make.right.equalTo(self.view.mas_left).offset(201);
+//        make.bottom.equalTo(self.view.mas_bottom);
+//        make.height.equalTo(@(50));
+//    }];
+//    self.sellBtn = [[UIButton alloc]init];
+//    self.sellBtn.backgroundColor = DropColor;
+//    [self.sellBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
+//    [self.sellBtn setTitle:@"平仓" forState:UIControlStateNormal];
+//    [self.sellBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    [self.sellBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+//    [self.sellBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
+//    self.sellBtn.tag = 2001;
+//    [self.view addSubview:self.sellBtn];
+//    [self.sellBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+//        //make.top.equalTo(_bottomBoxView.mas_bottom).offset(5);
+//        make.left.equalTo(self.buyBtn.mas_right).offset(6);
+//        make.right.equalTo(self.view.mas_right).offset(-6);
+//        make.bottom.equalTo(self.view.mas_bottom);
+//        make.height.equalTo(@(50));
+//    }];
+    
+    
+    self.klineBtn = [[UIButton alloc]init];
+    self.klineBtn.backgroundColor = RoseColor;
+    [self.klineBtn.titleLabel setFont:[UIFont systemFontOfSize:16]];
+    [self.klineBtn setTitle:@"K-Line" forState:UIControlStateNormal];
+    [self.klineBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.klineBtn setTitleColor:RoseColor forState:UIControlStateHighlighted];
+    self.klineBtn.tag = 2002;
+    [self.klineBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.klineBtn];
+    [self.klineBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_quotaView.mas_bottom).offset(2);
+        make.left.equalTo(self.view.mas_left).offset(5);
+        make.width.equalTo(@(60));
+        //make.right.equalTo(self.view.mas_right).offset(-6);
+        //make.bottom.equalTo(_topBoxView.mas_top);
+        make.bottom.equalTo(_topBoxView.mas_top).offset(-2);
+    }];
+    self.TlineBtn = [[UIButton alloc]init];
+    self.TlineBtn.backgroundColor = DropColor;;
+    [ self.TlineBtn.titleLabel setFont:[UIFont systemFontOfSize:16]];
+    [ self.TlineBtn setTitle:@"T-Line" forState:UIControlStateNormal];
+    [ self.TlineBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [ self.TlineBtn setTitleColor:RoseColor forState:UIControlStateHighlighted];
+    self.TlineBtn.tag = 2003;
+    [ self.TlineBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:self.TlineBtn];
+    [ self.TlineBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_quotaView.mas_bottom).offset(2);
+        make.left.equalTo(self.klineBtn.mas_right);
+        make.width.equalTo(@(60));
+        //make.right.equalTo(self.view.mas_right).offset(-6);
+        make.bottom.equalTo(_topBoxView.mas_top).offset(-2);
+    }];
+}
 
+
+- (void)btnPressed:(id)sender{
+    UIButton* btn = sender;
+    switch (btn.tag){
+//        case 2000:
+//            NSLog(@"buy in");
+//            self.buyVC = [[BuyVC alloc]init];
+//            self.buyVC.Scode = [_sCode uppercaseString];
+//            [self.navigationController pushViewController:self.buyVC animated:NO];
+//            break;
+//        case 2001:
+//            NSLog(@"sell out");
+//            break;
+        case 2002:
+            //self.timeLineView = nil;
+            btn.enabled = NO;
+            btn.backgroundColor = RoseColor;
+            self.TlineBtn.enabled = YES;
+            self.TlineBtn.backgroundColor = DropColor;
+            [self.timeLineView removeFromSuperview];
+            //[self addTopView];
+            break;
+        case 2003:
+            btn.enabled = NO;
+            btn.backgroundColor = RoseColor;
+            self.klineBtn.backgroundColor = DropColor;
+            self.klineBtn.enabled = YES;
+            [self addTlineView];
+            [self addTimeLineBox];
+            break;
+        default:
+            NSLog(@"dddddd");
+            break;
+    }
+}
+#pragma mark 添加分时图
+- (void)addTimeLineBox
+{
+    _timeLineBoxView = [UIView new];
+    [self.timeLineView addSubview:_timeLineBoxView];
+    _timeLineBoxView.userInteractionEnabled = NO;
+    _timeLineBoxView.layer.borderWidth = 0.5*widthradio;
+    _timeLineBoxView.layer.borderColor = [UIColor blackColor].CGColor;
+    [_timeLineBoxView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.top.height.equalTo(_timeLineView);
+    }];
+}
+- (void)addTlineView{
+    
+    _timeLineView = [ZYWTimeLineView new];
+    _timeLineView.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:_timeLineView];
+    [_timeLineView mas_makeConstraints:^(MASConstraintMaker *make) {
+        
+        //make.left.right.equalTo(self.view);
+        //make.height.equalTo(@(200));
+        make.left.equalTo(self.view.mas_left).offset(3);
+        make.right.equalTo(self.view.mas_right).offset(-5);
+        make.top.equalTo(_candleChartView);
+        make.bottom.equalTo(_bottomBoxView.mas_bottom);
+    }];
+    [_timeLineView layoutIfNeeded];
+    
+    if([self.timeData count]>0)
+    {
+        NSMutableArray * timeArray = [NSMutableArray array];
+        //[self.timeData removeLastObject];
+        NSEnumerator *enumerator =[self.timeData objectEnumerator];
+        id obj = nil;
+        while (obj = [enumerator nextObject]){
+            NSString *string = obj;
+            NSArray* array1 = [string componentsSeparatedByString:@","];
+            ZYWTimeLineModel * e = [[ZYWTimeLineModel alloc]init];
+            e.currtTime = array1[1];
+            e.preClosePx = [array1[6] doubleValue];
+            e.avgPirce = 0;
+            e.lastPirce = [array1[3] doubleValue];
+            e.volume = [array1[7] doubleValue];
+            e.rate = array1[8];
+            [timeArray addObject:e];
+        }
+        _timeLineView.leftMargin =10;
+        _timeLineView.rightMargin  = 10;
+        _timeLineView.lineWidth = 0.1;
+        _timeLineView.lineColor = [UIColor colorWithHexString:@"0033F0"];
+        _timeLineView.fillColor = [UIColor colorWithHexString:@"CCFFFF"];
+        _timeLineView.timesCount = 243;
+        _timeLineView.dataArray = timeArray.mutableCopy;
+        [_timeLineView stockFill];
+    }
+    else{
+        
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                       message:@"No data"
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK"
+                                                  style:UIAlertActionStyleDefault
+                                                handler:nil]];
+        [self presentViewController:alert animated:YES completion:nil];
+        
+    }
+    
+}
+#pragma mark 添加视图 view
 - (void)addActivityView
 {
     _activityView = [UIActivityIndicatorView new];
@@ -129,10 +336,10 @@ typedef enum
     _scrollView.showsHorizontalScrollIndicator = NO;
     _scrollView.backgroundColor = [UIColor whiteColor];
     [_scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_quotaView.mas_bottom);
+        make.top.equalTo(_quotaView.mas_bottom).offset(30);
         make.left.equalTo(@(5));
         make.width.mas_equalTo( DEVICE_HEIGHT - 60 - 5);
-         make.height.mas_equalTo(DEVICE_WIDTH - 50 - 20);
+        make.height.mas_equalTo(DEVICE_WIDTH - 50 - 20);
     }];
 }
 
@@ -145,11 +352,11 @@ typedef enum
     [_candleChartView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(_scrollView);
         make.right.equalTo(_scrollView);
-        make.height.equalTo(@((DEVICE_WIDTH - 70)*CandleChartScale));
+        make.height.equalTo(@((DEVICE_WIDTH - 120)*CandleChartScale));
         make.top.equalTo(_scrollView);
     }];
     _candleChartView.candleSpace = 2;
-    _candleChartView.displayCount = 25;
+    _candleChartView.displayCount = 15;
     _displayCount = 25;
     _candleChartView.lineWidth = 1*widthradio;
 }
@@ -165,7 +372,7 @@ typedef enum
         make.top.equalTo(_scrollView.mas_top).offset(1*heightradio);
         make.left.equalTo(_scrollView.mas_left).offset(-1*widthradio);
         make.right.equalTo(_scrollView.mas_right).offset(1*widthradio);
-        make.height.equalTo(@((DEVICE_WIDTH - 70)*CandleChartScale));
+        make.height.equalTo(@((DEVICE_WIDTH - 120)*CandleChartScale));
     }];
 }
 
@@ -232,25 +439,13 @@ typedef enum
     }];
 }
 
-- (void)addSubViews
-{
-    [self addQuotaView];
-    [self addScrollView];
-    [self addCandleChartView];
-    [self addTopBoxView];
-    [self addTechnicalView];
-    [self addBottomView];
-    [self addBottomBoxView];
-    [self addGestureToCandleView];
-}
-
 #pragma mark 添加手势
 
 - (void)addGestureToCandleView
 {
     _longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longGesture:)];
     [self.candleChartView addGestureRecognizer:_longPressGesture];
-    
+
     _pinchPressGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchesView:)];
     [self.scrollView addGestureRecognizer:_pinchPressGesture];
     
@@ -270,7 +465,6 @@ typedef enum
         make.top.bottom.equalTo(_bottomView);
         make.left.right.equalTo(_bottomView);
     }];
-    
     _kdjLineView = [ZYWKdjLineView new];
     [_bottomView addSubview:_kdjLineView];
     _kdjLineView.lineWidth = 1*widthradio;
@@ -279,7 +473,6 @@ typedef enum
         make.left.right.equalTo(_bottomView);
     }];
     _kdjLineView.hidden = YES;
-    
     _wrLineView = [ZYWWrLineView new];
     [_bottomView addSubview:_wrLineView];
     _wrLineView.lineWidth = 1*widthradio;
@@ -304,7 +497,6 @@ typedef enum
         make.bottom.equalTo(_macdView);
         make.left.equalTo(@(0));
     }];
-    
     self.leavView = [UIView new];
     self.leavView.clipsToBounds = YES;
     [self.scrollView addSubview:self.leavView];
@@ -315,7 +507,6 @@ typedef enum
         make.right.equalTo(self.candleChartView);
         make.height.equalTo(@(_candleChartView.lineWidth));
     }];
-    
     self.leavView.hidden = YES;
     self.verticalView.hidden = YES;
 }
@@ -354,10 +545,8 @@ typedef enum
         {
             return;
         }
-        
         self.scrollView.scrollEnabled = NO;
         oldPositionX = location.x;
-        
         CGPoint point = [self.candleChartView getLongPressModelPostionWithXPostion:location.x];
         CGFloat xPositoin = point.x + (self.candleChartView.candleWidth)/2.f - self.candleChartView.candleSpace/2.f ;
         CGFloat yPositoin = point.y +_candleChartView.topMargin;
@@ -365,15 +554,12 @@ typedef enum
             make.left.equalTo(@(xPositoin));
         }];
         [_quotaView layoutIfNeeded];
-        
         [self.leavView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.top.mas_equalTo(yPositoin);
         }];
-        
         self.verticalView.hidden = NO;
         self.leavView.hidden = NO;
     }
-    
     if(longPress.state == UIGestureRecognizerStateEnded)
     {
         if(self.verticalView)
@@ -385,7 +571,6 @@ typedef enum
         {
             self.leavView.hidden = YES;
         }
-        
         oldPositionX = 0;
         self.scrollView.scrollEnabled = YES;
     }
@@ -464,54 +649,46 @@ typedef enum
 #pragma mark 数据读取
 
 - (void)loadData {
-    NSString *fileName = @"N225.xml";
-    NSArray *fileComponents = [fileName componentsSeparatedByString:@"."];
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:[fileComponents objectAtIndex:0]
-                                                         ofType:[fileComponents objectAtIndex:1]];
-    NSURL *url = [NSURL fileURLWithPath:filePath];
-    NSXMLParser *parser = [[[NSXMLParser alloc] init] initWithContentsOfURL:url];
-    parser.delegate = self;
-    [parser parse];
-}
-
-- (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict
-{
-    if ([elementName isEqualToString:@"item"])
-    {
-        ZYWCandleModel *data = [[ZYWCandleModel alloc] init];
-        data.open = [[attributeDict objectForKey:@"open"] floatValue];
-        data.high = [[attributeDict objectForKey:@"high"] floatValue];
-        data.low =  [[attributeDict objectForKey:@"low"] floatValue];
-        data.close = [[attributeDict objectForKey:@"close"] floatValue];
-        data.date = [attributeDict objectForKey:@"date"];
-        self.model = data;
-    }
-}
-
-- (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName{
-    if ([elementName isEqualToString:@"item"])
-    {
-        if (self.dataSource == nil)
+//    NSString *fileName = @"N225.xml";
+//    NSArray *fileComponents = [fileName componentsSeparatedByString:@"."];
+//    NSString *filePath = [[NSBundle mainBundle] pathForResource:[fileComponents objectAtIndex:0]
+//                                                         ofType:[fileComponents objectAtIndex:1]];
+//    NSURL *url = [NSURL fileURLWithPath:filePath];
+//    NSXMLParser *parser = [[[NSXMLParser alloc] init] initWithContentsOfURL:url];
+//    parser.delegate = self;
+//    [parser parse];
+//
+    NSEnumerator *enumerator = [ self.KlineData objectEnumerator];
+    id obj = nil;
+    while (obj = [enumerator nextObject]){
+        WpQuoteServerDayKLineCodeInfo* kline = [[WpQuoteServerDayKLineCodeInfo alloc]init];
+        kline = obj;
+        if([_sCode isEqualToString: kline.sCode])
         {
-            self.dataSource = [[NSMutableArray alloc] init];
+            ZYWCandleModel *data = [[ZYWCandleModel alloc] init];
+            data.open = [kline.sOpenPrice floatValue];
+            data.high = [kline.sHighPrice floatValue];
+            data.low = [kline.sLowPrice floatValue];
+            data.close = [kline.sLastPrice floatValue];
+            data.date = kline.sDate;
+            self.model = data;
+            if (self.dataSource == nil)
+            {
+                self.dataSource = [[NSMutableArray alloc] init];
+            }
+            [self.dataSource addObject:self.model];
         }
-        [self.dataSource addObject:self.model];
     }
-}
-
-- (void)parserDidEndDocument:(NSXMLParser *)parser
-{
-    NSMutableArray * newMarray = [NSMutableArray array];
-    NSEnumerator * enumerator = [self.dataSource reverseObjectEnumerator];
     
+    NSMutableArray * newMarray = [NSMutableArray array];
+    NSEnumerator * enumerator1 = [self.dataSource reverseObjectEnumerator];//倒序排列
     id object;
-    while (object = [enumerator nextObject])
+    while (object = [enumerator1 nextObject])
     {
         [newMarray addObject:object];
     }
     [self reloadData:newMarray reload:NO];
 }
-
 - (void)reloadData:(NSMutableArray*)array reload:(BOOL)reload
 {
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
@@ -538,6 +715,45 @@ typedef enum
         });
     });
 }
+//- (void)parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary *)attributeDict
+//{
+//    if ([elementName isEqualToString:@"item"])
+//    {
+//        ZYWCandleModel *data = [[ZYWCandleModel alloc] init];
+//        data.open = [[attributeDict objectForKey:@"open"] floatValue];
+//        data.high = [[attributeDict objectForKey:@"high"] floatValue];
+//        data.low =  [[attributeDict objectForKey:@"low"] floatValue];
+//        data.close = [[attributeDict objectForKey:@"close"] floatValue];
+//        data.date = [attributeDict objectForKey:@"date"];
+//        self.model = data;
+//    }
+//}
+
+//- (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName{
+//    if ([elementName isEqualToString:@"item"])
+//    {
+//        if (self.dataSource == nil)
+//        {
+//            self.dataSource = [[NSMutableArray alloc] init];
+//        }
+//        [self.dataSource addObject:self.model];
+//    }
+//}
+//
+//- (void)parserDidEndDocument:(NSXMLParser *)parser
+//{
+//    NSMutableArray * newMarray = [NSMutableArray array];
+//    NSEnumerator * enumerator = [self.dataSource reverseObjectEnumerator];
+//
+//    id object;
+//    while (object = [enumerator nextObject])
+//    {
+//        [newMarray addObject:object];
+//    }
+//    [self reloadData:newMarray reload:NO];
+//}
+
+
 
 #pragma mark candleLineDelegeta
 

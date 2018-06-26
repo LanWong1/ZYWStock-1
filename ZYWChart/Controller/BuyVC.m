@@ -40,24 +40,26 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"交易";
-    self.ScodeTextField = [self addTextField:@"合约代码" PositionX:100 PositionY:150];
+    self.ScodeTextField = [self addTextField:@"合约代码" PositionX:100 PositionY:150 Lenth:200];
     self.ScodeTextField.text = self.Scode;
-    self.CountTextField = [self addTextField:@"手数" PositionX:100 PositionY:100];
+    self.CountTextField = [self addTextField:@"手数" PositionX:100 PositionY:100 Lenth:100];
+    self.CountTextField = [self addTextField:@"价格" PositionX:0   PositionY:100 Lenth:100];
     
-    self.OpenButton = [self addBuyButton:@"开仓" PositionX:110 PositionY:-10];
+    
+    self.OpenButton = [self addButton:@"开仓" PositionX:110 PositionY:-10];
     self.OpenButton.tag = 500;
     
-    self.CloseButton = [self addBuyButton:@"平仓" PositionX:-30 PositionY:-10];
+    self.CloseButton = [self addButton:@"平仓" PositionX:-30 PositionY:-10];
     self.CloseButton.tag = 500+1;
-    
-    self.QueryButton = [self addBuyButton:@"查委托" PositionX:110 PositionY:80];
-    self.QueryButton.tag = 502;
-    
-    self.FundButton = [self addBuyButton:@"查资金" PositionX:-30 PositionY:80];
-    self.FundButton.tag = 503;
-    
-    self.HoldButton = [self addBuyButton:@"查持仓" PositionX:110 PositionY:170];
-    self.HoldButton.tag = 504;
+//
+//    self.QueryButton = [self addButton:@"查委托" PositionX:110 PositionY:80];
+//    self.QueryButton.tag = 502;
+//
+//    self.FundButton = [self addButton:@"查资金" PositionX:-30 PositionY:80];
+//    self.FundButton.tag = 503;
+//
+//    self.HoldButton = [self addButton:@"查持仓" PositionX:110 PositionY:170];
+//    self.HoldButton.tag = 504;
     
     [self addActiveId];
  
@@ -71,8 +73,8 @@
     [self presentViewController:nav animated:NO completion:nil];
 }
 
--(UITextField*)addTextField:(NSString* )placeholder PositionX:(CGFloat)x PositionY:(CGFloat)y{
-    UITextField* TextField = [[UITextField alloc]initWithFrame:CGRectMake(self.view.centerX-x, self.view.centerY-y, 200, 50)];
+-(UITextField*)addTextField:(NSString* )placeholder PositionX:(CGFloat)x PositionY:(CGFloat)y Lenth:(CGFloat)l{
+    UITextField* TextField = [[UITextField alloc]initWithFrame:CGRectMake(self.view.centerX-x, self.view.centerY-y, l, 50)];
     [TextField setPlaceholder:placeholder];
     [TextField setTextColor:[UIColor redColor]];
     TextField.borderStyle = UITextBorderStyleRoundedRect;
@@ -94,7 +96,7 @@
     [self.view addSubview:self.activeId];
 }
 
--(UIButton*)addBuyButton:(NSString*) title PositionX:(CGFloat)x PositionY:(CGFloat)y {
+-(UIButton*)addButton:(NSString*) title PositionX:(CGFloat)x PositionY:(CGFloat)y {
     UIButton* btn = [[UIButton alloc]initWithFrame:CGRectMake(self.view.centerX-x, self.view.centerY+y, 80, 50)];
     [btn setTitle:title forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -109,7 +111,6 @@
 
 -(void)ButtonPressed:(id)sender{
     UIButton* btn = sender;
-    
     if(btn.tag==500){
         NSLog(@"open");
         self.CloseButton.enabled=YES;
@@ -127,6 +128,7 @@
             //}]];
             [self presentViewController:alert animated:YES completion:nil];  
         }
+        //开仓
         else{
             AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
             NSString* orderRef =  [app.iceTool SendCmd:app.strCmd strCmdType:@"GetOrderRef"];
@@ -140,39 +142,40 @@
         NSLog(@"close");
         self.CloseButton.enabled=NO;
     }
-    else if(btn.tag==502){
-        AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-#if NpTradeTest
-        [app.iceNpTrade queryOrder:app.strCmd];
-#else
-        [app.iceTool queryOrder:app.strCmd];
-#endif
-        [self.activeId startAnimating];
-        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addCheckOrderVC) userInfo:nil repeats:NO];
-    }
-    else if(btn.tag == 503)
-    {
-       AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-#if NpTradeTest
-       [app.iceNpTrade queryFund:app.strCmd];
-#else
-       [app.iceTool queryFund:app.strCmd];
-#endif
-       [self.activeId startAnimating];
-       [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addCheckFundVC) userInfo:nil repeats:NO];
-    }
-    else if(btn.tag == 504)
-    {
-        AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-#if NpTradeTest
-        [app.iceNpTrade queryHold:app.strCmd];
-#else
-        [app.iceTool queryHold:app.strCmd];
-#endif
-        [self.activeId startAnimating];
-        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addCheckHoldVC) userInfo:nil repeats:NO];
-    }
+//    else if(btn.tag==502){
+//        AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+//#if NpTradeTest
+//        [app.iceNpTrade queryOrder:app.strCmd];
+//#else
+//        [app.iceTool queryOrder:app.strCmd];
+//#endif
+//        [self.activeId startAnimating];
+//        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addCheckOrderVC) userInfo:nil repeats:NO];
+//    }
+//    else if(btn.tag == 503)
+//    {
+//       AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+//#if NpTradeTest
+//       [app.iceNpTrade queryFund:app.strCmd];
+//#else
+//       [app.iceTool queryFund:app.strCmd];
+//#endif
+//       [self.activeId startAnimating];
+//       [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addCheckFundVC) userInfo:nil repeats:NO];
+//    }
+//    else if(btn.tag == 504)
+//    {
+//        AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+//#if NpTradeTest
+//        [app.iceNpTrade queryHold:app.strCmd];
+//#else
+//        [app.iceTool queryHold:app.strCmd];
+//#endif
+//        [self.activeId startAnimating];
+//        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addCheckHoldVC) userInfo:nil repeats:NO];
+//    }
 }
+/*
 - (void)addCheckOrderVC{
     [self getMSg];
     CheckOrderVC* orderVC = [[CheckOrderVC alloc]init];
@@ -194,7 +197,7 @@
     self.tabBarController.tabBar.hidden = YES;
     [self getMSg];
     self.checkFundVC = [[CheckFundVC alloc]init];
-     self.checkFundVC.hidesBottomBarWhenPushed = YES;
+    self.checkFundVC.hidesBottomBarWhenPushed = YES;
     self.checkFundVC.fundDataArray=self.Msg;
     [self.navigationController pushViewController:self.checkFundVC animated:NO];
     [self.activeId stopAnimating];
@@ -218,7 +221,7 @@
         [self.Msg addObject:arry];
     }
 }
-
+*/
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

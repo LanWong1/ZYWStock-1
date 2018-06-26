@@ -47,33 +47,42 @@
 
 - (void)draw
 {
+    NSLog(@"redraw lineview");
     [self initConfig];
     [self initModelPostion];
     [self drawLineLayer];
+    
     if(self.boxLayer==nil){
       [self drawBoxLayer];
     }
-    [self addTimeLayer];
+    [self addTimeLayer];//时间轴
+    
     if(self.xLayer==nil){
-        [self addAxisLayer];
+        [self addAxisLayer];//十字线
     }
     
-    [self addLabels];
+    if(self.timeLabel == nil)
+    {
+        [self addLabels];//时间和值
+    }
+    
     
 }
 
 
-- (void)changeLineColor{
-
+- (void)redrawLine{
+    {
+        // todo reget data
+        // change dataArray
+    }
+   // [self.xLayer removeFromSuperlayer];
+   // [self.yLayer removeFromSuperlayer];
+   // [self.boxLayer removeFromSuperlayer];
+   // [self.timeLabel  removeFromSuperview];
+   // [self.valueLabel removeFromSuperview];
     [self.timeLayer removeFromSuperlayer];
-//    [self.xLayer removeFromSuperlayer];
-//    [self.yLayer removeFromSuperlayer];
     [self.lineChartLayer removeFromSuperlayer];
-    [self.boxLayer removeFromSuperlayer];
-    [self.timeLabel removeFromSuperview];
-    [self.valueLabel removeFromSuperview];
- 
-    [self stockFill];
+    [self stockFill];//重新绘制整个界面
 }
 
 
@@ -113,9 +122,10 @@
     [path stroke];
     [path closePath];
     //[self startRoundAnimation];
+    //start timer, redraw linechartview every second
     if(self.timer == nil){
         NSLog(@"timer begin");
-        self.timer =  [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(changeLineColor) userInfo:nil repeats:YES];
+        self.timer =  [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(redrawLine) userInfo:nil repeats:YES];
     }
    
 }
@@ -179,17 +189,17 @@
     self.yLayer.strokeColor = [UIColor colorWithHexString:@"FFA500"].CGColor;
     self.yLayer.fillColor = [[UIColor clearColor] CGColor];
     [self.layer addSublayer:self.yLayer];
-    
-    CGPoint point = [self getLastModelPostion];
-    UIBezierPath *xPath = [UIBezierPath bezierPath];
-    [xPath moveToPoint:CGPointMake(point.x,0)];
-    [xPath addLineToPoint:CGPointMake(point.x,self.height - self.timeLayerHeight)];
-    self.xLayer.path = xPath.CGPath;
-    
-    UIBezierPath *yPath = [UIBezierPath bezierPath];
-    [yPath moveToPoint:CGPointMake(self.leftMargin,point.y)];
-    [yPath addLineToPoint:CGPointMake(self.width - self.rightMargin,point.y)];
-    self.yLayer.path = yPath.CGPath;
+    //最近点的十字叉丝
+//    CGPoint point = [self getLastModelPostion];
+//    UIBezierPath *xPath = [UIBezierPath bezierPath];
+//    [xPath moveToPoint:CGPointMake(point.x,0)];
+//    [xPath addLineToPoint:CGPointMake(point.x,self.height - self.timeLayerHeight)];
+//    self.xLayer.path = xPath.CGPath;
+//
+//    UIBezierPath *yPath = [UIBezierPath bezierPath];
+//    [yPath moveToPoint:CGPointMake(self.leftMargin,point.y)];
+//    [yPath addLineToPoint:CGPointMake(self.width - self.rightMargin,point.y)];
+//    self.yLayer.path = yPath.CGPath;
     
     for (NSInteger i = 1; i<3 ;i++)
     {

@@ -18,8 +18,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"委托";
+    
     [self addLableWithName:@"商品代码" PositonX:0 PositionY:62 Type:0];
-    [self addLableWithName:@"合约代码"  PositonX:70 PositionY:62 Type:0];
+    [self addLableWithName:@"合约代码" PositonX:70 PositionY:62 Type:0];
     [self addLableWithName:@"委托状态" PositonX:140 PositionY:62 Type:0];
     [self addLableWithName:@"成交价格" PositonX:210 PositionY:62 Type:0];
     [self addLableWithName:@"成交数量" PositonX:280 PositionY:62 Type:0];

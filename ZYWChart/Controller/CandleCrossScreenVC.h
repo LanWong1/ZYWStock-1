@@ -7,6 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <WpQuote.h>
+#import <objc/Glacier2.h>
+#import <objc/Ice.h>
 
 @class CandleCrossScreenVC;
 
@@ -18,6 +21,7 @@
 
 @interface CandleCrossScreenVC : UIViewController
 
+-(instancetype)initWithScode:(NSString *)sCodeSelect KlineDataList:(WpQuoteServerDayKLineList *)KlineDataList TimeData:(NSArray*)TimeData;
 @property (assign, nonatomic)UIInterfaceOrientation orientation;
 @property (nonatomic,weak)  id <CandleCrossScreenVCDeleate> delegate;
 
