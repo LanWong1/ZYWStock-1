@@ -12,8 +12,8 @@
 
 @property (nonatomic, copy)    NSString *CommodityNo;
 @property (nonatomic, copy)    NSString *ContractNo;
-@property (nonatomic, copy)    NSString *OrderState;
-@property (nonatomic, copy)    NSString *MatchPrice;
+@property (nonatomic, copy)    NSString *OffSet;
+@property (nonatomic, copy)    NSString *Direction;
 @property (nonatomic, copy)    NSString *MatchVol;
 @property (nonatomic, copy)    NSString *OrderPrice;
 

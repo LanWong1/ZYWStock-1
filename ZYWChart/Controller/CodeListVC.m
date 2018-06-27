@@ -97,78 +97,7 @@
     UIBarButtonItem *searchBtn = [[UIBarButtonItem alloc]initWithCustomView:self.searchBtn];
     self.navigationItem.rightBarButtonItem = searchBtn;
 }
-//添加segment
-- (void)addSementView{
-    NSArray *titleArray = [[NSArray alloc]initWithObjects:@"中金所",@"郑商所",@"大商所",@"上期所", nil];
-    self.segment = [[UISegmentedControl alloc]initWithItems:titleArray];
-    self.segment.selectedSegmentIndex = 0;//默认显示中金所的数据
-    self.segment.tintColor = RoseColor;
-    self.segment.frame = CGRectMake(0, 58, DEVICE_WIDTH, 50);
-    [self.view addSubview:self.segment];
-    [self.segment addTarget:self action:@selector(touchSegment:) forControlEvents:UIControlEventValueChanged];
-}
-//选中segment
--(void)touchSegment:(UISegmentedControl*)segment{
-    [self.tableView removeFromSuperview];
-    switch(segment.selectedSegmentIndex){
-        case 0:
-            NSLog(@"中金所");
-            if(_zjsResult != nil){
-                self.KlineList =  self.KlineList0;
-                _searchResult = _zjsResult;
-                [self addTableView];
-            }
-            else{
-                self.sExchangeID = @"CFFEX";
-                self.segmentIndex = 0;
-                [self getData];
-            }
-            break;
-        case 1:
-            NSLog(@"郑商所");
-            if(_zssResult != nil){
-                self.KlineList =  self.KlineList1;
-                _searchResult = _zssResult;
-                [self addTableView];
-            }
-            else{
-                self.segmentIndex = 1;
-                self.sExchangeID = @"CZCE";
-                [self getData];
-            }
-            break;
-        case 2:
-            NSLog(@"大商所");
-            if(_dssResult != nil){
-                self.KlineList =  self.KlineList2;
-                _searchResult = _dssResult;
-                [self addTableView];
-            }
-            else{
-                self.segmentIndex = 2;
-                self.sExchangeID = @"DCE";
-                [self getData];
-            }
-            break;
-        case 3:
-              NSLog(@"上期所");
-            if(_sqsResult != nil){
-                self.KlineList =  self.KlineList3;
-                _searchResult = _sqsResult;
-                [self addTableView];
-            }
-            else{
-                self.segmentIndex = 3;
-                self.sExchangeID = @"SHFE";
-                [self getData];
-            }
-            break;
-        default:
-            break;
-    }
-    [self addRefreshControl];//添加刷新控件
-    //[self GetData];
-}
+
 #pragma -mark   获取数据
 //conncet to server
 - (void) GetData{
@@ -246,6 +175,7 @@
     // 开启定时器
     dispatch_resume(_timer);
 }
+
 //getData
 - (void)getData{
     //[self getKline];
@@ -265,7 +195,6 @@
             [self.label removeFromSuperview];
              [self loadData];
             [self addTableView];
-            //[self addSearch];
             [self addRefreshControl];
         });
     });
@@ -277,12 +206,12 @@
 {
     AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     [app.iceQuote Connect2Quote];
-    NSString* cmdType = @"CTP,";
-    cmdType =  [cmdType stringByAppendingString:app.strAcc];
-    [app.iceQuote SubscribeQuote:cmdType strCmd:@"c1809"];
-    [app.iceQuote Connect2Quote];
     self.KlineList = [app.iceQuote GetDayKline:self.sExchangeID];
-    //[self loadData];
+    
+//    NSString* cmdType = @"CTP,";
+//    cmdType =  [cmdType stringByAppendingString:app.strAcc];
+//    [app.iceQuote SubscribeQuote:cmdType strCmd:@"c1809"];
+    
 }
 
 //get titlesArray
@@ -299,7 +228,6 @@
         [self.KlineListAll addObject:kline];//将所有数据保存到klinelistall
         [sCodeAll addObject:kline.sCode];
     }
-  
     [_titlesArray addObject:sCodeAll[0]];
     for(int i=1;i<sCodeAll.count;i++){
         if(![sCodeAll[i] isEqual:sCodeAll[i-1]]){
@@ -329,14 +257,6 @@
     for(int j = 0;j<_titlesArray.count;j++){
         [self.allTitlesArray addObject:_titlesArray[j]];
     }
-//    if(self.allTitlesArray == nil)
-//    {
-//        self.allTitlesArray = _titlesArray;
-//    }
-//    else{
-//        [self.allTitlesArray addObjectsFromArray:_titlesArray];
-//    }
-    
     _searchResult = _titlesArray;
     
 }
@@ -377,23 +297,14 @@
         }
     }
     self.searchView = [[UIView alloc]initWithFrame:CGRectMake(0, 55, DEVICE_WIDTH, self.searchController.searchBar.frame.size.height)];
-    
     [self.searchView addSubview:self.search];
     [self.view addSubview:self.searchView];
-   
-    //self.tableView.hidden = YES;
-    //[self addTableView];
-    //self.tableView.tableHeaderView = view;
 }
 //tableview
 - (void)addTableView{
-    
     self->_tableView = [[UITableView alloc] init];
-    //self->_tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DEVICE_WIDTH,DEVICE_HEIGHT)];
-    
     self->_tableView.delegate = self;
     self->_tableView.dataSource = self;
-    
     [self.view addSubview:self->_tableView];
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.segment.mas_bottom);
@@ -402,7 +313,79 @@
         make.height.equalTo(@(DEVICE_HEIGHT-120));
     }];
 }
-
+#pragma -mark 添加segment
+//添加segment
+- (void)addSementView{
+    NSArray *titleArray = [[NSArray alloc]initWithObjects:@"中金所",@"郑商所",@"大商所",@"上期所", nil];
+    self.segment = [[UISegmentedControl alloc]initWithItems:titleArray];
+    self.segment.selectedSegmentIndex = 0;//默认显示中金所的数据
+    self.segment.tintColor = DropColor;
+    self.segment.frame = CGRectMake(0, 58, DEVICE_WIDTH, 50);
+    [self.view addSubview:self.segment];
+    [self.segment addTarget:self action:@selector(touchSegment:) forControlEvents:UIControlEventValueChanged];
+}
+//选中segment
+-(void)touchSegment:(UISegmentedControl*)segment{
+    [self.tableView removeFromSuperview];
+    switch(segment.selectedSegmentIndex){
+        case 0:
+            NSLog(@"中金所");
+            if(_zjsResult != nil){
+                self.KlineList =  self.KlineList0;
+                _searchResult = _zjsResult;
+                [self addTableView];
+            }
+            else{
+                self.sExchangeID = @"CFFEX";
+                self.segmentIndex = 0;
+                [self getData];
+            }
+            break;
+        case 1:
+            NSLog(@"郑商所");
+            if(_zssResult != nil){
+                self.KlineList =  self.KlineList1;
+                _searchResult = _zssResult;
+                [self addTableView];
+            }
+            else{
+                self.segmentIndex = 1;
+                self.sExchangeID = @"CZCE";
+                [self getData];
+            }
+            break;
+        case 2:
+            NSLog(@"大商所");
+            if(_dssResult != nil){
+                self.KlineList =  self.KlineList2;
+                _searchResult = _dssResult;
+                [self addTableView];
+            }
+            else{
+                self.segmentIndex = 2;
+                self.sExchangeID = @"DCE";
+                [self getData];
+            }
+            break;
+        case 3:
+            NSLog(@"上期所");
+            if(_sqsResult != nil){
+                self.KlineList =  self.KlineList3;
+                _searchResult = _sqsResult;
+                [self addTableView];
+            }
+            else{
+                self.segmentIndex = 3;
+                self.sExchangeID = @"SHFE";
+                [self getData];
+            }
+            break;
+        default:
+            break;
+    }
+    [self addRefreshControl];//添加下拉刷新控件
+    //[self GetData];
+}
 #pragma -mark 下拉刷新
 - (void)addRefreshControl{
     _refreshControl = [[UIRefreshControl alloc]init];
@@ -460,19 +443,7 @@
     }
     
     NSString* title = [_searchResult[indexPath.row] uppercaseString];//_searchResult[indexPath.row];
-//    UIButton* btn = [[UIButton alloc]init];
-//    btn = [self setButton:@"历史行情" xPosition:100];
-//    btn.tag = indexPath.row;
-//    btn.backgroundColor = DropColor;
-    //[btn addTarget:self action:@selector(btnPress:) forControlEvents:UIControlEventTouchUpInside];
-    
-//    UIButton *btn1 = [[UIButton alloc]init];
-//    btn1 = [self setButton:@"分时图" xPosition:100];
-//    btn1.backgroundColor = RoseColor;
-//    btn1.tag = indexPath.row+[_searchResult count];
-//    [btn1 addTarget:self action:@selector(btnPress:) forControlEvents:UIControlEventTouchUpInside];
-//    UILabel* lable = [[UILabel alloc]initWithFrame:CGRectMake(DEVICE_WIDTH-100, 10, 80, 35)];
-//    lable.text = @"点击查看";
+
     cell.textLabel.text = title;
     UIImage* gotoImg = [UIImage imageNamed:@"goto.png"];
     UIImageView* gotoView = [[UIImageView alloc]initWithFrame:CGRectMake(DEVICE_WIDTH-30, 10, 20, 20)];
@@ -480,37 +451,6 @@
     [cell addSubview:gotoView];
     return cell;
 }
-//button设置
-- (UIButton*)setButton:(NSString*)title xPosition:(CGFloat) x {
-    UIButton* btn = [[UIButton alloc]initWithFrame:CGRectMake(DEVICE_WIDTH-x, 10, 80, 35)];
-    [btn setTitle:title forState:UIControlStateNormal];
-    [btn.titleLabel setFont:[UIFont systemFontOfSize:12]];
-    //btn.layer.cornerRadius=20;
-    [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [btn setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
-    return btn;
-}
-////按下行情或者分时按钮
-//- (void)btnPress:(id)sender{
-//    UIButton*btn  = (UIButton*)sender;
-//
-//    //行情button按下
-//    if(btn.tag<[_searchResult count])
-//    {
-//        NSString *klinesCode = _searchResult[btn.tag];
-//        NSLog(@"历史行情 %@",_searchResult[btn.tag]);
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-//            [self.iceQuote Connect2Quote];
-//            self.TimeData =[self.iceQuote getTimeData:klinesCode];
-//            dispatch_sync(dispatch_get_main_queue(), ^{
-//                CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineList TimeData:self.TimeData];
-//                vc.hidesBottomBarWhenPushed = YES;
-//                [self.navigationController pushViewController:vc animated:YES];
-//            });
-//        });
-//    }
-//
-//}
 
 #pragma -mark searchbar delegate
 //search bar 过滤字符串 setter

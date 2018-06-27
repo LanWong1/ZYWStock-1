@@ -31,6 +31,7 @@
 - (WpTradeAPIServerCallbackReceiverI*)Connect2ICE;
 - (NSString*)SendCmd:(NSString*)StrCmd strCmdType:(NSString*)strCmdType;
 - (void)SendOrder:(NSString*)StrCmd;
+- (void)CancelOrder:(NSString*)StrCmd;
 @end
 
 

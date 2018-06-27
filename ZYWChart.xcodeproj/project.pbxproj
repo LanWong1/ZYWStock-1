@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		4204E0C71E120CEA00A47FCF /* ZYWLineModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 4204E0C61E120CEA00A47FCF /* ZYWLineModel.m */; };
 		4204E0CA1E12375D00A47FCF /* LineVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4204E0C91E12375D00A47FCF /* LineVC.m */; };
-		4204E0D31E12474400A47FCF /* SlipLineVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4204E0D21E12474400A47FCF /* SlipLineVC.m */; };
 		420577591E4AEF8600E8C15E /* ZYWCalcuteTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 420577581E4AEF8600E8C15E /* ZYWCalcuteTool.m */; };
 		4205775C1E4AF01F00E8C15E /* ZYWLineData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4205775B1E4AF01F00E8C15E /* ZYWLineData.m */; };
 		4205775F1E4AFAD500E8C15E /* ZYWCalcuteUntil.m in Sources */ = {isa = PBXBuildFile; fileRef = 4205775E1E4AFAD500E8C15E /* ZYWCalcuteUntil.m */; };
@@ -219,25 +218,14 @@
 		BA3EB02320CE08EC008F11E9 /* ICETool.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB02120CE08EB008F11E9 /* ICETool.m */; };
 		BA3EB02520CE21A5008F11E9 /* config1.client in Resources */ = {isa = PBXBuildFile; fileRef = BA3EB02420CE21A4008F11E9 /* config1.client */; };
 		BA3EB02820CE4137008F11E9 /* ICEQuote.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB02720CE4137008F11E9 /* ICEQuote.m */; };
-		BA3EB03120CF9D2E008F11E9 /* CheckFundVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB03020CF9D2E008F11E9 /* CheckFundVC.m */; };
 		BA3EB03420D0AB5C008F11E9 /* FundDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB03320D0AB5C008F11E9 /* FundDataModel.m */; };
-		BA3EB03720D10255008F11E9 /* CheckOrderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB03620D10255008F11E9 /* CheckOrderVC.m */; };
-		BA3EB03A20D24F2D008F11E9 /* checkHoldVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB03920D24F2D008F11E9 /* checkHoldVC.m */; };
 		BA3EB03D20D254D9008F11E9 /* OrderDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB03C20D254D9008F11E9 /* OrderDataModel.m */; };
 		BA3EB04020D2561D008F11E9 /* HoldDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3EB03F20D2561D008F11E9 /* HoldDataModel.m */; };
 		BA51D57920B6880E00B34DA7 /* config.client in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57820B6880E00B34DA7 /* config.client */; };
 		BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
 		BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
-		BA5994C120E209A700AB2E76 /* quoSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = BA5994BB20E209A300AB2E76 /* quoSelected.png */; };
-		BA5994C220E209A700AB2E76 /* tradeSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = BA5994BC20E209A400AB2E76 /* tradeSelected.png */; };
-		BA5994C320E209A700AB2E76 /* checkNotSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = BA5994BD20E209A400AB2E76 /* checkNotSelected.png */; };
-		BA5994C420E209A700AB2E76 /* quoNotSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = BA5994BE20E209A500AB2E76 /* quoNotSelected.png */; };
-		BA5994C520E209A700AB2E76 /* tradeNotSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = BA5994BF20E209A600AB2E76 /* tradeNotSelected.png */; };
-		BA5994C620E209A700AB2E76 /* checkSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = BA5994C020E209A600AB2E76 /* checkSelected.png */; };
 		BA5994C920E20CFC00AB2E76 /* checkVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA5994C820E20CFC00AB2E76 /* checkVC.m */; };
-		BA78AC7C20D9E3DA00F07D40 /* search.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC7B20D9E3D900F07D40 /* search.png */; };
 		BA78AC8220D9ECE800F07D40 /* searchSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8120D9ECE800F07D40 /* searchSelected.png */; };
-		BA78AC8720D9F23700F07D40 /* searchController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA78AC8620D9F23700F07D40 /* searchController.m */; };
 		BA78AC8920D9F52F00F07D40 /* goto.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8820D9F52F00F07D40 /* goto.png */; };
 		BA78AC8C20DB723000F07D40 /* ICENpTrade.m in Sources */ = {isa = PBXBuildFile; fileRef = BA78AC8B20DB723000F07D40 /* ICENpTrade.m */; };
 		BA78AC8E20DB745400F07D40 /* config2.client in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8D20DB745300F07D40 /* config2.client */; };
@@ -288,8 +276,6 @@
 		4204E0C61E120CEA00A47FCF /* ZYWLineModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZYWLineModel.m; sourceTree = "<group>"; };
 		4204E0C81E12375D00A47FCF /* LineVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineVC.h; sourceTree = "<group>"; };
 		4204E0C91E12375D00A47FCF /* LineVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LineVC.m; sourceTree = "<group>"; };
-		4204E0D11E12474400A47FCF /* SlipLineVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlipLineVC.h; sourceTree = "<group>"; };
-		4204E0D21E12474400A47FCF /* SlipLineVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlipLineVC.m; sourceTree = "<group>"; };
 		420577571E4AEF8600E8C15E /* ZYWCalcuteTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZYWCalcuteTool.h; sourceTree = "<group>"; };
 		420577581E4AEF8600E8C15E /* ZYWCalcuteTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZYWCalcuteTool.m; sourceTree = "<group>"; };
 		4205775A1E4AF01F00E8C15E /* ZYWLineData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZYWLineData.h; sourceTree = "<group>"; };
@@ -552,33 +538,18 @@
 		BA3EB02420CE21A4008F11E9 /* config1.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config1.client; sourceTree = "<group>"; };
 		BA3EB02620CE4137008F11E9 /* ICEQuote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICEQuote.h; sourceTree = "<group>"; };
 		BA3EB02720CE4137008F11E9 /* ICEQuote.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICEQuote.m; sourceTree = "<group>"; };
-		BA3EB02F20CF9D2E008F11E9 /* CheckFundVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckFundVC.h; sourceTree = "<group>"; };
-		BA3EB03020CF9D2E008F11E9 /* CheckFundVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckFundVC.m; sourceTree = "<group>"; };
 		BA3EB03220D0AB5C008F11E9 /* FundDataModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FundDataModel.h; sourceTree = "<group>"; };
 		BA3EB03320D0AB5C008F11E9 /* FundDataModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FundDataModel.m; sourceTree = "<group>"; };
-		BA3EB03520D10255008F11E9 /* CheckOrderVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckOrderVC.h; sourceTree = "<group>"; };
-		BA3EB03620D10255008F11E9 /* CheckOrderVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckOrderVC.m; sourceTree = "<group>"; };
-		BA3EB03820D24F2D008F11E9 /* checkHoldVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = checkHoldVC.h; sourceTree = "<group>"; };
-		BA3EB03920D24F2D008F11E9 /* checkHoldVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = checkHoldVC.m; sourceTree = "<group>"; };
 		BA3EB03B20D254D9008F11E9 /* OrderDataModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OrderDataModel.h; sourceTree = "<group>"; };
 		BA3EB03C20D254D9008F11E9 /* OrderDataModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OrderDataModel.m; sourceTree = "<group>"; };
 		BA3EB03E20D2561D008F11E9 /* HoldDataModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HoldDataModel.h; sourceTree = "<group>"; };
 		BA3EB03F20D2561D008F11E9 /* HoldDataModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HoldDataModel.m; sourceTree = "<group>"; };
 		BA51D57820B6880E00B34DA7 /* config.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.client; sourceTree = "<group>"; };
 		BA51D57A20B6881F00B34DA7 /* WpQuote.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WpQuote.ice; sourceTree = "<group>"; };
-		BA5994BB20E209A300AB2E76 /* quoSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = quoSelected.png; sourceTree = "<group>"; };
-		BA5994BC20E209A400AB2E76 /* tradeSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tradeSelected.png; sourceTree = "<group>"; };
-		BA5994BD20E209A400AB2E76 /* checkNotSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkNotSelected.png; sourceTree = "<group>"; };
-		BA5994BE20E209A500AB2E76 /* quoNotSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = quoNotSelected.png; sourceTree = "<group>"; };
-		BA5994BF20E209A600AB2E76 /* tradeNotSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tradeNotSelected.png; sourceTree = "<group>"; };
-		BA5994C020E209A600AB2E76 /* checkSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkSelected.png; sourceTree = "<group>"; };
 		BA5994C720E20CFC00AB2E76 /* checkVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = checkVC.h; sourceTree = "<group>"; };
 		BA5994C820E20CFC00AB2E76 /* checkVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = checkVC.m; sourceTree = "<group>"; };
 		BA6A04EF20CDFD8A00859A05 /* ICETool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICETool.m; sourceTree = "<group>"; };
-		BA78AC7B20D9E3D900F07D40 /* search.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = search.png; sourceTree = "<group>"; };
 		BA78AC8120D9ECE800F07D40 /* searchSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchSelected.png; sourceTree = "<group>"; };
-		BA78AC8520D9F23700F07D40 /* searchController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = searchController.h; sourceTree = "<group>"; };
-		BA78AC8620D9F23700F07D40 /* searchController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = searchController.m; sourceTree = "<group>"; };
 		BA78AC8820D9F52F00F07D40 /* goto.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goto.png; sourceTree = "<group>"; };
 		BA78AC8A20DB723000F07D40 /* ICENpTrade.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICENpTrade.h; sourceTree = "<group>"; };
 		BA78AC8B20DB723000F07D40 /* ICENpTrade.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICENpTrade.m; sourceTree = "<group>"; };
@@ -692,13 +663,6 @@
 				422787841E04F18600DB5CEC /* AppDelegate.m */,
 				422787831E04F18600DB5CEC /* AppDelegate.h */,
 				BA78AC8820D9F52F00F07D40 /* goto.png */,
-				BA78AC7B20D9E3D900F07D40 /* search.png */,
-				BA5994BD20E209A400AB2E76 /* checkNotSelected.png */,
-				BA5994C020E209A600AB2E76 /* checkSelected.png */,
-				BA5994BE20E209A500AB2E76 /* quoNotSelected.png */,
-				BA5994BB20E209A300AB2E76 /* quoSelected.png */,
-				BA5994BF20E209A600AB2E76 /* tradeNotSelected.png */,
-				BA5994BC20E209A400AB2E76 /* tradeSelected.png */,
 				BA78AC8120D9ECE800F07D40 /* searchSelected.png */,
 				4C5E070320E2690F0053F7CB /* searchNormal.png */,
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
@@ -753,8 +717,6 @@
 				BA0EF4C720BD3D3300E5F974 /* CodeListVC.m */,
 				4204E0C81E12375D00A47FCF /* LineVC.h */,
 				4204E0C91E12375D00A47FCF /* LineVC.m */,
-				4204E0D11E12474400A47FCF /* SlipLineVC.h */,
-				4204E0D21E12474400A47FCF /* SlipLineVC.m */,
 				42E729321E13CAF200682B3E /* CandleLineVC.h */,
 				42E729331E13CAF200682B3E /* CandleLineVC.m */,
 				4248A04C1EBC80E20086EAA7 /* TimeLineVC.h */,
@@ -763,14 +725,6 @@
 				423B9A2A1EC15EE300A2B49A /* CandleCrossScreenVC.m */,
 				BA8209C120C66E5700A5BCAE /* BuyVC.h */,
 				BA8209C220C66E5700A5BCAE /* BuyVC.m */,
-				BA3EB02F20CF9D2E008F11E9 /* CheckFundVC.h */,
-				BA3EB03020CF9D2E008F11E9 /* CheckFundVC.m */,
-				BA3EB03520D10255008F11E9 /* CheckOrderVC.h */,
-				BA3EB03620D10255008F11E9 /* CheckOrderVC.m */,
-				BA3EB03820D24F2D008F11E9 /* checkHoldVC.h */,
-				BA3EB03920D24F2D008F11E9 /* checkHoldVC.m */,
-				BA78AC8520D9F23700F07D40 /* searchController.h */,
-				BA78AC8620D9F23700F07D40 /* searchController.m */,
 				BA5994C720E20CFC00AB2E76 /* checkVC.h */,
 				BA5994C820E20CFC00AB2E76 /* checkVC.m */,
 			);
@@ -1203,22 +1157,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				BAE5985920C7CDE000524CB7 /* NpTrade.ice in Resources */,
-				BA5994C620E209A700AB2E76 /* checkSelected.png in Resources */,
 				4C5E070420E269100053F7CB /* searchNormal.png in Resources */,
-				BA5994C120E209A700AB2E76 /* quoSelected.png in Resources */,
-				BA5994C320E209A700AB2E76 /* checkNotSelected.png in Resources */,
 				BA78AC8220D9ECE800F07D40 /* searchSelected.png in Resources */,
 				BA78AC8920D9F52F00F07D40 /* goto.png in Resources */,
-				BA5994C520E209A700AB2E76 /* tradeNotSelected.png in Resources */,
 				422BF0BA1EC7081400DF8F4A /* data.plist in Resources */,
 				BA3EB02520CE21A5008F11E9 /* config1.client in Resources */,
 				422787901E04F18600DB5CEC /* LaunchScreen.storyboard in Resources */,
 				4227878D1E04F18600DB5CEC /* Assets.xcassets in Resources */,
 				4242362A1EC1ED8400C161A8 /* N225.xml in Resources */,
-				BA5994C220E209A700AB2E76 /* tradeSelected.png in Resources */,
 				BAE5985C20CA69B000524CB7 /* WpTrade.ice in Resources */,
-				BA78AC7C20D9E3DA00F07D40 /* search.png in Resources */,
-				BA5994C420E209A700AB2E76 /* quoNotSelected.png in Resources */,
 				423942841E2B6D0300F2A873 /* ta_retcode.csv in Resources */,
 				BA51D57920B6880E00B34DA7 /* config.client in Resources */,
 				BA78AC8E20DB745400F07D40 /* config2.client in Resources */,
@@ -1411,7 +1358,6 @@
 				423942FB1E2B6D0300F2A873 /* ta_MINMAXINDEX.c in Sources */,
 				423942C11E2B6D0300F2A873 /* ta_CDLMORNINGDOJISTAR.c in Sources */,
 				423942E71E2B6D0300F2A873 /* ta_LINEARREG_ANGLE.c in Sources */,
-				BA3EB03720D10255008F11E9 /* CheckOrderVC.m in Sources */,
 				423943071E2B6D0300F2A873 /* ta_ROC.c in Sources */,
 				BA5994C920E20CFC00AB2E76 /* checkVC.m in Sources */,
 				4239429D1E2B6D0300F2A873 /* ta_CDL3WHITESOLDIERS.c in Sources */,
@@ -1425,7 +1371,6 @@
 				423943131E2B6D0300F2A873 /* ta_STOCH.c in Sources */,
 				423942C01E2B6D0300F2A873 /* ta_CDLMATHOLD.c in Sources */,
 				423942A41E2B6D0300F2A873 /* ta_CDLCOUNTERATTACK.c in Sources */,
-				BA78AC8720D9F23700F07D40 /* searchController.m in Sources */,
 				4264501C1EA7680900B792A6 /* UIColor+YW.m in Sources */,
 				423942BD1E2B6D0300F2A873 /* ta_CDLLONGLINE.c in Sources */,
 				423942BB1E2B6D0300F2A873 /* ta_CDLLADDERBOTTOM.c in Sources */,
@@ -1443,7 +1388,6 @@
 				4239430B1E2B6D0300F2A873 /* ta_RSI.c in Sources */,
 				423942C31E2B6D0300F2A873 /* ta_CDLONNECK.c in Sources */,
 				4239431D1E2B6D0300F2A873 /* ta_TRIMA.c in Sources */,
-				BA3EB03A20D24F2D008F11E9 /* checkHoldVC.m in Sources */,
 				423942F91E2B6D0300F2A873 /* ta_MININDEX.c in Sources */,
 				423942A31E2B6D0300F2A873 /* ta_CDLCONCEALBABYSWALL.c in Sources */,
 				4239430F1E2B6D0300F2A873 /* ta_SINH.c in Sources */,
@@ -1457,12 +1401,10 @@
 				423942E81E2B6D0300F2A873 /* ta_LINEARREG_INTERCEPT.c in Sources */,
 				423942C81E2B6D0300F2A873 /* ta_CDLSHOOTINGSTAR.c in Sources */,
 				4248A0471EBC485A0086EAA7 /* ZYWLineView.m in Sources */,
-				BA3EB03120CF9D2E008F11E9 /* CheckFundVC.m in Sources */,
 				423942881E2B6D0300F2A873 /* ta_ADD.c in Sources */,
 				423942BE1E2B6D0300F2A873 /* ta_CDLMARUBOZU.c in Sources */,
 				BA3EB02320CE08EC008F11E9 /* ICETool.m in Sources */,
 				4205775C1E4AF01F00E8C15E /* ZYWLineData.m in Sources */,
-				4204E0D31E12474400A47FCF /* SlipLineVC.m in Sources */,
 				4239428D1E2B6D0300F2A873 /* ta_AROON.c in Sources */,
 				420577591E4AEF8600E8C15E /* ZYWCalcuteTool.m in Sources */,
 				4239429A1E2B6D0300F2A873 /* ta_CDL3LINESTRIKE.c in Sources */,
@@ -1670,7 +1612,7 @@
 					"-lGlacier2Objc",
 					"-lbz2",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = lanwong;
+				PRODUCT_BUNDLE_IDENTIFIER = "lanwong----";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1710,7 +1652,7 @@
 					"-lGlacier2Objc",
 					"-lbz2",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = lanwong;
+				PRODUCT_BUNDLE_IDENTIFIER = "lanwong----";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;

@@ -109,16 +109,16 @@
                     UINavigationController* checkNav = [[UINavigationController alloc]initWithRootViewController:check];
                     
                     buyNav.tabBarItem.title = @"交易";
-                    buyNav.tabBarItem.image = [[UIImage imageNamed:@"tradeNotSelected.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-                    buyNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"tradeSelected.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    buyNav.tabBarItem.image = [UIImage imageNamed:@"tradeNotSelected"];
+                    buyNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"tradeSelected"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
                     
                     listNav.tabBarItem.title = @"行情";
-                    listNav.tabBarItem.image = [[UIImage imageNamed:@"quoNotSelected.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-                    listNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"quoSelected.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    listNav.tabBarItem.image = [UIImage imageNamed:@"quoNotSelectet"];
+                    listNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"quoSelected"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
                     
                     checkNav.tabBarItem.title = @"账户";
-                    checkNav.tabBarItem.image = [[UIImage imageNamed:@"checkNotSelected.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-                    checkNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"checkSelected.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    checkNav.tabBarItem.image = [UIImage imageNamed:@"checkNotSelected"];
+                    checkNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"checkSelected"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
                     
                     tab.viewControllers = @[listNav,buyNav,checkNav];
                     [self presentViewController:tab animated:NO completion:nil];
@@ -202,7 +202,7 @@
     [btn setTitle:@"Login" forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
-    btn.backgroundColor = RoseColor;
+    btn.backgroundColor = DropColor;
     btn.layer.cornerRadius = 20;
     //btn.enabled = NO;
     [btn addTarget:self action:@selector(ButtonPressed) forControlEvents:UIControlEventTouchUpInside];

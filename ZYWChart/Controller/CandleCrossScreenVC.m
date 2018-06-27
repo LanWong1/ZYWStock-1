@@ -130,39 +130,7 @@ typedef enum
 #pragma mark 按键视图
 -(void)addButtonView{
     
-//    self.buyBtn = [[UIButton alloc]init];
-//    self.buyBtn.backgroundColor = RoseColor;
-//    [self.buyBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
-//    [self.buyBtn setTitle:@"开仓" forState:UIControlStateNormal];
-//    [self.buyBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-//    [self.buyBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-//    [self.buyBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
-//    self.buyBtn.tag = 2000;
-//    [self.view addSubview:self.buyBtn];
-//    [self.buyBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-//        //make.top.equalTo(_bottomBoxView.mas_bottom).offset(5);
-//        make.left.equalTo(self.view.mas_left).offset(5);
-//        make.right.equalTo(self.view.mas_left).offset(201);
-//        make.bottom.equalTo(self.view.mas_bottom);
-//        make.height.equalTo(@(50));
-//    }];
-//    self.sellBtn = [[UIButton alloc]init];
-//    self.sellBtn.backgroundColor = DropColor;
-//    [self.sellBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
-//    [self.sellBtn setTitle:@"平仓" forState:UIControlStateNormal];
-//    [self.sellBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-//    [self.sellBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-//    [self.sellBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
-//    self.sellBtn.tag = 2001;
-//    [self.view addSubview:self.sellBtn];
-//    [self.sellBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-//        //make.top.equalTo(_bottomBoxView.mas_bottom).offset(5);
-//        make.left.equalTo(self.buyBtn.mas_right).offset(6);
-//        make.right.equalTo(self.view.mas_right).offset(-6);
-//        make.bottom.equalTo(self.view.mas_bottom);
-//        make.height.equalTo(@(50));
-//    }];
-    
+
     
     self.klineBtn = [[UIButton alloc]init];
     self.klineBtn.backgroundColor = RoseColor;
@@ -203,23 +171,13 @@ typedef enum
 - (void)btnPressed:(id)sender{
     UIButton* btn = sender;
     switch (btn.tag){
-//        case 2000:
-//            NSLog(@"buy in");
-//            self.buyVC = [[BuyVC alloc]init];
-//            self.buyVC.Scode = [_sCode uppercaseString];
-//            [self.navigationController pushViewController:self.buyVC animated:NO];
-//            break;
-//        case 2001:
-//            NSLog(@"sell out");
-//            break;
+
         case 2002:
-            //self.timeLineView = nil;
             btn.enabled = NO;
             btn.backgroundColor = RoseColor;
             self.TlineBtn.enabled = YES;
             self.TlineBtn.backgroundColor = DropColor;
             [self.timeLineView removeFromSuperview];
-            //[self addTopView];
             break;
         case 2003:
             btn.enabled = NO;

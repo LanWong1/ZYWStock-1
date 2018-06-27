@@ -145,7 +145,7 @@ typedef enum
 - (void)addQuotaView
 {
     _quotaView = [ZYWQuotaView new];
-    _quotaView.backgroundColor = RoseColor;
+    _quotaView.backgroundColor = DropColor;
     [self.view addSubview:_quotaView];
     [_quotaView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(@(40));
@@ -309,7 +309,7 @@ typedef enum
     self.buyBtn = [[UIButton alloc]init];
     self.buyBtn.backgroundColor = RoseColor;
     [self.buyBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
-    [self.buyBtn setTitle:@"开仓" forState:UIControlStateNormal];
+    [self.buyBtn setTitle:@"买入" forState:UIControlStateNormal];
     [self.buyBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.buyBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [self.buyBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -325,7 +325,7 @@ typedef enum
     self.sellBtn = [[UIButton alloc]init];
     self.sellBtn.backgroundColor = DropColor;
     [self.sellBtn.titleLabel setFont:[UIFont systemFontOfSize:20]];
-    [self.sellBtn setTitle:@"平仓" forState:UIControlStateNormal];
+    [self.sellBtn setTitle:@"卖出" forState:UIControlStateNormal];
     [self.sellBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.sellBtn setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [self.sellBtn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];

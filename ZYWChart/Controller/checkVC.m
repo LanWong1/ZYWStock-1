@@ -34,6 +34,7 @@
 @property (nonatomic) int segmentIndex;
 @property (nonatomic,strong)  UITableView    *tableView;
 @property (nonatomic,strong)  UIView    *titleView;
+@property (nonatomic, retain) UIRefreshControl * refreshControl;
 
 @end
 
@@ -44,7 +45,7 @@
     self.navigationItem.title = @"账户";
     //self.titleView = [[UIView alloc]initWithFrame:CGRectMake(0, 120, DEVICE_WIDTH, 40)];
     [self addSementView];
-    //[self addTitleView];
+    [self addTitleView];
     [self addActiveId];
     AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
 #if NpTradeTest
@@ -68,6 +69,36 @@
         make.height.equalTo(@(40));
     }];
 }
+#pragma -mark 下拉刷新
+- (void)addRefreshControl{
+    _refreshControl = [[UIRefreshControl alloc]init];
+    _refreshControl.tintColor = [UIColor redColor];
+    _refreshControl.attributedTitle = [[NSAttributedString alloc]initWithString:@"下拉刷新"];
+    [_refreshControl addTarget:self action:@selector(refreshControlAction) forControlEvents:UIControlEventValueChanged];
+    [_tableView addSubview:_refreshControl];
+}
+- (void)refreshControlAction{
+    [self.tableView removeFromSuperview];
+    if(self.refreshControl.refreshing){
+        _refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"加载中..."];
+        switch (self.segmentIndex) {
+            case 0:
+                [self queryOrder];
+                break;
+            case 1:
+                [self queryHold];
+                break;
+            case 2:
+                [self queryFund];
+                break;
+            default:
+                break;
+        }
+  
+        [self.refreshControl endRefreshing];
+        
+    }
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -82,19 +113,22 @@
     NSArray *titleArray = [[NSArray alloc]initWithObjects:@"委托",@"持仓",@"资金", nil];
     self.segment = [[UISegmentedControl alloc]initWithItems:titleArray];
     self.segment.selectedSegmentIndex = 1;//默认显示委托的数据
-    self.segment.tintColor = RoseColor;
+    self.segment.tintColor = DropColor;
     self.segment.frame = CGRectMake(0, 65, DEVICE_WIDTH, 40);
     [self.view addSubview:self.segment];
     [self.segment addTarget:self action:@selector(touchSegment:) forControlEvents:UIControlEventValueChanged];
 }
 - (void)addOrderTitle{
 
-    [self.titleView removeFromSuperview];
-    [self addTitleView];
+//    [self.titleView removeFromSuperview];
+//    [self addTitleView];
+    for(UIView* view in [self.titleView subviews]){
+        [view removeFromSuperview];
+    }
     [self.titleView addSubview: [self addLableWithName:@"商品代码" PositonX:0 PositionY:Y Type:0]];
     [self.titleView addSubview: [self addLableWithName:@"合约代码" PositonX:70 PositionY:Y Type:0]];
-    [self.titleView addSubview: [self addLableWithName:@"委托状态" PositonX:140 PositionY:Y Type:0]];
-    [self.titleView addSubview: [self addLableWithName:@"成交价格" PositonX:210 PositionY:Y Type:0]];
+    [self.titleView addSubview: [self addLableWithName:@"开仓平仓" PositonX:140 PositionY:Y Type:0]];
+    [self.titleView addSubview: [self addLableWithName:@"买卖方向" PositonX:210 PositionY:Y Type:0]];
     [self.titleView addSubview: [self addLableWithName:@"成交数量" PositonX:280 PositionY:Y Type:0]];
     [self.titleView addSubview: [self addLableWithName:@"委托价格" PositonX:70*5 PositionY:Y Type:0]];
     //[self.view addSubview:self.titleView];
@@ -112,8 +146,8 @@
         OrderDataModel *M = [[OrderDataModel alloc]init];
         M.CommodityNo = arry[6];
         M.ContractNo  = arry[7];
-        M.OrderState  = arry[36];
-        M.MatchPrice  = arry[37];
+        M.OffSet  = arry[14];
+        M.Direction   = arry[13];
         M.MatchVol    = arry[38];
         M.OrderPrice  = arry[16];
         [self.modleOrderArray addObject:M];
@@ -126,8 +160,12 @@
 }
 - (void)addHoldTitle{
 
-    [self.titleView removeFromSuperview];
-    [self addTitleView];
+//    [self.titleView removeFromSuperview];
+//    [self addTitleView];
+    
+    for(UIView* view in [self.titleView subviews]){
+        [view removeFromSuperview];
+    }
     [self.titleView addSubview:[self addLableWithName:@"商品编号" PositonX:0 PositionY:Y Type:0]];
     [self.titleView addSubview:[self addLableWithName:@"合约号"  PositonX:70 PositionY:Y Type:0]];
     [self.titleView addSubview:[self addLableWithName:@"买卖方向" PositonX:140 PositionY:Y Type:0]];
@@ -161,9 +199,12 @@
     [self addTableView];
 }
 - (void)addFunTitle{
-    [self.titleView removeFromSuperview];
-    [self addTitleView];
-    //[self.view addSubview:self.titleView];r
+    
+//    [self.titleView removeFromSuperview];
+//    [self addTitleView];
+    for(UIView* view in [self.titleView subviews]){
+        [view removeFromSuperview];
+    }
     [self.titleView addSubview:[self addLableWithName:@"货币编号" PositonX:0 PositionY:Y Type:0]];
     [self.titleView addSubview:[self addLableWithName:@"今资金"  PositonX:70 PositionY:Y Type:0]];
     [self.titleView addSubview:[self addLableWithName:@"今权益" PositonX:140 PositionY:Y Type:0]];
@@ -211,25 +252,17 @@
 }
 //选中segment
 -(void)touchSegment:(UISegmentedControl*)segment{
-    [self.tableView removeFromSuperview];
+    [self.tableView removeFromSuperview];//移除tableview 重新创建
     switch(segment.selectedSegmentIndex){
         case 0:
             NSLog(@"委托");
             if(_modleOrderArray != nil){
-                
                 self.segmentIndex = 0;
                 [self addOrderTitle];
                 [self addTableView];
             }
             else{
-                AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-#if NpTradeTest
-                [app.iceNpTrade queryOrder:app.strCmd];
-#else
-                [app.iceTool queryOrder:app.strCmd];
-#endif
-                [self.activeId startAnimating];
-                [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addOrderView) userInfo:nil repeats:NO];
+                [self queryOrder];
             }
             break;
         case 1:
@@ -240,15 +273,7 @@
                 [self addTableView];
             }
             else{
-                AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-#if NpTradeTest
-                [app.iceNpTrade queryHold:app.strCmd];
-#else
-                [app.iceTool queryHold:app.strCmd];
-#endif
-                [self.activeId startAnimating];
-                [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addHoldView) userInfo:nil repeats:NO];
-        
+                [self queryHold];
             }
             break;
         case 2:
@@ -259,26 +284,47 @@
                 [self addTableView];
             }
             else{
-                self.segmentIndex = 2;
-                AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-#if NpTradeTest
-                [app.iceNpTrade queryFund:app.strCmd];
-#else
-                [app.iceTool queryFund:app.strCmd];
-#endif
-                [self.activeId startAnimating];
-                [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addFundView) userInfo:nil repeats:NO];
-  
+                [self queryFund];
             }
             break;
         default:
             break;
     }
-    //[self addRefreshControl];//添加刷新控件
-    //[self GetData];
+   
 }
 
+- (void)queryOrder{
+    AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+#if NpTradeTest
+    [app.iceNpTrade queryOrder:app.strCmd];
+#else
+    [app.iceTool queryOrder:app.strCmd];
+#endif
+    [self.activeId startAnimating];
+    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addOrderView) userInfo:nil repeats:NO];
+}
 
+- (void)queryHold{
+    AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+#if NpTradeTest
+    [app.iceNpTrade queryHold:app.strCmd];
+#else
+    [app.iceTool queryHold:app.strCmd];
+#endif
+    [self.activeId startAnimating];
+    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addHoldView) userInfo:nil repeats:NO];
+}
+- (void)queryFund{
+    
+    AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+#if NpTradeTest
+    [app.iceNpTrade queryFund:app.strCmd];
+#else
+    [app.iceTool queryFund:app.strCmd];
+#endif
+    [self.activeId startAnimating];
+    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addFundView) userInfo:nil repeats:NO];
+}
 
 - (UILabel*)addLableWithName:(NSString*)name PositonX:(CGFloat)x PositionY:(CGFloat)y Type:(int)type {
     UILabel* lable = [[UILabel alloc]initWithFrame:CGRectMake(x, y, 70, 40)];
@@ -287,7 +333,7 @@
     UIFont *font = [UIFont systemFontOfSize:13];
     [lable setFont:font];
     if(type==0){
-        lable.backgroundColor = RoseColor;
+        lable.backgroundColor = DropColor;
         [self.view addSubview:lable];
     }
     else{
@@ -300,7 +346,6 @@
 
 
 - (void)getMSg{
-    //self.tabBarController.tabBar.hidden = YES;
     self.Msg = [NSMutableArray array];
     AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
 #if NpTradeTest
@@ -319,23 +364,14 @@
 }
 
 
-//- (void)addTableView{
-//    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 160, DEVICE_WIDTH, DEVICE_HEIGHT-160)];
-//    self.tableView.delegate = self;
-//    self.tableView.dataSource = self;
-//    [self.view addSubview:self.tableView];
-//
-//}
+
 
 
 - (void)addTableView{
 
     self->_tableView = [[UITableView alloc] init];
-    //self->_tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DEVICE_WIDTH,DEVICE_HEIGHT)];
-
     self->_tableView.delegate = self;
     self->_tableView.dataSource = self;
-
     [self.view addSubview:self->_tableView];
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.titleView.mas_bottom);
@@ -343,6 +379,7 @@
         make.right.equalTo(self.view);
         make.height.equalTo(@(DEVICE_HEIGHT-120));
     }];
+    [self addRefreshControl];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -383,14 +420,14 @@
     if(self.segmentIndex == 0){
         NSString* CommodityNo = [self.modleOrderArray objectAtIndex:indexPath.row].CommodityNo;
         NSString* ContractNo = [self.modleOrderArray objectAtIndex:indexPath.row].ContractNo;
-        NSString* OrderState = [self.modleOrderArray objectAtIndex:indexPath.row].OrderState;
-        NSString* MatchPrice = [self.modleOrderArray objectAtIndex:indexPath.row].MatchPrice;
+        NSString* OffSet = [self.modleOrderArray objectAtIndex:indexPath.row].OffSet;
+        NSString* Direction = [self.modleOrderArray objectAtIndex:indexPath.row].Direction;
         NSString* MatchVol = [self.modleOrderArray objectAtIndex:indexPath.row].MatchVol;
         NSString* OrderPrice = [self.modleOrderArray objectAtIndex:indexPath.row].OrderPrice;
         [cell addSubview: [self addLableWithName:CommodityNo PositonX:0 PositionY:5 Type:1]];
         [cell addSubview:[self addLableWithName:ContractNo PositonX:70 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:OrderState PositonX:140 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:MatchPrice PositonX:210 PositionY:5 Type:1]];
+        [cell addSubview:[self addLableWithName:OffSet PositonX:140 PositionY:5 Type:1]];
+        [cell addSubview:[self addLableWithName:Direction PositonX:210 PositionY:5 Type:1]];
         [cell addSubview:[self addLableWithName:MatchVol PositonX:280 PositionY:5 Type:1]];
         [cell addSubview:[self addLableWithName:OrderPrice PositonX:350 PositionY:5 Type:1]];
     }
