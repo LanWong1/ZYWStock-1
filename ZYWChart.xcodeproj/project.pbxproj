@@ -16,7 +16,6 @@
 		422787851E04F18600DB5CEC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 422787841E04F18600DB5CEC /* AppDelegate.m */; };
 		422787881E04F18600DB5CEC /* HomeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 422787871E04F18600DB5CEC /* HomeVC.m */; };
 		4227878D1E04F18600DB5CEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4227878C1E04F18600DB5CEC /* Assets.xcassets */; };
-		422787901E04F18600DB5CEC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */; };
 		4227879B1E04F18600DB5CEC /* ZYWChartTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4227879A1E04F18600DB5CEC /* ZYWChartTests.m */; };
 		422787A61E04F18600DB5CEC /* ZYWChartUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 422787A51E04F18600DB5CEC /* ZYWChartUITests.m */; };
 		422BF0BA1EC7081400DF8F4A /* data.plist in Resources */ = {isa = PBXBuildFile; fileRef = 422BF0B91EC7081400DF8F4A /* data.plist */; };
@@ -289,7 +288,6 @@
 		422787861E04F18600DB5CEC /* HomeVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HomeVC.h; sourceTree = "<group>"; };
 		422787871E04F18600DB5CEC /* HomeVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HomeVC.m; sourceTree = "<group>"; };
 		4227878C1E04F18600DB5CEC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4227878F1E04F18600DB5CEC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		422787911E04F18600DB5CEC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		422787961E04F18600DB5CEC /* ZYWChartTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZYWChartTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4227879A1E04F18600DB5CEC /* ZYWChartTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZYWChartTests.m; sourceTree = "<group>"; };
@@ -666,7 +664,6 @@
 				BA78AC8120D9ECE800F07D40 /* searchSelected.png */,
 				4C5E070320E2690F0053F7CB /* searchNormal.png */,
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
-				4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */,
 				BA51D57820B6880E00B34DA7 /* config.client */,
 				BA78AC8D20DB745300F07D40 /* config2.client */,
 				BA3EB02420CE21A4008F11E9 /* config1.client */,
@@ -1162,7 +1159,6 @@
 				BA78AC8920D9F52F00F07D40 /* goto.png in Resources */,
 				422BF0BA1EC7081400DF8F4A /* data.plist in Resources */,
 				BA3EB02520CE21A5008F11E9 /* config1.client in Resources */,
-				422787901E04F18600DB5CEC /* LaunchScreen.storyboard in Resources */,
 				4227878D1E04F18600DB5CEC /* Assets.xcassets in Resources */,
 				4242362A1EC1ED8400C161A8 /* N225.xml in Resources */,
 				BAE5985C20CA69B000524CB7 /* WpTrade.ice in Resources */,
@@ -1461,17 +1457,6 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		4227878E1E04F18600DB5CEC /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4227878F1E04F18600DB5CEC /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		422787A81E04F18600DB5CEC /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1585,6 +1570,7 @@
 			buildSettings = {
 				ADDITIONAL_SDKS = "/usr/local/opt/ice/sdk/$(PLATFORM_NAME).sdk";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = W9753JG9F5;
@@ -1625,6 +1611,7 @@
 			buildSettings = {
 				ADDITIONAL_SDKS = "/usr/local/opt/ice/sdk/$(PLATFORM_NAME).sdk";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = W9753JG9F5;

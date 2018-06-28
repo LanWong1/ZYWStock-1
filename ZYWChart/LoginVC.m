@@ -77,7 +77,7 @@
 }
 //conncet to server
 - (void) connect2Server{
-
+    
     [self.view addSubview:self.label];
     [self addActiveId];
     [self.activeId startAnimating];

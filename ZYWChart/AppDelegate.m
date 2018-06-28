@@ -28,6 +28,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
    
+    [NSThread sleepForTimeInterval:3.0];
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
@@ -41,7 +42,6 @@
 #else
     LoginVC* Controller = [[LoginVC alloc]init];
 #endif
-    
     [self.window setRootViewController:Controller];
     [self.window makeKeyAndVisible];
     return YES;
