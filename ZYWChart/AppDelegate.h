@@ -21,11 +21,12 @@
 @property (strong,nonatomic) NSString* passWord;
 @property (strong,nonatomic) NSString* userID;
 @property (strong,nonatomic) NSString* strAcc;
-@property (strong,nonatomic) WpTradeAPIServerCallbackReceiverI* wpTradeAPIServerCallbackReceiverI;
-@property (strong,nonatomic) NpTradeAPIServerCallbackReceiverI* npTradeAPIServerCallbackReceiverI;
-@property (strong,nonatomic) WpQuoteServerCallbackReceiverI* wpQuoteServerCallbackReceiverI;
 @property (strong,nonatomic) LoginVC* loginVC;
 @property (nonatomic) int loginFlag;
 @property (strong,nonatomic) NSString* strCmd;
+@property (strong,nonatomic) WpTradeAPIServerCallbackReceiverI* wpTradeAPIServerCallbackReceiverI;
+@property (strong,nonatomic) NpTradeAPIServerCallbackReceiverI* npTradeAPIServerCallbackReceiverI;
+@property (strong,nonatomic) WpQuoteServerCallbackReceiverI* wpQuoteServerCallbackReceiverI;
+
 @end
 

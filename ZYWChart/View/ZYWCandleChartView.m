@@ -536,7 +536,6 @@ static inline bool isEqualZero(float value)
     [bpath addLineToPoint:CGPointMake(self.width, self.height - self.timeLayerHeight - self.bottomMargin)];
     bottomLayer.path = bpath.CGPath;
     [self.timeLayer addSublayer:bottomLayer];
-    
     CAShapeLayer *centXLayer = [self getAxispLayer];
     UIBezierPath *xPath = [UIBezierPath bezierPath];
     [xPath moveToPoint:CGPointMake(0,self.centerY)];

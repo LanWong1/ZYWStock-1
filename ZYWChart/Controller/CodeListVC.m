@@ -414,23 +414,24 @@
     NSString *klinesCode = _searchResult[indexPath.row];
     //NSString *klinesCode = _searchResult[btn.tag];
     NSLog(@"历史行情 %@",klinesCode);
-    //AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    //self.TimeData =[self.iceQuote getTimeData:klinesCode];
-    
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-        //[self.iceQuote Connect2Quote];
-        //获取分时图数据
-        AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-        [app.iceQuote Connect2Quote];
-        self.TimeData =[app.iceQuote getTimeData:klinesCode];
-        //self.TimeData =[self.iceQuote getTimeData:klinesCode];
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineListAll TimeData:self.TimeData];
-            vc.hidesBottomBarWhenPushed = YES;
-            [self.navigationController pushViewController:vc animated:YES];
-        });
-    });
+    CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineListAll];
+    vc.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
+
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
+//        //[self.iceQuote Connect2Quote];
+//        //获取分时图数据
+//        AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+//        [app.iceQuote Connect2Quote];
+//        self.TimeData =[app.iceQuote getTimeData:klinesCode];
+//        //self.TimeData =[self.iceQuote getTimeData:klinesCode];
+//        dispatch_sync(dispatch_get_main_queue(), ^{
+//            CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineListAll TimeData:self.TimeData];
+//            vc.hidesBottomBarWhenPushed = YES;
+//            [self.navigationController pushViewController:vc animated:YES];
+//        });
+//    });
+
 }
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -438,17 +439,17 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (!cell)
     {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
-    
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     NSString* title = [_searchResult[indexPath.row] uppercaseString];//_searchResult[indexPath.row];
 
     cell.textLabel.text = title;
-    UIImage* gotoImg = [UIImage imageNamed:@"goto.png"];
-    UIImageView* gotoView = [[UIImageView alloc]initWithFrame:CGRectMake(DEVICE_WIDTH-30, 10, 20, 20)];
-    [gotoView setImage:gotoImg];
-    [cell addSubview:gotoView];
+//    UIImage* gotoImg = [UIImage imageNamed:@"goto.png"];
+//    UIImageView* gotoView = [[UIImageView alloc]initWithFrame:CGRectMake(DEVICE_WIDTH-30, 10, 20, 20)];
+//    [gotoView setImage:gotoImg];
+//    [cell addSubview:gotoView];
     return cell;
 }
 

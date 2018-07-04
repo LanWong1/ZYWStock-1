@@ -17,5 +17,5 @@
 
 
 //-(instancetype)initWithScode:(NSString*)sCodeSelect;
--(instancetype)initWithScode:(NSString *)sCodeSelect KlineDataList:(WpQuoteServerDayKLineList *)KlineDataList TimeData:(NSArray*)timeData;
+-(instancetype)initWithScode:(NSString *)sCodeSelect KlineDataList:(WpQuoteServerDayKLineList *)KlineDataList;
 @end

@@ -22,7 +22,7 @@
 #import "ZYWTimeLineView.h"
 #import "ICEQuote.h"
 #import "BuyVC.h"
-
+#import "AppDelegate.h"
 
 
 
@@ -41,7 +41,7 @@ typedef enum
 #define MinCount 10
 #define MaxCount 100
 
-@interface CandleLineVC ()<NSXMLParserDelegate,ZYWCandleProtocol,ZYWTecnnicalViewDelegate,CandleCrossScreenVCDeleate>
+@interface CandleLineVC ()<NSXMLParserDelegate,ZYWCandleProtocol,ZYWTecnnicalViewDelegate,CandleCrossScreenVCDeleate,ZYWTimeLineViewDataSource>
 @property (nonatomic,strong) ZYWTimeLineView *timeLineView;
 
 
@@ -89,23 +89,53 @@ typedef enum
 
 @implementation CandleLineVC
 
--(instancetype)initWithScode:(NSString *)sCodeSelect KlineDataList:(WpQuoteServerDayKLineList *)KlineDataList TimeData:(NSArray*)TimeData{
+
+
+# pragma --mark DataSource of timeline
+- (NSMutableArray*)getString{
+    AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    self.timeData =[app.iceQuote getTimeData:self.sCode];
+    NSMutableArray * timeArray = [NSMutableArray array];
+    //[self.timeData removeLastObject];
+    NSEnumerator *enumerator =[self.timeData objectEnumerator];
+    id obj = nil;
+    while (obj = [enumerator nextObject]){
+        NSString *string = obj;
+        NSArray* array1 = [string componentsSeparatedByString:@","];
+        ZYWTimeLineModel * e = [[ZYWTimeLineModel alloc]init];
+        e.currtTime = array1[1];
+        e.preClosePx = [array1[6] doubleValue];
+        e.avgPirce = 0;
+        e.lastPirce = [array1[3] doubleValue];
+        e.volume = [array1[7] doubleValue];
+        e.rate = array1[8];
+        [timeArray addObject:e];
+    }
+    return timeArray;
+}
+
+
+
+
+
+-(instancetype)initWithScode:(NSString *)sCodeSelect KlineDataList:(WpQuoteServerDayKLineList *)KlineDataList{
     
     self = [super init];
     if(self){
         _sCode = sCodeSelect;
         self.KlineData = KlineDataList;
-        self.timeData = TimeData;
     }
     return self;
 }
+
+
+
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.navigationItem.title  = [_sCode uppercaseString];
     _type = MACD;
-
     [self addQuotaView];
     [self addScrollView];
     [self addCandleChartView];
@@ -381,95 +411,124 @@ typedef enum
 - (void)addTlineView{
 
     _timeLineView = [ZYWTimeLineView new];
+    _timeLineView.dataSource = self;
     _timeLineView.backgroundColor = [UIColor whiteColor];
+    //[self.scrollView addSubview:_timeLineView];
     [self.view addSubview:_timeLineView];
     [_timeLineView mas_makeConstraints:^(MASConstraintMaker *make) {
 
         //make.left.right.equalTo(self.view);
         //make.height.equalTo(@(200));
-        make.left.equalTo(self.view.mas_left).offset(5);
+        make.left.equalTo(self.view.mas_left).offset(4);
         make.right.equalTo(self.view.mas_right).offset(-5);
         make.top.equalTo(_candleChartView);
         make.bottom.equalTo(_bottomBoxView.mas_bottom);
     }];
     [_timeLineView layoutIfNeeded];
 
-    if([self.timeData count]>0)
-    {
-        NSMutableArray * timeArray = [NSMutableArray array];
-        //[self.timeData removeLastObject];
-        NSEnumerator *enumerator =[self.timeData objectEnumerator];
-        id obj = nil;
-        while (obj = [enumerator nextObject]){
-            NSString *string = obj;
-            NSArray* array1 = [string componentsSeparatedByString:@","];
-            ZYWTimeLineModel * e = [[ZYWTimeLineModel alloc]init];
-            e.currtTime = array1[1];
-            e.preClosePx = [array1[6] doubleValue];
-            e.avgPirce = 0;
-            e.lastPirce = [array1[3] doubleValue];
-            e.volume = [array1[7] doubleValue];
-            e.rate = array1[8];
-            [timeArray addObject:e];
-        }
-        _timeLineView.leftMargin =10;
-        _timeLineView.rightMargin  = 10;
-        _timeLineView.lineWidth = 0.1;
-        _timeLineView.lineColor = [UIColor colorWithHexString:@"0033F0"];
-        _timeLineView.fillColor = [UIColor colorWithHexString:@"CCFFFF"];
-        _timeLineView.timesCount = 243;
-        _timeLineView.dataArray = timeArray.mutableCopy;
-        [_timeLineView stockFill];
-    }
-    else{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
+        //[self.iceQuote Connect2Quote];
+        //获取分时图数据
+        AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+        //[app.iceQuote Connect2Quote];
+        self.timeData =[app.iceQuote getTimeData:self.sCode];
+        //self.TimeData =[self.iceQuote getTimeData:klinesCode];
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            
+            if([self.timeData count]>0)
+            {
+                NSMutableArray * timeArray = [NSMutableArray array];
+                //[self.timeData removeLastObject];
+                NSEnumerator *enumerator =[self.timeData objectEnumerator];
+                id obj = nil;
+                while (obj = [enumerator nextObject]){
+                    NSString *string = obj;
+                    NSArray* array1 = [string componentsSeparatedByString:@","];
+                    ZYWTimeLineModel * e = [[ZYWTimeLineModel alloc]init];
+                    e.currtTime = array1[1];
+                    e.preClosePx = [array1[6] doubleValue];
+                    e.avgPirce = 0;
+                    e.lastPirce = [array1[3] doubleValue];
+                    e.volume = [array1[7] doubleValue];
+                    e.rate = array1[8];
+                    [timeArray addObject:e];
+                }
+                _timeLineView.leftMargin =10;
+                _timeLineView.rightMargin  = 10;
+                _timeLineView.lineWidth = 0.1;
+                _timeLineView.lineColor = [UIColor colorWithHexString:@"0033F0"];
+                _timeLineView.fillColor = [UIColor colorWithHexString:@"CCFFFF"];
+                _timeLineView.timesCount = [timeArray count];
+                _timeLineView.dataArray = timeArray.mutableCopy;
+                [_timeLineView stockFill];
+            }
+            else{
+                UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
+                                                                               message:@"No data"
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                
+                [alert addAction:[UIAlertAction actionWithTitle:@"OK"
+                                                          style:UIAlertActionStyleDefault
+                                                        handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+                
+            }
+    
+        });
+    });
+
         
-        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Error"
-                                                                       message:@"No data"
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-        
-        [alert addAction:[UIAlertAction actionWithTitle:@"OK"
-                                                  style:UIAlertActionStyleDefault
-                                                handler:nil]];
-        [self presentViewController:alert animated:YES completion:nil];
-        
-    }
+
     
 }
 
 - (void)btnPressed:(id)sender{
     UIButton* btn = sender;
     switch (btn.tag){
-        case 2000:
-            NSLog(@"buy in");
-            self.buyVC = [[BuyVC alloc]init];
-            self.buyVC.Scode = [_sCode uppercaseString];
-            [self.navigationController pushViewController:self.buyVC animated:NO];
-            break;
-        case 2001:
-            NSLog(@"sell out");
-            break;
+
         case 2002:
+            NSLog(@"kline");
+//            self.topBoxView.hidden = NO;
+//            self.technicalView.hidden = NO;
+//            self.candleChartView.hidden = NO;
+//            self.bottomView.hidden = NO;
+//            self.bottomBoxView.hidden = NO;
+            
             //self.timeLineView = nil;
             btn.enabled = NO;
             btn.backgroundColor = RoseColor;
             self.TlineBtn.enabled = YES;
             self.TlineBtn.backgroundColor = DropColor;
+            [self.timeLineView.timer invalidate];
             [self.timeLineView removeFromSuperview];
-            //[self addTopView];
+            //self.timeLineView = nil;
             break;
         case 2003:
+            NSLog(@"Tline");
+//            self.topBoxView.hidden = YES;
+//            self.technicalView.hidden = YES;
+//            self.candleChartView.hidden = YES;
+//            self.bottomView.hidden = YES;
+//            self.bottomBoxView.hidden = YES;
+            
             btn.enabled = NO;
             btn.backgroundColor = RoseColor;
             self.klineBtn.backgroundColor = DropColor;
             self.klineBtn.enabled = YES;
-           
             [self addTlineView];
             [self addTimeLineBox];
             break;
         default:
+            [self toTradeVC];
             NSLog(@"dddddd");
             break;
     }
+}
+
+- (void)toTradeVC{
+    self.buyVC = [[BuyVC alloc]init];
+    self.buyVC.Scode = [_sCode uppercaseString];
+    [self.navigationController pushViewController:self.buyVC animated:NO];
 }
 #pragma mark 指标视图
 
@@ -781,7 +840,7 @@ typedef enum
 }
 
 - (void)displayScreenleftPostion:(CGFloat)leftPostion startIndex:(NSInteger)index count:(NSInteger)count
-{
+{    
     [self showIndexLineView:leftPostion startIndex:index count:count];
 }
 

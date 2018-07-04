@@ -225,7 +225,6 @@
 		BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
 		BA5994C920E20CFC00AB2E76 /* checkVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA5994C820E20CFC00AB2E76 /* checkVC.m */; };
 		BA78AC8220D9ECE800F07D40 /* searchSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8120D9ECE800F07D40 /* searchSelected.png */; };
-		BA78AC8920D9F52F00F07D40 /* goto.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8820D9F52F00F07D40 /* goto.png */; };
 		BA78AC8C20DB723000F07D40 /* ICENpTrade.m in Sources */ = {isa = PBXBuildFile; fileRef = BA78AC8B20DB723000F07D40 /* ICENpTrade.m */; };
 		BA78AC8E20DB745400F07D40 /* config2.client in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8D20DB745300F07D40 /* config2.client */; };
 		BA78AC9120DB74E800F07D40 /* LoginVC1.m in Sources */ = {isa = PBXBuildFile; fileRef = BA78AC9020DB74E800F07D40 /* LoginVC1.m */; };
@@ -548,7 +547,6 @@
 		BA5994C820E20CFC00AB2E76 /* checkVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = checkVC.m; sourceTree = "<group>"; };
 		BA6A04EF20CDFD8A00859A05 /* ICETool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICETool.m; sourceTree = "<group>"; };
 		BA78AC8120D9ECE800F07D40 /* searchSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchSelected.png; sourceTree = "<group>"; };
-		BA78AC8820D9F52F00F07D40 /* goto.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goto.png; sourceTree = "<group>"; };
 		BA78AC8A20DB723000F07D40 /* ICENpTrade.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICENpTrade.h; sourceTree = "<group>"; };
 		BA78AC8B20DB723000F07D40 /* ICENpTrade.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICENpTrade.m; sourceTree = "<group>"; };
 		BA78AC8D20DB745300F07D40 /* config2.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config2.client; sourceTree = "<group>"; };
@@ -660,7 +658,6 @@
 				424347151EF69C570021F2C5 /* BaseNavigationController.m */,
 				422787841E04F18600DB5CEC /* AppDelegate.m */,
 				422787831E04F18600DB5CEC /* AppDelegate.h */,
-				BA78AC8820D9F52F00F07D40 /* goto.png */,
 				BA78AC8120D9ECE800F07D40 /* searchSelected.png */,
 				4C5E070320E2690F0053F7CB /* searchNormal.png */,
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
@@ -1156,7 +1153,6 @@
 				BAE5985920C7CDE000524CB7 /* NpTrade.ice in Resources */,
 				4C5E070420E269100053F7CB /* searchNormal.png in Resources */,
 				BA78AC8220D9ECE800F07D40 /* searchSelected.png in Resources */,
-				BA78AC8920D9F52F00F07D40 /* goto.png in Resources */,
 				422BF0BA1EC7081400DF8F4A /* data.plist in Resources */,
 				BA3EB02520CE21A5008F11E9 /* config1.client in Resources */,
 				4227878D1E04F18600DB5CEC /* Assets.xcassets in Resources */,
@@ -1593,10 +1589,10 @@
 					"-liconv",
 					"-ObjC",
 					"-lIce",
+					"-lbz2",
 					"-lIceSSL",
 					"-lIceObjc",
 					"-lGlacier2Objc",
-					"-lbz2",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "lanwong----";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1634,10 +1630,10 @@
 					"-liconv",
 					"-ObjC",
 					"-lIce",
+					"-lbz2",
 					"-lIceSSL",
 					"-lIceObjc",
 					"-lGlacier2Objc",
-					"-lbz2",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "lanwong----";
 				PRODUCT_NAME = "$(TARGET_NAME)";

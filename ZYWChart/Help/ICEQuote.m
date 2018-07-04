@@ -29,6 +29,7 @@
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
 @property (nonatomic)  WpQuoteServerCallbackReceiverI* wpQuoteServerCallbackReceiverI;
 //@property (nonatomic) WpQuoteServerDayKLineList* DLL;
+
 @end
 
 @implementation ICEQuote

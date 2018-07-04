@@ -26,7 +26,7 @@
 @property (nonatomic,strong) UIBezierPath *path;
 @property (nonatomic,strong) ZYWLineModel *modle;
 @property (nonatomic,strong) NSMutableArray *array;
-@property (nonatomic,strong) NSTimer *timer;
+//@property (nonatomic,strong) NSTimer *timer;
 
 @end
 
@@ -64,7 +64,9 @@
     if(self.timeLabel == nil)
     {
         [self addLabels];//时间和值
+        //[self startRoundAnimation];
     }
+    //[self startRoundAnimation];
     
     
 }
@@ -72,14 +74,24 @@
 
 - (void)redrawLine{
     {
+        if(self.dataSource && [self.dataSource respondsToSelector:@selector(getString)]){
+            self.dataArray = [self.dataSource getString].mutableCopy;
+            //NSLog(@"%@",msg);
+        }
         // todo reget data
         // change dataArray
     }
-   // [self.xLayer removeFromSuperlayer];
-   // [self.yLayer removeFromSuperlayer];
-   // [self.boxLayer removeFromSuperlayer];
-   // [self.timeLabel  removeFromSuperview];
-   // [self.valueLabel removeFromSuperview];
+//    static int i = 0;
+//    i++;
+//    if(i%2==0){
+//        self.fillColor = [UIColor greenColor];
+//    }
+//    else{
+//        self.fillColor = [UIColor redColor];
+//    }
+//    
+//    self.timeLayer = nil;
+//    self.lineChartLayer = nil;
     [self.timeLayer removeFromSuperlayer];
     [self.lineChartLayer removeFromSuperlayer];
     [self stockFill];//重新绘制整个界面
@@ -106,7 +118,7 @@
     self.lineChartLayer.path = path.CGPath;
     self.lineChartLayer.strokeColor = self.lineColor.CGColor;
     self.lineChartLayer.fillColor = [[UIColor clearColor] CGColor];
-    self.lineChartLayer.lineWidth = self.lineWidth;
+    self.lineChartLayer.lineWidth = 1;//self.lineWidth;
     self.lineChartLayer.lineCap = kCALineCapRound;
     self.lineChartLayer.lineJoin = kCALineJoinRound;
     self.lineChartLayer.contentsScale = [UIScreen mainScreen].scale;
@@ -121,13 +133,20 @@
     [path fill];
     [path stroke];
     [path closePath];
-    //[self startRoundAnimation];
+    
+    [self startRedraw];
+ 
+   
+}
+- (void)startRedraw{
+    
+    
     //start timer, redraw linechartview every second
     if(self.timer == nil){
+        //[self startRoundAnimation];
         NSLog(@"timer begin");
-        self.timer =  [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(redrawLine) userInfo:nil repeats:YES];
+        self.timer =  [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(redrawLine) userInfo:nil repeats:YES];
     }
-   
 }
 
 - (void)drawBoxLayer
@@ -237,9 +256,9 @@
     self.timeLayer.strokeColor = [UIColor clearColor].CGColor;
     self.timeLayer.fillColor = [UIColor clearColor].CGColor;
     [self.layer addSublayer:self.timeLayer];
-    for (NSInteger i = 0;i<self.dataArray.count;i++)
+    for (NSInteger i = 1;i<self.dataArray.count;i++)
     {
-        if(i%20==0){
+        if(i%40==0){
             ZYWTimeLineModel *model = self.dataArray[i];
             CGFloat x = self.width/self.dataArray.count*i;
             CATextLayer *layer = [self getTextLayer];
@@ -322,7 +341,7 @@
 {
     self.boxLineWidth = 1;
     self.timeLayerHeight = 20;
-    self.lineWidth  = (self.width - self.leftMargin - self.rightMargin )/self.timesCount;
+    self.lineWidth  =  (self.width - self.leftMargin - self.rightMargin )/self.timesCount;
     self.maxY = CGFLOAT_MIN;
     self.minY = CGFLOAT_MAX;
     CGFloat offset = CGFLOAT_MIN;
