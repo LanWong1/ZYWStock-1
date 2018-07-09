@@ -19,6 +19,9 @@
 //- (NSMutableArray*)messageForBuyVC;
 @end
 
+@protocol ICEQuoteDelegate<NSObject>
+- (void)refreshTimeline:(NSString*)s;
+@end
 
 @interface ICEQuote : NSObject
 
@@ -29,4 +32,7 @@
 - (void)SubscribeQuote:(NSString*)strCmdType strCmd:(NSString*)strCmd;
 - (WpQuoteServerDayKLineList*)GetDayKline:(NSString*)ExchangeID;
 - (NSMutableArray*)getTimeData:(NSString*)sCode;
+
+@property(nonatomic,weak) id<ICEQuoteDelegate>delegate;
+
 @end

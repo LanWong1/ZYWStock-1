@@ -8,8 +8,9 @@
 
 #import "ZYWTimeLineView.h"
 #import "ZYWLineModel.h"
-
-@interface ZYWTimeLineView()
+#import "ICEQuote.h"
+#import "AppDelegate.h"
+@interface ZYWTimeLineView()<ICEQuoteDelegate>
 
 @property (nonatomic,strong) NSMutableArray *modelPostionArray;
 @property (nonatomic,strong) CAShapeLayer *lineChartLayer;
@@ -26,14 +27,22 @@
 @property (nonatomic,strong) UIBezierPath *path;
 @property (nonatomic,strong) ZYWLineModel *modle;
 @property (nonatomic,strong) NSMutableArray *array;
+@property (nonatomic,strong) ICEQuote *quoto;
 //@property (nonatomic,strong) NSTimer *timer;
 
 @end
 
 @implementation ZYWTimeLineView
 
-#pragma mark setter
 
+
+- (void)refreshTimeline:(NSString *)s{
+    NSLog(@"delegate.........%@",s);
+}
+
+
+
+#pragma mark setter
 - (NSMutableArray*)modelPostionArray
 {
     if (!_modelPostionArray)
@@ -100,6 +109,10 @@
 
 - (void)stockFill
 {
+    self.quoto = [[ICEQuote alloc]init];
+    self.quoto.delegate = self;
+    AppDelegate* app = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    app.iceQuote.delegate = self;
     [self setNeedsDisplay];
 }
 

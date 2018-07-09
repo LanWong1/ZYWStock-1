@@ -14,9 +14,9 @@
 #include "TimeLineVC.h"
 #import "ICEQuote.h"
 #import "AppDelegate.h"
+#import "Y_StockChartViewController.h"
 
-
-
+#define new 1
 @interface CodeListVC ()<UITableViewDelegate,UITableViewDataSource,UISearchResultsUpdating, UISearchControllerDelegate>
 @property (nonatomic,strong)  UISearchController *searchController;
 @property (nonatomic, retain) UIRefreshControl * refreshControl;
@@ -71,17 +71,26 @@
 @synthesize KlineList;
 @synthesize WpQuoteServerclientApiPrx;
 
+- (void)viewWillAppear:(BOOL)animated{
+    NSLog(@"view will appear aaaa");
+    [super viewWillAppear: animated];
+    self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor blackColor]};
+    self.navigationController.navigationBar.barTintColor  = [UIColor whiteColor];
+    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+    
+}
+
 - (void)viewDidLoad {
+    NSLog(@"codlist view didload");
     [super viewDidLoad];
     self.allTitlesArray = [[NSMutableArray alloc]init];
-     self.KlineListAll = [[NSMutableArray alloc]init];
+    self.KlineListAll = [[NSMutableArray alloc]init];
     self.navigationItem.title = @"合约代码";
     [self addSearchButton];
     [self addSementView];
-    self.sExchangeID = @"CFFEX";//默认为中金所
-    self.segmentIndex = 0;
+    self.sExchangeID = @"CZCE";//默认为中金所
+    self.segmentIndex = 1;
     [self GetData];
-    
     // Do any additional setup after loading the view.
 }
 
@@ -98,6 +107,7 @@
     self.navigationItem.rightBarButtonItem = searchBtn;
 }
 
+
 #pragma -mark   获取数据
 //conncet to server
 - (void) GetData{
@@ -109,6 +119,7 @@
         {
             AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
             app.iceQuote = [[ICEQuote alloc]init];
+            app.iceQuote.delegate = self;
             app.wpQuoteServerCallbackReceiverI =  [app.iceQuote Connect2Quote];
             [app.iceQuote initiateCallback:app.strAcc];
             [app.iceQuote Login:app.strCmd];
@@ -318,7 +329,7 @@
 - (void)addSementView{
     NSArray *titleArray = [[NSArray alloc]initWithObjects:@"中金所",@"郑商所",@"大商所",@"上期所", nil];
     self.segment = [[UISegmentedControl alloc]initWithItems:titleArray];
-    self.segment.selectedSegmentIndex = 0;//默认显示中金所的数据
+    self.segment.selectedSegmentIndex = 1;//默认显示中金所的数据
     self.segment.tintColor = DropColor;
     self.segment.frame = CGRectMake(0, 58, DEVICE_WIDTH, 50);
     [self.view addSubview:self.segment];
@@ -414,10 +425,16 @@
     NSString *klinesCode = _searchResult[indexPath.row];
     //NSString *klinesCode = _searchResult[btn.tag];
     NSLog(@"历史行情 %@",klinesCode);
+#if new
+    Y_StockChartViewController* vc = [[Y_StockChartViewController alloc]initWithScode:klinesCode KlineDataList:self.KlineListAll];
+    vc.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
+#else
+
     CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineListAll];
     vc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];
-
+#endif
 //    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
 //        //[self.iceQuote Connect2Quote];
 //        //获取分时图数据
@@ -446,10 +463,6 @@
     NSString* title = [_searchResult[indexPath.row] uppercaseString];//_searchResult[indexPath.row];
 
     cell.textLabel.text = title;
-//    UIImage* gotoImg = [UIImage imageNamed:@"goto.png"];
-//    UIImageView* gotoView = [[UIImageView alloc]initWithFrame:CGRectMake(DEVICE_WIDTH-30, 10, 20, 20)];
-//    [gotoView setImage:gotoImg];
-//    [cell addSubview:gotoView];
     return cell;
 }
 

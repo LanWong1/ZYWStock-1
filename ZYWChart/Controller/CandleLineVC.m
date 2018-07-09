@@ -93,6 +93,7 @@ typedef enum
 
 # pragma --mark DataSource of timeline
 - (NSMutableArray*)getString{
+    
     AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     self.timeData =[app.iceQuote getTimeData:self.sCode];
     NSMutableArray * timeArray = [NSMutableArray array];
@@ -216,7 +217,7 @@ typedef enum
     _candleChartView.candleSpace = 2;
     _candleChartView.displayCount = 15;
     _displayCount = _candleChartView.displayCount;
-    _candleChartView.lineWidth = 1*widthradio;
+    _candleChartView.lineWidth = 0.5*widthradio;
 }
 
 - (void)addTopBoxView

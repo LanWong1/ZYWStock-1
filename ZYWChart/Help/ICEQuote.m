@@ -18,7 +18,7 @@
 @implementation WpQuoteServerCallbackReceiverI
 - (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current
 {
-    NSLog(@"hahahah:%d   %@",itype,strMessage);
+    NSLog(@"hahahah:%d%@",itype,strMessage);
 }
 @end
 
@@ -29,7 +29,8 @@
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
 @property (nonatomic)  WpQuoteServerCallbackReceiverI* wpQuoteServerCallbackReceiverI;
 //@property (nonatomic) WpQuoteServerDayKLineList* DLL;
-
+//@property (nonatomic) NSTimer *timer;
+@property (nonatomic, strong) dispatch_source_t timer;
 @end
 
 @implementation ICEQuote
@@ -56,8 +57,6 @@
     self.wpQuoteServerCallbackReceiverI = [[WpQuoteServerCallbackReceiverI alloc]init];
     self.twowayR = [WpQuoteServerCallbackReceiverPrx uncheckedCast:[adapter add:_wpQuoteServerCallbackReceiverI identity:callbackReceiverIdent]];
     return self.wpQuoteServerCallbackReceiverI;
-    
-    
 }
 
 - (WpQuoteServerDayKLineList*)GetDayKline:(NSString*) ExchangeID{
@@ -84,7 +83,30 @@
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     int ret = [self.WpQuoteServerclientApiPrx Login:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
-    NSLog(@"login %d",ret);
+    NSLog(@"loginnjjjjjlllllll %d",ret);
+    [self setHeartbeat];
+    
+    
+ 
+    
+}
+- (void)setHeartbeat{
+    // 创建GCD定时器
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行
+    dispatch_source_set_event_handler(_timer, ^{
+        [self sendmsg];
+    });
+    // 开启定时器
+    dispatch_resume(_timer);
+}
+- (void)sendmsg{
+    NSLog(@"sendmsg");
+    if(self.delegate && [self.delegate respondsToSelector:@selector(refreshTimeline:)]){
+        [self.delegate refreshTimeline:@"哒哒哒哒哒哒多多多多多"];
+        //NSLog(@"%@",msg);
+    }
 }
 
 - (int)HeartBeat:(NSString*)strCmd{

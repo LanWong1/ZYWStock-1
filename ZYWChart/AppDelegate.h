@@ -14,6 +14,9 @@
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+@property (nonatomic, assign) BOOL isEable;
+
+
 @property (strong, nonatomic) ICETool* iceTool;
 @property (strong, nonatomic) ICENpTrade* iceNpTrade;
 @property (strong, nonatomic) ICEQuote* iceQuote;
