@@ -246,6 +246,7 @@
 		BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
 		BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
 		BA5994C920E20CFC00AB2E76 /* checkVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA5994C820E20CFC00AB2E76 /* checkVC.m */; };
+		BA69E21B20F43FBC0098D327 /* Y_KlineMAVLabelView.m in Sources */ = {isa = PBXBuildFile; fileRef = BA69E21A20F43FBC0098D327 /* Y_KlineMAVLabelView.m */; };
 		BA78AC8220D9ECE800F07D40 /* searchSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8120D9ECE800F07D40 /* searchSelected.png */; };
 		BA78AC8C20DB723000F07D40 /* ICENpTrade.m in Sources */ = {isa = PBXBuildFile; fileRef = BA78AC8B20DB723000F07D40 /* ICENpTrade.m */; };
 		BA78AC8E20DB745400F07D40 /* config2.client in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8D20DB745300F07D40 /* config2.client */; };
@@ -612,6 +613,8 @@
 		BA51D57A20B6881F00B34DA7 /* WpQuote.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WpQuote.ice; sourceTree = "<group>"; };
 		BA5994C720E20CFC00AB2E76 /* checkVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = checkVC.h; sourceTree = "<group>"; };
 		BA5994C820E20CFC00AB2E76 /* checkVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = checkVC.m; sourceTree = "<group>"; };
+		BA69E21920F43FBC0098D327 /* Y_KlineMAVLabelView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Y_KlineMAVLabelView.h; sourceTree = "<group>"; };
+		BA69E21A20F43FBC0098D327 /* Y_KlineMAVLabelView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Y_KlineMAVLabelView.m; sourceTree = "<group>"; };
 		BA6A04EF20CDFD8A00859A05 /* ICETool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICETool.m; sourceTree = "<group>"; };
 		BA78AC8120D9ECE800F07D40 /* searchSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchSelected.png; sourceTree = "<group>"; };
 		BA78AC8A20DB723000F07D40 /* ICENpTrade.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICENpTrade.h; sourceTree = "<group>"; };
@@ -1195,6 +1198,8 @@
 			children = (
 				BA3D619F20EDA08400665888 /* Y_KLineMAView.h */,
 				BA3D61A020EDA08400665888 /* Y_KLineMAView.m */,
+				BA69E21920F43FBC0098D327 /* Y_KlineMAVLabelView.h */,
+				BA69E21A20F43FBC0098D327 /* Y_KlineMAVLabelView.m */,
 			);
 			path = KLine_MAView;
 			sourceTree = "<group>";
@@ -1563,6 +1568,7 @@
 				423943251E2B6D0300F2A873 /* ta_WILLR.c in Sources */,
 				422787821E04F18600DB5CEC /* main.m in Sources */,
 				423942F41E2B6D0300F2A873 /* ta_MEDPRICE.c in Sources */,
+				BA69E21B20F43FBC0098D327 /* Y_KlineMAVLabelView.m in Sources */,
 				42619B171EBAD23D00A4CACC /* ZYWPriceView.m in Sources */,
 				423942AA1E2B6D0300F2A873 /* ta_CDLEVENINGDOJISTAR.c in Sources */,
 				BA3D61C920EDA08400665888 /* Y_KLineAccessory.m in Sources */,
@@ -1880,7 +1886,7 @@
 					"-lIceObjc",
 					"-lGlacier2Objc",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "lanwong----";
+				PRODUCT_BUNDLE_IDENTIFIER = lanwong;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1921,7 +1927,7 @@
 					"-lIceObjc",
 					"-lGlacier2Objc",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "lanwong----";
+				PRODUCT_BUNDLE_IDENTIFIER = lanwong;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;

@@ -1,16 +1,16 @@
 //
-//  Y_KLineMAView.m
-//  BTC-Kline
+//  Y_KlineMAVLabelView.m
+//  ZYWChart
 //
-//  Created by yate1996 on 16/5/2.
-//  Copyright © 2016年 yate1996. All rights reserved.
+//  Created by zdqh on 2018/7/10.
+//  Copyright © 2018 zyw113. All rights reserved.
 //
 
-#import "Y_KLineMAView.h"
+#import "Y_KlineMAVLabelView.h"
 #import "Masonry.h"
 #import "UIColor+Y_StockChart.h"
 #import "Y_KLineModel.h"
-@interface Y_KLineMAView ()
+@interface Y_KlineMAVLabelView ()
 
 @property (strong, nonatomic) UILabel *MA7Label;
 
@@ -36,7 +36,17 @@
 
 @end
 
-@implementation Y_KLineMAView
+@implementation Y_KlineMAVLabelView
+
+
+
+/*
+// Only override drawRect: if you perform custom drawing.
+// An empty implementation adversely affects performance during animation.
+- (void)drawRect:(CGRect)rect {
+    // Drawing code
+}
+*/
 
 - (instancetype)init
 {
@@ -47,109 +57,110 @@
         _dateDescLabel = [self private_createLabel];
         _openDescLabel = [self private_createLabel];
         _openDescLabel.text = @" 开:";
-
         _closeDescLabel = [self private_createLabel];
         _closeDescLabel.text = @" 收:";
-
         _highDescLabel = [self private_createLabel];
         _highDescLabel.text = @" 高:";
-
         _lowDescLabel = [self private_createLabel];
         _lowDescLabel.text = @" 低:";
-
         _openLabel = [self private_createLabel];
         _closeLabel = [self private_createLabel];
         _highLabel = [self private_createLabel];
         _lowLabel = [self private_createLabel];
-        
-        
         _MA7Label.textColor = [UIColor ma7Color];
         _MA30Label.textColor = [UIColor ma30Color];
-        
         _openLabel.textColor = [UIColor whiteColor];
         _highLabel.textColor = [UIColor whiteColor];
         _lowLabel.textColor = [UIColor whiteColor];
         _closeLabel.textColor = [UIColor whiteColor];
-        
-
+   
         NSNumber *labelWidth = [NSNumber numberWithInt:55];
+       // NSNumber *labelHeight = [NSNumber numberWithInt:6];
         
         [_dateDescLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.mas_left);
             make.top.equalTo(self.mas_top);
-            
             //make.bottom.equalTo(self.mas_bottom);
             make.width.equalTo(@100);
-
+            
         }];
         
         [_openDescLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_dateDescLabel.mas_right);
-            make.top.equalTo(self.mas_top);
+            
+            //make.top.equalTo(self.mas_top);
+            make.left.equalTo(self.mas_left);
+            make.top.equalTo(_dateDescLabel.mas_bottom);
+            
             //make.bottom.equalTo(self.mas_bottom);
         }];
         
         [_openLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(_openDescLabel.mas_right);
-            make.top.equalTo(self.mas_top);
-            //make.bottom.equalTo(self.mas_bottom);
+            make.bottom.equalTo(self.openDescLabel.mas_bottom);
             make.width.equalTo(labelWidth);
- 
+            
         }];
         
         [_highDescLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_openLabel.mas_right);
-            make.top.equalTo(self.mas_top);
+            make.left.equalTo(self.mas_left);
+            make.top.equalTo(_openDescLabel.mas_bottom);
+            //make.height.equalTo(labelHeight);
             //make.bottom.equalTo(self.mas_bottom);
         }];
         
         [_highLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(_highDescLabel.mas_right);
-            make.top.equalTo(self.mas_top);
-            //make.bottom.equalTo(self.mas_bottom);
+            //make.top.equalTo(self.mas_top);
+            make.bottom.equalTo(_highDescLabel.mas_bottom);
+            //make.height.equalTo(labelHeight);
             make.width.equalTo(labelWidth);
-
+            
         }];
         
         [_lowDescLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_highLabel.mas_right);
-            make.top.equalTo(self.mas_top);
+            make.left.equalTo(self.mas_left);
+            make.top.equalTo(_highDescLabel.mas_bottom);
+           // make.height.equalTo(labelHeight);
             //make.bottom.equalTo(self.mas_bottom);
         }];
         
         [_lowLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(_lowDescLabel.mas_right);
-            make.top.equalTo(self.mas_top);
-           // make.bottom.equalTo(self.mas_bottom);
+            make.bottom.equalTo(_lowDescLabel.mas_bottom);
+           // make.height.equalTo(labelHeight);
+            // make.bottom.equalTo(self.mas_bottom);
             make.width.equalTo(labelWidth);
-
+            
         }];
         
         [_closeDescLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_lowLabel.mas_right);
-            make.top.equalTo(self.mas_top);
+            make.left.equalTo(self.mas_left);
+            make.top.equalTo(_lowDescLabel.mas_bottom);
+             //make.height.equalTo(labelHeight);
             //make.bottom.equalTo(self.mas_bottom);
         }];
         
         [_closeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(_closeDescLabel.mas_right);
-            make.top.equalTo(self.mas_top);
-            //make.bottom.equalTo(self.mas_bottom);
+            //make.top.equalTo(self.mas_top);
+            make.bottom.equalTo(_closeDescLabel.mas_bottom);
+            //make.height.equalTo(labelHeight);
             make.width.equalTo(labelWidth);
-
+            
         }];
         
         [_MA7Label mas_makeConstraints:^(MASConstraintMaker *make) {
-            //make.left.equalTo(_closeLabel.mas_right);
-            make.left.equalTo(_openDescLabel.mas_left);
-            //make.top.equalTo(self.mas_top);
-            make.bottom.equalTo(self.mas_bottom);
-
+            make.left.equalTo(self.mas_left);
+           
+            make.top.equalTo(_closeDescLabel.mas_bottom);
+            //make.height.equalTo(labelHeight);
+            
         }];
-//
+        //
         [_MA30Label mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_MA7Label.mas_right);
-            //make.top.equalTo(self.mas_top);
+            make.left.equalTo(self.mas_left);
+            make.top.equalTo(_MA7Label.mas_bottom);
+            //make.height.equalTo(labelHeight);
             make.bottom.equalTo(self.mas_bottom);
         }];
         
@@ -157,11 +168,7 @@
     return self;
 }
 
-+(instancetype)view
-{
-    Y_KLineMAView *MAView = [[Y_KLineMAView alloc]init];
-    return MAView;
-}
+
 
 -(void)maProfileWithModel:(Y_KLineModel *)model
 {
@@ -175,7 +182,7 @@
     _highLabel.text = [NSString stringWithFormat:@"%.2f",model.High.floatValue];
     _lowLabel.text = [NSString stringWithFormat:@"%.2f",model.Low.floatValue];
     _closeLabel.text = [NSString stringWithFormat:@"%.2f",model.Close.floatValue];
- 
+    
     _MA7Label.text = [NSString stringWithFormat:@" MA7：%.2f ",model.MA7.floatValue];
     _MA30Label.text = [NSString stringWithFormat:@" MA30：%.2f",model.MA30.floatValue];
 }

@@ -18,6 +18,7 @@
 #import "Y_KLineVolumeView.h"
 #import "Y_StockChartRightYView.h"
 #import "Y_KLineAccessoryView.h"
+#import "Y_KlineMAVLabelView.h"
 @interface Y_KLineView() <UIScrollViewDelegate, Y_KLineMainViewDelegate, Y_KLineVolumeViewDelegate, Y_KLineAccessoryViewDelegate>
 
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -55,7 +56,7 @@
  *  旧的scrollview准确位移
  */
 @property (nonatomic, assign) CGFloat oldExactOffset;
-
+@property (nonatomic, assign)  CGPoint location;
 /**
  *  kLine-MAView
  */
@@ -75,6 +76,10 @@
  *  长按后显示的View
  */
 @property (nonatomic, strong) UIView *verticalView;
+@property (nonatomic, strong) Y_KlineMAVLabelView *kLineMALabelViewLeft;
+@property (nonatomic, strong) Y_KlineMAVLabelView *kLineMALabelViewRight;
+
+@property (nonatomic, strong) Y_KlineMAVLabelView *kLineMALabelView;
 
 
 @property (nonatomic, strong) MASConstraint *kLineMainViewHeightConstraint;
@@ -138,20 +143,51 @@
 
 - (Y_KLineMAView *)kLineMAView
 {
-    if (!_kLineMAView) {
-        _kLineMAView = [Y_KLineMAView view];
-        [self addSubview:_kLineMAView];
-        [_kLineMAView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(self);
-            make.left.equalTo(self);
-            make.top.equalTo(self).offset(5);
-            make.height.equalTo(@40);
-        }];
-    }
-    //_kLineMAView=nil;
+//    if (!_kLineMAView) {
+//        _kLineMAView = [Y_KLineMAView view];
+//        [self addSubview:_kLineMAView];
+//        [_kLineMAView mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.right.equalTo(self);
+//            make.left.equalTo(self);
+//            make.top.equalTo(self).offset(5);
+//            make.height.equalTo(@30);
+//        }];
+//    }
+    _kLineMAView=nil;
     return _kLineMAView;
 }
+- (Y_KlineMAVLabelView *)kLineMALabelViewLeft
+{
+    if (!_kLineMALabelViewLeft) {
+        NSLog(@"悬浮窗口左边");
+        _kLineMALabelViewLeft = [Y_KlineMAVLabelView view];
+        [self.scrollView addSubview:_kLineMALabelViewLeft];
+        [_kLineMALabelViewLeft mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.equalTo(self.mas_left).offset(100);
+            make.left.equalTo(self.scrollView);
+            make.top.equalTo(self.scrollView.mas_top);//.offset(5);
+            make.height.equalTo(@80);
+        }];
+    }
+    return _kLineMALabelViewLeft;
+}
 
+- (Y_KlineMAVLabelView *)kLineMALabelViewRight
+{
+   
+    if (!_kLineMALabelViewRight) {
+         NSLog(@"悬浮窗口右边");
+        _kLineMALabelViewRight = [Y_KlineMAVLabelView view];
+        [self.scrollView addSubview:_kLineMALabelViewRight];
+        [_kLineMALabelViewRight mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.equalTo(self.scrollView);
+            make.left.equalTo(self.scrollView.mas_right).offset(-100);
+            make.top.equalTo(self.scrollView.mas_top);//.offset(5);
+            make.height.equalTo(@80);
+        }];
+    }
+    return _kLineMALabelViewRight;
+}
 - (Y_VolumeMAView *)volumeMAView
 {
 //    if (!_volumeMAView) {
@@ -349,6 +385,7 @@
 #pragma mark 缩放执行方法
 - (void)event_pichMethod:(UIPinchGestureRecognizer *)pinch
 {
+    
     static CGFloat oldScale = 1.0f;
     CGFloat difValue = pinch.scale - oldScale;
     if(ABS(difValue) > Y_StockChartScaleBound) {
@@ -378,20 +415,57 @@
 #pragma mark 长按手势执行方法
 - (void)event_longPressMethod:(UILongPressGestureRecognizer *)longPress
 {
+  
+ 
     static CGFloat oldPositionX = 0;
     if(UIGestureRecognizerStateChanged == longPress.state || UIGestureRecognizerStateBegan == longPress.state)
     {
-        CGPoint location = [longPress locationInView:self.scrollView];
-        if(ABS(oldPositionX - location.x) < ([Y_StockChartGlobalVariable kLineWidth] + [Y_StockChartGlobalVariable kLineGap])/2)
+        self.location = [longPress locationInView:self.scrollView];//设置响应长按的view
+        if(ABS(oldPositionX - _location.x) < ([Y_StockChartGlobalVariable kLineWidth] + [Y_StockChartGlobalVariable kLineGap])/2)
         {
             return;
         }
-        
+
+        if((oldPositionX != 0 && oldPositionX<198 && _location.x>198)  ){
+      
+            [self.kLineMALabelView removeFromSuperview];
+            self.kLineMALabelView=nil;
+
+        }
+        else if ((oldPositionX > 198 && _location.x < 198)){
+
+            [self.kLineMALabelView removeFromSuperview];
+            self.kLineMALabelView=nil;
+        }
         //暂停滑动
         self.scrollView.scrollEnabled = NO;
-        oldPositionX = location.x;
+        oldPositionX = _location.x;
+        CGFloat offset = 0;
         
-        //初始化竖线
+        if(_location.x < 198){
+            offset = 280;
+        }
+        else{
+            offset = 0;
+        }
+
+        if(!self.kLineMALabelView){
+            
+            self.kLineMALabelView = [[Y_KlineMAVLabelView alloc]init];
+            //[self.kLineMALabelView addLabels];
+            [self addSubview:self.kLineMALabelView];
+            [self.kLineMALabelView mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(self);
+                make.height.equalTo(@80);
+                make.left.equalTo(self).offset(offset);
+            }];
+        }
+        self.kLineMALabelView.hidden = NO;
+        
+        
+        
+        //更新竖线位置
+        CGFloat rightXPosition = [self.kLineMainView getExactXPositionWithOriginXPosition:_location.x];
         if(!self.verticalView)
         {
             self.verticalView = [UIView new];
@@ -406,8 +480,6 @@
             }];
         }
         
-        //更新竖线位置
-        CGFloat rightXPosition = [self.kLineMainView getExactXPositionWithOriginXPosition:location.x];
         [self.verticalView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(@(rightXPosition));
         }];
@@ -421,15 +493,17 @@
         if(self.verticalView)
         {
             self.verticalView.hidden = YES;
+            [self.kLineMALabelView removeFromSuperview];
+            self.kLineMALabelView = nil;
         }
         oldPositionX = 0;
         //恢复scrollView的滑动
         self.scrollView.scrollEnabled = YES;
-        
         Y_KLineModel *lastModel = self.kLineModels.lastObject;
         [self.kLineMAView maProfileWithModel:lastModel];
-        [self.volumeMAView maProfileWithModel:lastModel];
-        [self.accessoryMAView maProfileWithModel:lastModel];
+        //[self.kLineMALabelView maProfileWithModel:lastModel];
+        //[self.volumeMAView maProfileWithModel:lastModel];
+        //[self.accessoryMAView maProfileWithModel:lastModel];
     }
 }
 
@@ -515,6 +589,15 @@
 - (void)kLineMainViewLongPressKLinePositionModel:(Y_KLinePositionModel *)kLinePositionModel kLineModel:(Y_KLineModel *)kLineModel
 {
     //更新ma信息
+//    if(self.location.x > 198){
+//        NSLog(@"left!!!!");
+//        [self.kLineMALabelViewLeft maProfileWithModel:kLineModel];
+//    }
+//    else if(self.location.x < 198){
+//        NSLog(@"right!!!!!!!!!!!!");
+//        [self.kLineMALabelViewRight maProfileWithModel:kLineModel];
+//    }
+    [self.kLineMALabelView maProfileWithModel:kLineModel];
     [self.kLineMAView maProfileWithModel:kLineModel];
     //[self.volumeMAView maProfileWithModel:kLineModel];
     //[self.accessoryMAView maProfileWithModel:kLineModel];
