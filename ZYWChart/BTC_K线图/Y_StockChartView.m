@@ -89,7 +89,7 @@
     }
     if(self.dataSource)
     {
-        self.segmentView.selectedIndex = 5;
+        self.segmentView.selectedIndex = 6;
     }
 }
 
@@ -98,7 +98,7 @@
     _dataSource = dataSource;
     if(self.itemModels)
     {
-        self.segmentView.selectedIndex = 5;
+        self.segmentView.selectedIndex = 6;
     }
 }
 - (void)reloadData
