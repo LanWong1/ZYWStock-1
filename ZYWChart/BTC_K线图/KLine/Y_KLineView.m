@@ -156,38 +156,7 @@
     _kLineMAView=nil;
     return _kLineMAView;
 }
-- (Y_KlineMAVLabelView *)kLineMALabelViewLeft
-{
-    if (!_kLineMALabelViewLeft) {
-        NSLog(@"悬浮窗口左边");
-        _kLineMALabelViewLeft = [Y_KlineMAVLabelView view];
-        [self.scrollView addSubview:_kLineMALabelViewLeft];
-        [_kLineMALabelViewLeft mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(self.mas_left).offset(100);
-            make.left.equalTo(self.scrollView);
-            make.top.equalTo(self.scrollView.mas_top);//.offset(5);
-            make.height.equalTo(@80);
-        }];
-    }
-    return _kLineMALabelViewLeft;
-}
 
-- (Y_KlineMAVLabelView *)kLineMALabelViewRight
-{
-   
-    if (!_kLineMALabelViewRight) {
-         NSLog(@"悬浮窗口右边");
-        _kLineMALabelViewRight = [Y_KlineMAVLabelView view];
-        [self.scrollView addSubview:_kLineMALabelViewRight];
-        [_kLineMALabelViewRight mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(self.scrollView);
-            make.left.equalTo(self.scrollView.mas_right).offset(-100);
-            make.top.equalTo(self.scrollView.mas_top);//.offset(5);
-            make.height.equalTo(@80);
-        }];
-    }
-    return _kLineMALabelViewRight;
-}
 - (Y_VolumeMAView *)volumeMAView
 {
 //    if (!_volumeMAView) {
@@ -415,25 +384,20 @@
 #pragma mark 长按手势执行方法
 - (void)event_longPressMethod:(UILongPressGestureRecognizer *)longPress
 {
-  
- 
     static CGFloat oldPositionX = 0;
     if(UIGestureRecognizerStateChanged == longPress.state || UIGestureRecognizerStateBegan == longPress.state)
     {
         self.location = [longPress locationInView:self.scrollView];//设置响应长按的view
+        //移动小于K线图间隔的返回   效果是竖线只在K线图之间跳动
         if(ABS(oldPositionX - _location.x) < ([Y_StockChartGlobalVariable kLineWidth] + [Y_StockChartGlobalVariable kLineGap])/2)
         {
             return;
         }
-
-        if((oldPositionX != 0 && oldPositionX<198 && _location.x>198)  ){
-      
+        if((oldPositionX != 0 && oldPositionX-self.scrollView.contentOffset.x<198 && _location.x-self.scrollView.contentOffset.x>198)  ){
             [self.kLineMALabelView removeFromSuperview];
-            self.kLineMALabelView=nil;
-
+            self.kLineMALabelView = nil;
         }
-        else if ((oldPositionX > 198 && _location.x < 198)){
-
+        else if ((oldPositionX-self.scrollView.contentOffset.x > 198 && _location.x-self.scrollView.contentOffset.x < 198)){
             [self.kLineMALabelView removeFromSuperview];
             self.kLineMALabelView=nil;
         }
@@ -441,8 +405,7 @@
         self.scrollView.scrollEnabled = NO;
         oldPositionX = _location.x;
         CGFloat offset = 0;
-        
-        if(_location.x < 198){
+        if(_location.x-self.scrollView.contentOffset.x < 198){
             offset = 280;
         }
         else{
@@ -461,9 +424,7 @@
             }];
         }
         self.kLineMALabelView.hidden = NO;
-        
-        
-        
+
         //更新竖线位置
         CGFloat rightXPosition = [self.kLineMainView getExactXPositionWithOriginXPosition:_location.x];
         if(!self.verticalView)
@@ -479,14 +440,12 @@
                 make.left.equalTo(@(-10));
             }];
         }
-        
         [self.verticalView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(@(rightXPosition));
         }];
         [self.verticalView layoutIfNeeded];
         self.verticalView.hidden = NO;
     }
-    
     if(longPress.state == UIGestureRecognizerStateEnded)
     {
         //取消竖线
@@ -588,15 +547,7 @@
 }
 - (void)kLineMainViewLongPressKLinePositionModel:(Y_KLinePositionModel *)kLinePositionModel kLineModel:(Y_KLineModel *)kLineModel
 {
-    //更新ma信息
-//    if(self.location.x > 198){
-//        NSLog(@"left!!!!");
-//        [self.kLineMALabelViewLeft maProfileWithModel:kLineModel];
-//    }
-//    else if(self.location.x < 198){
-//        NSLog(@"right!!!!!!!!!!!!");
-//        [self.kLineMALabelViewRight maProfileWithModel:kLineModel];
-//    }
+
     [self.kLineMALabelView maProfileWithModel:kLineModel];
     [self.kLineMAView maProfileWithModel:kLineModel];
     //[self.volumeMAView maProfileWithModel:kLineModel];
@@ -617,7 +568,7 @@
 //        isNeedPostNotification = YES;
 //    }
     
-    NSLog(@"这是  %f-----%f=====%f",scrollView.contentSize.width,scrollView.contentOffset.x,self.kLineMainView.frame.size.width);
+    //NSLog(@"这是  %f-----%f=====%f",scrollView.contentSize.width,scrollView.contentOffset.x,self.kLineMainView.frame.size.width);
 }
 
 - (void)dealloc

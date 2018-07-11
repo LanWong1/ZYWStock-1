@@ -39,7 +39,6 @@
 
 - (Y_KLineView *)kLineView
 {
-    NSLog(@"klineView");
     if(!_kLineView)
     {
         _kLineView = [Y_KLineView new];
@@ -90,7 +89,7 @@
     }
     if(self.dataSource)
     {
-        self.segmentView.selectedIndex = 6;
+        self.segmentView.selectedIndex = 5;
     }
 }
 
@@ -99,7 +98,7 @@
     _dataSource = dataSource;
     if(self.itemModels)
     {
-        self.segmentView.selectedIndex = 6;
+        self.segmentView.selectedIndex = 5;
     }
 }
 - (void)reloadData
@@ -153,7 +152,7 @@
                     case Y_StockChartcenterViewTypeKline:
                     {
                         self.kLineView.hidden = NO;
-                      //[self bringSubviewToFront:self.kLineView];
+                     //[self bringSubviewToFront:self.kLineView];
                      //[self bringSubviewToFront:self.segmentView];
                         
                     }

@@ -38,13 +38,14 @@
 #pragma mark 涨的颜色
 +(UIColor *)increaseColor
 {
-    return [UIColor colorWithRGBHex:0xff5353];
+    return [UIColor colorWithRGBHex:0x00b07c];
+    
 }
 
 #pragma mark 跌的颜色
 +(UIColor *)decreaseColor
 {
-    return [UIColor colorWithRGBHex:0x00b07c];
+    return [UIColor colorWithRGBHex:0xff5353];
 }
 
 #pragma mark 主文字颜色

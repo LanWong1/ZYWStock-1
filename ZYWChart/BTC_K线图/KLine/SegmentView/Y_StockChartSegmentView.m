@@ -43,7 +43,7 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    NSLog(@"sementview initwithFrame");
+
     self = [super initWithFrame:frame];
     if(self)
     {

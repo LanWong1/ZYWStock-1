@@ -36,9 +36,6 @@ typedef NS_ENUM(NSInteger, Y_KLineType) {
 
 
 @end
-
-
-
 /**
  *  Y_StockChartView数据源
  */

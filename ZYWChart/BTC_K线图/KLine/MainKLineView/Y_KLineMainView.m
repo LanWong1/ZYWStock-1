@@ -120,11 +120,7 @@
     //设置显示日期的区域背景颜色
     CGContextSetFillColorWithColor(context, [UIColor assistBackgroundColor].CGColor);
     CGContextFillRect(context, CGRectMake(0, Y_StockChartKLineMainViewMaxY, self.frame.size.width, self.frame.size.height - Y_StockChartKLineMainViewMaxY));
-    
-    
-    
-    
-    
+
     Y_MALine *MALine = [[Y_MALine alloc]initWithContext:context];
     
     if(self.MainViewType == Y_StockChartcenterViewTypeKline)
@@ -155,21 +151,25 @@
             CGPoint point = [positions[idx] CGPointValue];
             
             //日期
+//            NSDate *date = [NSDate dateWithTimeIntervalSince1970:self.needDrawKLineModels[idx].Date.doubleValue];
+//            NSDateFormatter *formatter = [NSDateFormatter new];
+//            formatter.dateFormat = @"HH:mm";
+//            NSString *dateStr = [formatter stringFromDate:date];
             
-            NSDate *date = [NSDate dateWithTimeIntervalSince1970:self.needDrawKLineModels[idx].Date.doubleValue];
-            NSDateFormatter *formatter = [NSDateFormatter new];
-            formatter.dateFormat = @"HH:mm";
-            NSString *dateStr = [formatter stringFromDate:date];
-            
-            CGPoint drawDatePoint = CGPointMake(point.x + 1, Y_StockChartKLineMainViewMaxY + 1.5);
-            if(CGPointEqualToPoint(lastDrawDatePoint, CGPointZero) || point.x - lastDrawDatePoint.x > 60 )
+            CGPoint drawDatePoint;
+            if(CGPointEqualToPoint(lastDrawDatePoint, CGPointZero)){
+                drawDatePoint = CGPointMake(point.x -1, Y_StockChartKLineMainViewMaxY + 1.5);
+            }
+            else{
+                drawDatePoint = CGPointMake(point.x -11, Y_StockChartKLineMainViewMaxY + 1.5);
+            }
+            if(CGPointEqualToPoint(lastDrawDatePoint, CGPointZero) || point.x - lastDrawDatePoint.x > 60)
             {
-                [dateStr drawAtPoint:drawDatePoint withAttributes:@{NSFontAttributeName : [UIFont systemFontOfSize:11],NSForegroundColorAttributeName : [UIColor assistTextColor]}];
+                [self.needDrawKLineModels[idx].Date drawAtPoint:drawDatePoint withAttributes:@{NSFontAttributeName : [UIFont systemFontOfSize:11],NSForegroundColorAttributeName : [UIColor assistTextColor]}];
                 lastDrawDatePoint = drawDatePoint;
             }
         }];
     }
-    
     if (self.targetLineStatus == Y_StockChartTargetLineStatusBOLL) {
         // 画BOLL MB线 标准线
         MALine.MAType = Y_BOLL_MB;
@@ -261,6 +261,7 @@
  *  长按的时候根据原始的x位置获得精确的x的位置
  */
 - (CGFloat)getExactXPositionWithOriginXPosition:(CGFloat)originXPosition{
+    
     CGFloat xPositoinInMainView = originXPosition;
     NSInteger startIndex = (NSInteger)((xPositoinInMainView - self.startXPosition) / ([Y_StockChartGlobalVariable kLineGap] + [Y_StockChartGlobalVariable kLineWidth]));
     NSInteger arrCount = self.needDrawKLinePositionModels.count;

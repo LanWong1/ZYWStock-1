@@ -147,7 +147,7 @@
 //    param[@"market"] = @"btc_usdt";
 //    param[@"size"] = @"1000";
 //    [NetWorking requestWithApi:@"http://api.bitkk.com/data/v1/kline" param:param thenSuccess:^(NSDictionary *responseObject) {
-//        
+//
 //        Y_KLineGroupModel *groupModel = [Y_KLineGroupModel objectWithArray:responseObject[@"data"]];//很多组数据组成的array 每个元素包含时间 开盘价等数据
 //        NSLog(@"%@",responseObject[@"data"]);
 //        self.groupModel = groupModel;
@@ -155,7 +155,7 @@
 //        // NSLog(@"%@",groupModel);
 //        [self.stockChartView reloadData];
 //    } fail:^{
-//        
+//
 //    }];
 }
 

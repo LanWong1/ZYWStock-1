@@ -16,6 +16,7 @@
 #import "AppDelegate.h"
 #import "Y_StockChartLandScapeViewController.h"
 #import "ICEQuote.h"
+#import "ZYWTimeLineModel.h"
 
 #define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
@@ -112,6 +113,7 @@
             break;
         case 2:
         {
+            NSLog(@"kline 1min");
             type = @"1min";
         }
             break;
@@ -150,6 +152,7 @@
     //无数据 重新下载数据
     if(![self.modelsDict objectForKey:type])
     {
+        NSLog(@"type = %@ data = %@",type, [self.modelsDict objectForKey:type]);
         [self reloadData];
     } else {
         return [self.modelsDict objectForKey:type].models;
@@ -159,54 +162,107 @@
 
 - (void)reloadData
 {
-//    NSMutableDictionary *param = [NSMutableDictionary dictionary];
-//    param[@"type"] = self.type;
-//    param[@"market"] = @"btc_usdt";
-//    param[@"size"] = @"1000";
-//    [NetWorking requestWithApi:@"http://api.bitkk.com/data/v1/kline" param:param thenSuccess:^(NSDictionary *responseObject) {
-//        NSLog(@"%@",responseObject[@"data"]);//下载到的数据
-//        Y_KLineGroupModel *groupModel = [Y_KLineGroupModel objectWithArray:responseObject[@"data"]];
+        AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+        //[app.iceQuote Connect2Quote];
+        //self.timeData =
+        [app.iceQuote getKlineData:self.sCode type:self.type];
+        NSMutableArray *timeArray = [NSMutableArray array];
+        NSMutableArray *data = [NSMutableArray array];
+        //[self.timeData removeLastObject];
+        NSEnumerator *enumerator = [[NSEnumerator alloc]init];
+        if([self.type isEqualToString: @"1min"]){
+        enumerator =[[app.iceQuote getKlineData:self.sCode type:@"minute"] objectEnumerator];
+        }
+       if([self.type isEqualToString: @"1day"]){
+        enumerator =[[app.iceQuote getKlineData:self.sCode type:@"day"] objectEnumerator];
+        }
+        id obj = nil;
+        while (obj = [enumerator nextObject]){
+            NSString *string = obj;
+            NSArray* array1 = [string componentsSeparatedByString:@","];
+            NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
+            if([self.type isEqualToString: @"1min"]){
+                NSMutableString *date = [[NSMutableString alloc]initWithString:array1[0]];
+                [date appendString:array1[1]];
+                NSMutableString *timeString = [[NSMutableString alloc]initWithString:array1[1]];
+                [timeString deleteCharactersInRange:NSMakeRange(4,2)];
+                [timeString insertString:@":" atIndex:2];
+                array[0] = timeString;
+                array[1] = @([array1[2] floatValue]);
+                array[2] = @([array1[4] floatValue]);
+                array[3] = @([array1[5] floatValue]);
+                array[4] = @([array1[4] floatValue]);
+                array[5] = @([array1[7] floatValue]);
+                [timeArray addObject:array];
+            }
+            else if ([self.type isEqualToString:@"1day"]){
+                NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
+                [dateString insertString:@"-" atIndex:4];
+                [dateString insertString:@"-" atIndex:7];
+                array[0] = dateString;
+                array[1] = @([array1[1] floatValue]);
+                array[2] = @([array1[3] floatValue]);
+                array[3] = @([array1[4] floatValue]);
+                array[4] = @([array1[2] floatValue]);
+                array[5] = @([array1[6] floatValue]);
+                [data addObject:array];
+            }
+           // NSMutableArray * newMarray = [NSMutableArray array];
+
+      
+        }
+       if ([self.type isEqualToString:@"1day"]){
+           NSEnumerator * enumerator1 = [data reverseObjectEnumerator];//倒序排列
+           id object;
+           while (object = [enumerator1 nextObject])
+           {
+               [timeArray addObject:object];
+           }
+       }
+        Y_KLineGroupModel *groupModel = [Y_KLineGroupModel objectWithArray:timeArray];
+        self.groupModel = groupModel;
+        [self.modelsDict setObject:groupModel forKey:self.type];
+        [self.stockChartView reloadData];
+    
+//    
+//    if([self.type isEqualToString: @"1day"]){
+//        NSLog(@"kline   1day");
+//        NSMutableArray *data = [NSMutableArray array];
+//        NSEnumerator *enumerator = [self.KlineData objectEnumerator];
+//        id obj = nil;
+//        while (obj = [enumerator nextObject]){
+//            WpQuoteServerDayKLineCodeInfo* kline = [[WpQuoteServerDayKLineCodeInfo alloc]init];
+//            kline = obj;
+//            if([_sCode isEqualToString: kline.sCode])
+//            {
+//                NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
+//                NSMutableString *dateString = [[NSMutableString alloc]initWithString:kline.sDate];
+//                [dateString insertString:@"-" atIndex:4];
+//                [dateString insertString:@"-" atIndex:7];
+//                array[0] = dateString;
+//                array[1] = @([kline.sOpenPrice floatValue]);
+//                array[2] = @([kline.sHighPrice floatValue]);
+//                array[3] = @([kline.sLowPrice floatValue]);
+//                array[4] = @([kline.sLastPrice floatValue]);
+//                array[5] = @([kline.sVolume floatValue]);
+//                [data addObject:array];
+//            }
+//        }
+//        NSMutableArray * newMarray = [NSMutableArray array];
+//        NSEnumerator * enumerator1 = [data reverseObjectEnumerator];//倒序排列
+//        id object;
+//        while (object = [enumerator1 nextObject])
+//        {
+//            [newMarray addObject:object];
+//        }
+//        
+//        Y_KLineGroupModel *groupModel = [Y_KLineGroupModel objectWithArray:newMarray];
 //        self.groupModel = groupModel;
 //        [self.modelsDict setObject:groupModel forKey:self.type];
 //        [self.stockChartView reloadData];
-//    } fail:^{
-//
-//    }];
-    
-    NSMutableArray *data = [NSMutableArray array];
-    NSEnumerator *enumerator = [ self.KlineData objectEnumerator];
-    id obj = nil;
-    while (obj = [enumerator nextObject]){
-        WpQuoteServerDayKLineCodeInfo* kline = [[WpQuoteServerDayKLineCodeInfo alloc]init];
-        
-        kline = obj;
-        if([_sCode isEqualToString: kline.sCode])
-        {
-            NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
-            array[0] = kline.sDate;
-            array[1] = @([kline.sOpenPrice floatValue]);
-            array[2] = @([kline.sHighPrice floatValue]);
-            array[3] = @([kline.sLowPrice floatValue]);
-            array[4] = @([kline.sLastPrice floatValue]);
-            array[5] = @([kline.sVolume floatValue]);
-            [data addObject:array];
-        }
-
-    }
-    NSLog(@"%@",data);
-    NSMutableArray * newMarray = [NSMutableArray array];
-    NSEnumerator * enumerator1 = [data reverseObjectEnumerator];//倒序排列
-    id object;
-    while (object = [enumerator1 nextObject])
-    {
-        [newMarray addObject:object];
-    }
-    NSLog(@"%@",newMarray);
-    Y_KLineGroupModel *groupModel = [Y_KLineGroupModel objectWithArray:newMarray];
-    self.groupModel = groupModel;
-    [self.modelsDict setObject:groupModel forKey:self.type];
-    [self.stockChartView reloadData];
-    
+//    }
+    NSLog(@"reload finish");
+  
 }
 #pragma --mark Getter of Y_StockChartView
 - (Y_StockChartView *)stockChartView
@@ -214,7 +270,7 @@
     if(!_stockChartView) {
         _stockChartView = [Y_StockChartView new];
         _stockChartView.itemModels = @[
-                                       [Y_StockChartViewItemModel itemModelWithTitle:@"指标" type:Y_StockChartcenterViewTypeOther],
+                                       //[Y_StockChartViewItemModel itemModelWithTitle:@"指标" type:Y_StockChartcenterViewTypeOther],
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"分时" type:Y_StockChartcenterViewTypeTimeLine],
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"1分" type:Y_StockChartcenterViewTypeKline],
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"5分" type:Y_StockChartcenterViewTypeKline],
