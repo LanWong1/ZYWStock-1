@@ -42,6 +42,7 @@
 #else
     LoginVC* Controller = [[LoginVC alloc]init];
 #endif
+    //Controller.view.backgroundColor = [UIColor whiteColor];
     [self.window setRootViewController:Controller];
     [self.window makeKeyAndVisible];
     return YES;
@@ -50,10 +51,8 @@
 - (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window
 {
     if(self.isEable) {
-        NSLog(@"landscape");
         return UIInterfaceOrientationMaskLandscape;
     } else {
-        NSLog(@"Portrait");
         return UIInterfaceOrientationMaskPortrait;
     }
 }

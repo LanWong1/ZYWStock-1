@@ -10,4 +10,6 @@
 
 @interface Y_StockChartLandScapeViewController : UIViewController
 
+@property (nonatomic, copy) NSString* sCode;
+
 @end

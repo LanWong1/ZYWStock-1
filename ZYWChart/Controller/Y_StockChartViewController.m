@@ -58,29 +58,26 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    NSLog(@"chart view will appear");
+  
     [super viewWillAppear:animated];
     self.navigationController.navigationBar.barTintColor = [UIColor assistBackgroundColor];
     self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor whiteColor]};//设置标题文字为白色
-    //self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;//设置状态栏文字为白色
-
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-}
+//- (void)viewWillDisappear:(BOOL)animated
+//{
+//    [super viewWillDisappear:animated];
+//}
 
 - (void)viewDidLoad {
    
     [super viewDidLoad];
-
-     self.navigationItem.title = self.sCode;
-    //self.navigationItem.leftBarButtonItem.style = ;
-    // Do any additional setup after loading the view.
+    self.navigationItem.title = self.sCode;
+    self.view.backgroundColor = [UIColor backgroundColor];
     self.currentIndex = -1;
     self.stockChartView.backgroundColor = [UIColor backgroundColor];//调用了getter方法[UIColor whiteColor]; // [UIColor backgroundColor];//调用了getter方法
+
 }
 
 - (NSMutableDictionary<NSString *,Y_KLineGroupModel *> *)modelsDict
@@ -111,33 +108,32 @@
             type = @"1min";
         }
             break;
+//        case 2:
+//        {
+//            type = @"1min";
+//        }
+//            break;
         case 2:
-        {
-            NSLog(@"kline 1min");
-            type = @"1min";
-        }
-            break;
-        case 3:
         {
             type = @"5min";
         }
             break;
-        case 4:
+        case 3:
         {
             type = @"30min";
         }
             break;
-        case 5:
+        case 4:
         {
             type = @"1hour";
         }
             break;
-        case 6:
+        case 5:
         {
             type = @"1day";
         }
             break;
-        case 7:
+        case 6:
         {
             type = @"1week";
         }
@@ -261,7 +257,7 @@
 //        [self.modelsDict setObject:groupModel forKey:self.type];
 //        [self.stockChartView reloadData];
 //    }
-    NSLog(@"reload finish");
+
   
 }
 #pragma --mark Getter of Y_StockChartView
@@ -287,7 +283,7 @@
             if (IS_IPHONE_X) {
                 make.edges.equalTo(self.view).insets(UIEdgeInsetsMake(0, 30, 0, 0));
             } else {
-                make.top.equalTo(self.view).offset(60);
+                make.top.equalTo(self.view);
                 make.bottom.left.right.equalTo(self.view);
                 //make.edges.equalTo(self.view);
             }
@@ -301,25 +297,23 @@
 - (void)dismiss
 {
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-    appdelegate.isEable = YES;
-    
+    appdelegate.isEable = YES;//横屏
     Y_StockChartLandScapeViewController *stockChartVC = [Y_StockChartLandScapeViewController new];
-    //stockChartVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    //    UINavigationController* nav = [[UINavigationController alloc]initWithRootViewController:stockChartVC];
-    //    [self.navigationController pushViewController:stockChartVC animated:YES];
-    [self presentViewController:stockChartVC animated:NO completion:nil];
-
+    stockChartVC.sCode = _sCode;
+    stockChartVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    [self presentViewController:stockChartVC animated:YES completion:nil];
+ 
 }
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskLandscape;
 }
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleLightContent;
-    //return UIStatusBarStyleDefault;
-}
-- (BOOL)shouldAutorotate
-{
-    return NO;
-}
+//- (UIStatusBarStyle)preferredStatusBarStyle {
+//    return UIStatusBarStyleLightContent;
+//    //return UIStatusBarStyleDefault;
+//}
+//- (BOOL)shouldAutorotate
+//{
+//    return NO;
+//}
 @end

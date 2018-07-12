@@ -26,7 +26,7 @@ static CGFloat Y_StockChartKLineMainViewRadio = 0.5;
 /**
  *  VolumeView的高度占比,默认为0.5
  */
-static CGFloat Y_StockChartKLineVolumeViewRadio = 0.2;
+static CGFloat Y_StockChartKLineVolumeViewRadio = 0.15;
 
 
 /**
