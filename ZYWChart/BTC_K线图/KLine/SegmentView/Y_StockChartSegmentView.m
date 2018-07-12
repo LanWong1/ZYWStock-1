@@ -9,6 +9,7 @@
 #import "Y_StockChartSegmentView.h"
 #import "Masonry.h"
 #import "UIColor+Y_StockChart.h"
+#import "AppDelegate.h"
 
 static NSInteger const Y_StockChartSegmentStartTag = 2000;
 
@@ -19,6 +20,7 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
 @interface Y_StockChartSegmentView()
 
 @property (nonatomic, strong) UIButton *selectedBtn;
+@property (nonatomic, strong) UIButton *selectedBtnPortrit;
 
 @property (nonatomic, strong) UIView *indicatorView;
 
@@ -43,7 +45,7 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    NSLog(@"sementview initwithFrame");
+
     self = [super initWithFrame:frame];
     if(self)
     {
@@ -129,14 +131,12 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
     
     for (NSString *title in items)
     {
-        UIButton *btn = [self private_createButtonWithTitle:title tag:Y_StockChartSegmentStartTag+index];
+        UIButton *btn = [self private_createButtonWithTitle:title tag:Y_StockChartSegmentStartTag+index];//tag从2000开始
         UIView *view = [UIView new];
         view.backgroundColor = [UIColor redColor];// [UIColor colorWithRed:52.f/255.f green:56.f/255.f blue:67/255.f alpha:1];
         [self addSubview:btn];
         [self addSubview:view];
-        
-        
-        
+
         [btn mas_makeConstraints:^(MASConstraintMaker *make) {
             //make.left.equalTo(self.mas_left);
 //            make.height.equalTo(self).multipliedBy(1.0f/count);
@@ -173,7 +173,7 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
     NSAssert(btn, @"按钮初始化出错");
     [self event_segmentButtonClicked:btn];
 }
-
+//
 - (void)setSelectedBtn:(UIButton *)selectedBtn
 {
     if(_selectedBtn == selectedBtn)
@@ -181,17 +181,17 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
         if(selectedBtn.tag != Y_StockChartSegmentStartTag)
         {
             return;
-        } else {
-            
+        }
+        else {
+
         }
     }
-    
     if(selectedBtn.tag >= 2100 && selectedBtn.tag < 2103)
     {
         [_secondLevelSelectedBtn1 setSelected:NO];
         [selectedBtn setSelected:YES];
         _secondLevelSelectedBtn1 = selectedBtn;
-        
+
     } else if(selectedBtn.tag >= 2103) {
         [_secondLevelSelectedBtn2 setSelected:NO];
         [selectedBtn setSelected:YES];
@@ -203,7 +203,7 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
     }
 
     _selectedIndex = selectedBtn.tag - Y_StockChartSegmentStartTag;
-    
+    //如果index = 0 显示indicator view
     if(_selectedIndex == 0 && self.indicatorView.frame.origin.x < 0)
     {
         [self.indicatorView mas_remakeConstraints:^(MASConstraintMaker *make) {
@@ -247,13 +247,25 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
 #pragma mark 底部按钮点击事件  按下button  调用协议方法
 - (void)event_segmentButtonClicked:(UIButton *)btn
 {
-    self.selectedBtn = btn;
-    
-    if(btn.tag == Y_StockChartSegmentStartTag)
+    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+    if(appdelegate.isEable == NO)
     {
-        return;
+        NSLog(@"btn.tag = %d",btn.tag);
+        [_selectedBtnPortrit setSelected:NO];
+        self.selectedBtnPortrit = btn;//按钮按下的
+        [btn setSelected:YES];
+        self.selectedBtnPortrit = btn;//按钮按下的
+        _selectedIndex = btn.tag-Y_StockChartSegmentStartTag;
     }
-    
+    else{
+        self.selectedBtn = btn;//按钮按下的
+        if(btn.tag == Y_StockChartSegmentStartTag)
+        {
+            return;
+        }
+    }
+  
+
     if(self.delegate && [self.delegate respondsToSelector:@selector(y_StockChartSegmentView:clickSegmentButtonIndex:)])
     {
         [self.delegate y_StockChartSegmentView:self clickSegmentButtonIndex: btn.tag-Y_StockChartSegmentStartTag];

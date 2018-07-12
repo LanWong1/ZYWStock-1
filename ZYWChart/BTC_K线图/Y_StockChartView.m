@@ -11,6 +11,7 @@
 #import "Masonry.h"
 #import "Y_StockChartSegmentView.h"
 #import "Y_StockChartGlobalVariable.h"
+#import "AppDelegate.h"
 @interface Y_StockChartView() <Y_StockChartSegmentViewDelegate>
 
 /**
@@ -39,7 +40,6 @@
 
 - (Y_KLineView *)kLineView
 {
-    NSLog(@"klineView");
     if(!_kLineView)
     {
         _kLineView = [Y_KLineView new];
@@ -63,7 +63,13 @@
         [_segmentView mas_makeConstraints:^(MASConstraintMaker *make) {
            // make.bottom.left.top.equalTo(self);
             make.right.left.equalTo(self);
-            make.top.equalTo(self);
+            AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+            if(appdelegate.isEable == YES){
+                make.top.equalTo(self);
+            }
+            else{
+                 make.top.equalTo(self).offset(60);
+            }
             make.height.equalTo(@40);
            //make.width.equalTo(@50);
         }];
@@ -90,7 +96,13 @@
     }
     if(self.dataSource)
     {
-        self.segmentView.selectedIndex = 6;
+        AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+        if(appdelegate.isEable == YES){
+            self.segmentView.selectedIndex = 6;
+        }
+        else{
+            self.segmentView.selectedIndex = 5;
+        }
     }
 }
 
@@ -98,8 +110,14 @@
 {
     _dataSource = dataSource;
     if(self.itemModels)
-    {
-        self.segmentView.selectedIndex = 6;
+    {   AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+        if(appdelegate.isEable == YES){
+            self.segmentView.selectedIndex = 6;
+        }
+        else{
+            self.segmentView.selectedIndex = 5;
+        }
+        
     }
 }
 - (void)reloadData
@@ -112,7 +130,6 @@
 - (void)y_StockChartSegmentView:(Y_StockChartSegmentView *)segmentView clickSegmentButtonIndex:(NSInteger)index
 {
     self.currentIndex = index;
-    
     if (index == 105) {
         
         [Y_StockChartGlobalVariable setisBOLLLine:Y_StockChartTargetLineStatusBOLL];
@@ -153,7 +170,7 @@
                     case Y_StockChartcenterViewTypeKline:
                     {
                         self.kLineView.hidden = NO;
-                      //[self bringSubviewToFront:self.kLineView];
+                     //[self bringSubviewToFront:self.kLineView];
                      //[self bringSubviewToFront:self.segmentView];
                         
                     }

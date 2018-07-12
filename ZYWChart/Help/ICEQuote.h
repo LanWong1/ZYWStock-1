@@ -32,7 +32,7 @@
 - (void)SubscribeQuote:(NSString*)strCmdType strCmd:(NSString*)strCmd;
 - (WpQuoteServerDayKLineList*)GetDayKline:(NSString*)ExchangeID;
 - (NSMutableArray*)getTimeData:(NSString*)sCode;
-
+- (NSMutableArray*)getKlineData:(NSString*)sCode type:(NSString*)type;
 @property(nonatomic,weak) id<ICEQuoteDelegate>delegate;
 
 @end

@@ -16,6 +16,7 @@
 #import "AppDelegate.h"
 #import "Y_StockChartLandScapeViewController.h"
 #import "ICEQuote.h"
+#import "ZYWTimeLineModel.h"
 
 #define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
@@ -57,29 +58,26 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    NSLog(@"chart view will appear");
+  
     [super viewWillAppear:animated];
     self.navigationController.navigationBar.barTintColor = [UIColor assistBackgroundColor];
     self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor whiteColor]};//设置标题文字为白色
-    //self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;//设置状态栏文字为白色
-
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-}
+//- (void)viewWillDisappear:(BOOL)animated
+//{
+//    [super viewWillDisappear:animated];
+//}
 
 - (void)viewDidLoad {
    
     [super viewDidLoad];
-
-     self.navigationItem.title = self.sCode;
-    //self.navigationItem.leftBarButtonItem.style = ;
-    // Do any additional setup after loading the view.
+    self.navigationItem.title = self.sCode;
+    self.view.backgroundColor = [UIColor backgroundColor];
     self.currentIndex = -1;
     self.stockChartView.backgroundColor = [UIColor backgroundColor];//调用了getter方法[UIColor whiteColor]; // [UIColor backgroundColor];//调用了getter方法
+
 }
 
 - (NSMutableDictionary<NSString *,Y_KLineGroupModel *> *)modelsDict
@@ -110,32 +108,32 @@
             type = @"1min";
         }
             break;
+//        case 2:
+//        {
+//            type = @"1min";
+//        }
+//            break;
         case 2:
-        {
-            type = @"1min";
-        }
-            break;
-        case 3:
         {
             type = @"5min";
         }
             break;
-        case 4:
+        case 3:
         {
             type = @"30min";
         }
             break;
-        case 5:
+        case 4:
         {
             type = @"1hour";
         }
             break;
-        case 6:
+        case 5:
         {
             type = @"1day";
         }
             break;
-        case 7:
+        case 6:
         {
             type = @"1week";
         }
@@ -150,6 +148,7 @@
     //无数据 重新下载数据
     if(![self.modelsDict objectForKey:type])
     {
+        NSLog(@"type = %@ data = %@",type, [self.modelsDict objectForKey:type]);
         [self reloadData];
     } else {
         return [self.modelsDict objectForKey:type].models;
@@ -159,54 +158,107 @@
 
 - (void)reloadData
 {
-//    NSMutableDictionary *param = [NSMutableDictionary dictionary];
-//    param[@"type"] = self.type;
-//    param[@"market"] = @"btc_usdt";
-//    param[@"size"] = @"1000";
-//    [NetWorking requestWithApi:@"http://api.bitkk.com/data/v1/kline" param:param thenSuccess:^(NSDictionary *responseObject) {
-//        NSLog(@"%@",responseObject[@"data"]);//下载到的数据
-//        Y_KLineGroupModel *groupModel = [Y_KLineGroupModel objectWithArray:responseObject[@"data"]];
+        AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+        //[app.iceQuote Connect2Quote];
+        //self.timeData =
+        [app.iceQuote getKlineData:self.sCode type:self.type];
+        NSMutableArray *timeArray = [NSMutableArray array];
+        NSMutableArray *data = [NSMutableArray array];
+        //[self.timeData removeLastObject];
+        NSEnumerator *enumerator = [[NSEnumerator alloc]init];
+        if([self.type isEqualToString: @"1min"]){
+        enumerator =[[app.iceQuote getKlineData:self.sCode type:@"minute"] objectEnumerator];
+        }
+       if([self.type isEqualToString: @"1day"]){
+        enumerator =[[app.iceQuote getKlineData:self.sCode type:@"day"] objectEnumerator];
+        }
+        id obj = nil;
+        while (obj = [enumerator nextObject]){
+            NSString *string = obj;
+            NSArray* array1 = [string componentsSeparatedByString:@","];
+            NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
+            if([self.type isEqualToString: @"1min"]){
+                NSMutableString *date = [[NSMutableString alloc]initWithString:array1[0]];
+                [date appendString:array1[1]];
+                NSMutableString *timeString = [[NSMutableString alloc]initWithString:array1[1]];
+                [timeString deleteCharactersInRange:NSMakeRange(4,2)];
+                [timeString insertString:@":" atIndex:2];
+                array[0] = timeString;
+                array[1] = @([array1[2] floatValue]);
+                array[2] = @([array1[4] floatValue]);
+                array[3] = @([array1[5] floatValue]);
+                array[4] = @([array1[4] floatValue]);
+                array[5] = @([array1[7] floatValue]);
+                [timeArray addObject:array];
+            }
+            else if ([self.type isEqualToString:@"1day"]){
+                NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
+                [dateString insertString:@"-" atIndex:4];
+                [dateString insertString:@"-" atIndex:7];
+                array[0] = dateString;
+                array[1] = @([array1[1] floatValue]);
+                array[2] = @([array1[3] floatValue]);
+                array[3] = @([array1[4] floatValue]);
+                array[4] = @([array1[2] floatValue]);
+                array[5] = @([array1[6] floatValue]);
+                [data addObject:array];
+            }
+           // NSMutableArray * newMarray = [NSMutableArray array];
+
+      
+        }
+       if ([self.type isEqualToString:@"1day"]){
+           NSEnumerator * enumerator1 = [data reverseObjectEnumerator];//倒序排列
+           id object;
+           while (object = [enumerator1 nextObject])
+           {
+               [timeArray addObject:object];
+           }
+       }
+        Y_KLineGroupModel *groupModel = [Y_KLineGroupModel objectWithArray:timeArray];
+        self.groupModel = groupModel;
+        [self.modelsDict setObject:groupModel forKey:self.type];
+        [self.stockChartView reloadData];
+    
+//    
+//    if([self.type isEqualToString: @"1day"]){
+//        NSLog(@"kline   1day");
+//        NSMutableArray *data = [NSMutableArray array];
+//        NSEnumerator *enumerator = [self.KlineData objectEnumerator];
+//        id obj = nil;
+//        while (obj = [enumerator nextObject]){
+//            WpQuoteServerDayKLineCodeInfo* kline = [[WpQuoteServerDayKLineCodeInfo alloc]init];
+//            kline = obj;
+//            if([_sCode isEqualToString: kline.sCode])
+//            {
+//                NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
+//                NSMutableString *dateString = [[NSMutableString alloc]initWithString:kline.sDate];
+//                [dateString insertString:@"-" atIndex:4];
+//                [dateString insertString:@"-" atIndex:7];
+//                array[0] = dateString;
+//                array[1] = @([kline.sOpenPrice floatValue]);
+//                array[2] = @([kline.sHighPrice floatValue]);
+//                array[3] = @([kline.sLowPrice floatValue]);
+//                array[4] = @([kline.sLastPrice floatValue]);
+//                array[5] = @([kline.sVolume floatValue]);
+//                [data addObject:array];
+//            }
+//        }
+//        NSMutableArray * newMarray = [NSMutableArray array];
+//        NSEnumerator * enumerator1 = [data reverseObjectEnumerator];//倒序排列
+//        id object;
+//        while (object = [enumerator1 nextObject])
+//        {
+//            [newMarray addObject:object];
+//        }
+//        
+//        Y_KLineGroupModel *groupModel = [Y_KLineGroupModel objectWithArray:newMarray];
 //        self.groupModel = groupModel;
 //        [self.modelsDict setObject:groupModel forKey:self.type];
 //        [self.stockChartView reloadData];
-//    } fail:^{
-//
-//    }];
-    
-    NSMutableArray *data = [NSMutableArray array];
-    NSEnumerator *enumerator = [ self.KlineData objectEnumerator];
-    id obj = nil;
-    while (obj = [enumerator nextObject]){
-        WpQuoteServerDayKLineCodeInfo* kline = [[WpQuoteServerDayKLineCodeInfo alloc]init];
-        
-        kline = obj;
-        if([_sCode isEqualToString: kline.sCode])
-        {
-            NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
-            array[0] = kline.sDate;
-            array[1] = @([kline.sOpenPrice floatValue]);
-            array[2] = @([kline.sHighPrice floatValue]);
-            array[3] = @([kline.sLowPrice floatValue]);
-            array[4] = @([kline.sLastPrice floatValue]);
-            array[5] = @([kline.sVolume floatValue]);
-            [data addObject:array];
-        }
+//    }
 
-    }
-    NSLog(@"%@",data);
-    NSMutableArray * newMarray = [NSMutableArray array];
-    NSEnumerator * enumerator1 = [data reverseObjectEnumerator];//倒序排列
-    id object;
-    while (object = [enumerator1 nextObject])
-    {
-        [newMarray addObject:object];
-    }
-    NSLog(@"%@",newMarray);
-    Y_KLineGroupModel *groupModel = [Y_KLineGroupModel objectWithArray:newMarray];
-    self.groupModel = groupModel;
-    [self.modelsDict setObject:groupModel forKey:self.type];
-    [self.stockChartView reloadData];
-    
+  
 }
 #pragma --mark Getter of Y_StockChartView
 - (Y_StockChartView *)stockChartView
@@ -214,7 +266,7 @@
     if(!_stockChartView) {
         _stockChartView = [Y_StockChartView new];
         _stockChartView.itemModels = @[
-                                       [Y_StockChartViewItemModel itemModelWithTitle:@"指标" type:Y_StockChartcenterViewTypeOther],
+                                       //[Y_StockChartViewItemModel itemModelWithTitle:@"指标" type:Y_StockChartcenterViewTypeOther],
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"分时" type:Y_StockChartcenterViewTypeTimeLine],
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"1分" type:Y_StockChartcenterViewTypeKline],
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"5分" type:Y_StockChartcenterViewTypeKline],
@@ -231,7 +283,7 @@
             if (IS_IPHONE_X) {
                 make.edges.equalTo(self.view).insets(UIEdgeInsetsMake(0, 30, 0, 0));
             } else {
-                make.top.equalTo(self.view).offset(60);
+                make.top.equalTo(self.view);
                 make.bottom.left.right.equalTo(self.view);
                 //make.edges.equalTo(self.view);
             }
@@ -245,25 +297,23 @@
 - (void)dismiss
 {
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-    appdelegate.isEable = YES;
-    
+    appdelegate.isEable = YES;//横屏
     Y_StockChartLandScapeViewController *stockChartVC = [Y_StockChartLandScapeViewController new];
-    //stockChartVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    //    UINavigationController* nav = [[UINavigationController alloc]initWithRootViewController:stockChartVC];
-    //    [self.navigationController pushViewController:stockChartVC animated:YES];
-    [self presentViewController:stockChartVC animated:NO completion:nil];
-
+    stockChartVC.sCode = _sCode;
+    stockChartVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    [self presentViewController:stockChartVC animated:YES completion:nil];
+ 
 }
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskLandscape;
 }
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleLightContent;
-    //return UIStatusBarStyleDefault;
-}
-- (BOOL)shouldAutorotate
-{
-    return NO;
-}
+//- (UIStatusBarStyle)preferredStatusBarStyle {
+//    return UIStatusBarStyleLightContent;
+//    //return UIStatusBarStyleDefault;
+//}
+//- (BOOL)shouldAutorotate
+//{
+//    return NO;
+//}
 @end

@@ -15,6 +15,7 @@
 #import "UIColor+Y_StockChart.h"
 #import "AppDelegate.h"
 #import "Y_StockChartViewController.h"
+#import "ICEQuote.h"
 
 #define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
@@ -36,6 +37,7 @@
 
 @property (nonatomic, copy) NSString *type;
 
+
 @end
 
 @implementation Y_StockChartLandScapeViewController
@@ -44,7 +46,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [UIApplication sharedApplication].statusBarHidden = NO;
+    [UIApplication sharedApplication].statusBarHidden = YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -54,14 +56,9 @@
 }
 
 - (void)viewDidLoad {
-    NSLog(@"view didload");
+
     [super viewDidLoad];
-    self.navigationController.navigationBar.barTintColor = [UIColor assistBackgroundColor];
-    self.navigationController.navigationBar.translucent = YES;
-    self.navigationItem.title = @"行情";
-    [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
-    //[self.navigationItem setHidesBackButton:YES];//
-    // Do any additional setup after loading the view.
+    self.view.backgroundColor = [UIColor backgroundColor];
     self.currentIndex = -1;
     self.stockChartView.backgroundColor = [UIColor backgroundColor];
 }
@@ -147,7 +144,7 @@
 //    param[@"market"] = @"btc_usdt";
 //    param[@"size"] = @"1000";
 //    [NetWorking requestWithApi:@"http://api.bitkk.com/data/v1/kline" param:param thenSuccess:^(NSDictionary *responseObject) {
-//        
+//
 //        Y_KLineGroupModel *groupModel = [Y_KLineGroupModel objectWithArray:responseObject[@"data"]];//很多组数据组成的array 每个元素包含时间 开盘价等数据
 //        NSLog(@"%@",responseObject[@"data"]);
 //        self.groupModel = groupModel;
@@ -155,8 +152,69 @@
 //        // NSLog(@"%@",groupModel);
 //        [self.stockChartView reloadData];
 //    } fail:^{
-//        
+//
 //    }];
+    AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    //[app.iceQuote Connect2Quote];
+    //self.timeData =
+    [app.iceQuote getKlineData:self.sCode type:self.type];
+    NSMutableArray *timeArray = [NSMutableArray array];
+    NSMutableArray *data = [NSMutableArray array];
+    //[self.timeData removeLastObject];
+    NSEnumerator *enumerator = [[NSEnumerator alloc]init];
+    if([self.type isEqualToString: @"1min"]){
+        enumerator =[[app.iceQuote getKlineData:self.sCode type:@"minute"] objectEnumerator];
+    }
+    if([self.type isEqualToString: @"1day"]){
+        enumerator =[[app.iceQuote getKlineData:self.sCode type:@"day"] objectEnumerator];
+    }
+    id obj = nil;
+    while (obj = [enumerator nextObject]){
+        NSString *string = obj;
+        NSArray* array1 = [string componentsSeparatedByString:@","];
+        NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
+        if([self.type isEqualToString: @"1min"]){
+            NSMutableString *date = [[NSMutableString alloc]initWithString:array1[0]];
+            [date appendString:array1[1]];
+            NSMutableString *timeString = [[NSMutableString alloc]initWithString:array1[1]];
+            [timeString deleteCharactersInRange:NSMakeRange(4,2)];
+            [timeString insertString:@":" atIndex:2];
+            array[0] = timeString;
+            array[1] = @([array1[2] floatValue]);
+            array[2] = @([array1[4] floatValue]);
+            array[3] = @([array1[5] floatValue]);
+            array[4] = @([array1[4] floatValue]);
+            array[5] = @([array1[7] floatValue]);
+            [timeArray addObject:array];
+        }
+        else if ([self.type isEqualToString:@"1day"]){
+            NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
+            [dateString insertString:@"-" atIndex:4];
+            [dateString insertString:@"-" atIndex:7];
+            array[0] = dateString;
+            array[1] = @([array1[1] floatValue]);
+            array[2] = @([array1[3] floatValue]);
+            array[3] = @([array1[4] floatValue]);
+            array[4] = @([array1[2] floatValue]);
+            array[5] = @([array1[6] floatValue]);
+            [data addObject:array];
+        }
+        // NSMutableArray * newMarray = [NSMutableArray array];
+        
+        
+    }
+    if ([self.type isEqualToString:@"1day"]){
+        NSEnumerator * enumerator1 = [data reverseObjectEnumerator];//倒序排列
+        id object;
+        while (object = [enumerator1 nextObject])
+        {
+            [timeArray addObject:object];
+        }
+    }
+    Y_KLineGroupModel *groupModel = [Y_KLineGroupModel objectWithArray:timeArray];
+    self.groupModel = groupModel;
+    [self.modelsDict setObject:groupModel forKey:self.type];
+    [self.stockChartView reloadData];
 }
 
 - (Y_StockChartView *)stockChartView
@@ -199,6 +257,7 @@
     
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
     appdelegate.isEable = NO;
+    
     [self dismissViewControllerAnimated:self completion:nil ];
    
 }

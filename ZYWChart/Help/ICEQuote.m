@@ -83,12 +83,8 @@
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     int ret = [self.WpQuoteServerclientApiPrx Login:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
-    NSLog(@"loginnjjjjjlllllll %d",ret);
-    [self setHeartbeat];
-    
-    
- 
-    
+    NSLog(@"login%d",ret);
+    [self setHeartbeat];//设置心跳
 }
 - (void)setHeartbeat{
     // 创建GCD定时器
@@ -101,11 +97,11 @@
     // 开启定时器
     dispatch_resume(_timer);
 }
+//传递数据的
 - (void)sendmsg{
     NSLog(@"sendmsg");
     if(self.delegate && [self.delegate respondsToSelector:@selector(refreshTimeline:)]){
         [self.delegate refreshTimeline:@"哒哒哒哒哒哒多多多多多"];
-        //NSLog(@"%@",msg);
     }
 }
 
@@ -143,7 +139,33 @@
         NSString* Code = sCode;
         NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
         NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,Code,@"=",Time];
-        [self.WpQuoteServerclientApiPrx GetKLine:@"minute" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+        [self.WpQuoteServerclientApiPrx GetKLine:@"day" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+        NSMutableArray* array = [NSMutableArray array];
+        if([strOut length]> 0){
+            array = [NSMutableArray array];
+            array = [[strOut componentsSeparatedByString:@"|"] mutableCopy];
+            [array removeLastObject];
+        }
+        else{
+            array = nil;
+        }
+        return array;
+    }
+    @catch(ICEException* s)
+    {
+        NSLog(@"Fail %@",s);
+    }
+}
+//获取timedata
+- (NSMutableArray*)getKlineData:(NSString*)sCode type:(NSString*)type{
+    @try{
+        // [self reconnect];//重连
+        NSMutableString* strOut = [[NSMutableString alloc]init];
+        NSString* Time = [self getCurrentTime];
+        NSString* Code = sCode;
+        NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+        NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,Code,@"=",Time];
+        [self.WpQuoteServerclientApiPrx GetKLine:type strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
         NSMutableArray* array = [NSMutableArray array];
         if([strOut length]> 0){
             array = [NSMutableArray array];
