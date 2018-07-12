@@ -156,38 +156,7 @@
     _kLineMAView=nil;
     return _kLineMAView;
 }
-- (Y_KlineMAVLabelView *)kLineMALabelViewLeft
-{
-    if (!_kLineMALabelViewLeft) {
-        NSLog(@"悬浮窗口左边");
-        _kLineMALabelViewLeft = [Y_KlineMAVLabelView view];
-        [self.scrollView addSubview:_kLineMALabelViewLeft];
-        [_kLineMALabelViewLeft mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(self.mas_left).offset(100);
-            make.left.equalTo(self.scrollView);
-            make.top.equalTo(self.scrollView.mas_top);//.offset(5);
-            make.height.equalTo(@80);
-        }];
-    }
-    return _kLineMALabelViewLeft;
-}
 
-- (Y_KlineMAVLabelView *)kLineMALabelViewRight
-{
-   
-    if (!_kLineMALabelViewRight) {
-         NSLog(@"悬浮窗口右边");
-        _kLineMALabelViewRight = [Y_KlineMAVLabelView view];
-        [self.scrollView addSubview:_kLineMALabelViewRight];
-        [_kLineMALabelViewRight mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(self.scrollView);
-            make.left.equalTo(self.scrollView.mas_right).offset(-100);
-            make.top.equalTo(self.scrollView.mas_top);//.offset(5);
-            make.height.equalTo(@80);
-        }];
-    }
-    return _kLineMALabelViewRight;
-}
 - (Y_VolumeMAView *)volumeMAView
 {
 //    if (!_volumeMAView) {
@@ -421,6 +390,7 @@
     if(UIGestureRecognizerStateChanged == longPress.state || UIGestureRecognizerStateBegan == longPress.state)
     {
         self.location = [longPress locationInView:self.scrollView];//设置响应长按的view
+        //self.location = [longPress locationInView:self];//设置响应长按的view
         if(ABS(oldPositionX - _location.x) < ([Y_StockChartGlobalVariable kLineWidth] + [Y_StockChartGlobalVariable kLineGap])/2)
         {
             return;
