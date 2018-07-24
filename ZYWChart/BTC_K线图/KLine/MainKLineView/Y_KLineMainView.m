@@ -122,7 +122,7 @@
     CGContextFillRect(context, CGRectMake(0, Y_StockChartKLineMainViewMaxY, self.frame.size.width, self.frame.size.height - Y_StockChartKLineMainViewMaxY));
 
     Y_MALine *MALine = [[Y_MALine alloc]initWithContext:context];
-    
+    //K线图
     if(self.MainViewType == Y_StockChartcenterViewTypeKline)
     {
         Y_KLine *kLine = [[Y_KLine alloc]initWithContext:context];
@@ -134,7 +134,9 @@
             UIColor *kLineColor = [kLine draw];
             [kLineColors addObject:kLineColor];
         }];
-    } else {
+    }
+    //分时图
+    else {
         __block NSMutableArray *positions = @[].mutableCopy;
         [self.needDrawKLinePositionModels enumerateObjectsUsingBlock:^(Y_KLinePositionModel * _Nonnull positionModel, NSUInteger idx, BOOL * _Nonnull stop) {
             UIColor *strokeColor = positionModel.OpenPoint.y < positionModel.ClosePoint.y ? [UIColor increaseColor] : [UIColor decreaseColor];
@@ -157,12 +159,14 @@
 //            NSString *dateStr = [formatter stringFromDate:date];
             
             CGPoint drawDatePoint;
+            //第一个时间
             if(CGPointEqualToPoint(lastDrawDatePoint, CGPointZero)){
                 drawDatePoint = CGPointMake(point.x -1, Y_StockChartKLineMainViewMaxY + 1.5);
             }
             else{
                 drawDatePoint = CGPointMake(point.x -11, Y_StockChartKLineMainViewMaxY + 1.5);
             }
+            //每60个数据画时间
             if(CGPointEqualToPoint(lastDrawDatePoint, CGPointZero) || point.x - lastDrawDatePoint.x > 60)
             {
                 [self.needDrawKLineModels[idx].Date drawAtPoint:drawDatePoint withAttributes:@{NSFontAttributeName : [UIFont systemFontOfSize:11],NSForegroundColorAttributeName : [UIColor assistTextColor]}];
@@ -418,21 +422,14 @@
         
         
     }];
-    
-    
-    
     maxAssert *= 1.0001;
     minAssert *= 0.9991;
-    
-    
     CGFloat minY = Y_StockChartKLineMainViewMinY;
     CGFloat maxY = self.parentScrollView.frame.size.height * [Y_StockChartGlobalVariable kLineMainViewRadio] - 15;
     
     CGFloat unitValue = (maxAssert - minAssert)/(maxY - minY);
     //    CGFloat ma7UnitValue = (maxMA7 - minMA7) / (maxY - minY);
     //    CGFloat ma30UnitValue = (maxMA30 - minMA30) / (maxY - minY);
-    
-    
     [self.needDrawKLinePositionModels removeAllObjects];
     [self.MA7Positions removeAllObjects];
     [self.MA30Positions removeAllObjects];

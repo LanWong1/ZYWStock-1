@@ -72,7 +72,6 @@
 @synthesize WpQuoteServerclientApiPrx;
 
 - (void)viewWillAppear:(BOOL)animated{
-    NSLog(@"view will appear aaaa");
     [super viewWillAppear: animated];
     self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor blackColor]};
     self.navigationController.navigationBar.barTintColor  = [UIColor whiteColor];
@@ -81,7 +80,7 @@
 }
 
 - (void)viewDidLoad {
-    NSLog(@"codlist view didload");
+    
     [super viewDidLoad];
     self.allTitlesArray = [[NSMutableArray alloc]init];
     self.KlineListAll = [[NSMutableArray alloc]init];

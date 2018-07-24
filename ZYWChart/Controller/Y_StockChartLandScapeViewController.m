@@ -157,7 +157,7 @@
     AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     //[app.iceQuote Connect2Quote];
     //self.timeData =
-    [app.iceQuote getKlineData:self.sCode type:self.type];
+    //[app.iceQuote getKlineData:self.sCode type:self.type];
     NSMutableArray *timeArray = [NSMutableArray array];
     NSMutableArray *data = [NSMutableArray array];
     //[self.timeData removeLastObject];

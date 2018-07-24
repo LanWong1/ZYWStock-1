@@ -14,7 +14,7 @@
 #import "ICETool.h"
 #import "BuyVC.h"
 #import "AppDelegate.h"
-#import "TabVC.h"
+
 #import "CodeListVC.h"
 #import "checkVC.h"
 #define USERNAME @"200172"
@@ -90,8 +90,12 @@
                 app.iceTool = [[ICETool alloc]init];
                 app.wpTradeAPIServerCallbackReceiverI = [app.iceTool Connect2ICE];
                 [app.iceTool initiateCallback:self.strAcc];
-                [app.iceTool Login:app.strCmd];
-        
+                //[app.iceTool Login:app.strCmd];
+            NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+            NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+            int ret = [app.iceTool.WpTrade Login:@"" strCmd:app.strCmd strOut:&strOut strErrInfo:&strErroInfo];
+            
+            
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self setHeartbeat];
                 [self.activeId removeFromSuperview];
@@ -99,10 +103,11 @@
                 //判断是否重新连接 若是重新连接 无需跳转页面
                 if(self.connectFlag == 0){
                     self.connectFlag = 1;
-                    TabVC* tab = [[TabVC alloc]init];
+                
                     BuyVC* buy = [[BuyVC alloc]init];
                     checkVC* check = [[checkVC alloc]init];
                     CodeListVC* list = [[CodeListVC alloc]init];
+                    UITabBarController *tab = [[UITabBarController alloc]init];
                     UINavigationController* listNav = [[UINavigationController alloc]initWithRootViewController:list];
                     UINavigationController* buyNav = [[UINavigationController alloc]initWithRootViewController:buy];
                     

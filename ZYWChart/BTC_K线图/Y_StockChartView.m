@@ -12,12 +12,10 @@
 #import "Y_StockChartSegmentView.h"
 #import "Y_StockChartGlobalVariable.h"
 #import "AppDelegate.h"
+#import "ICEQuote.h"
 @interface Y_StockChartView() <Y_StockChartSegmentViewDelegate>
 
-/**
- *  K线图View
- */
-@property (nonatomic, strong) Y_KLineView *kLineView;
+
 
 /**
  *  底部选择View
@@ -38,6 +36,8 @@
 
 @implementation Y_StockChartView
 
+@synthesize kLineView = _kLineView;
+
 - (Y_KLineView *)kLineView
 {
     if(!_kLineView)
@@ -45,7 +45,15 @@
         _kLineView = [Y_KLineView new];
         [self addSubview:_kLineView];
         [_kLineView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.bottom.right.equalTo(self);
+            AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+            if(appdelegate.isEable == NO){
+                make.bottom.equalTo(self).offset(-100);
+            }
+            else{
+                make.bottom.equalTo(self);
+            }
+           // make.bottom.equalTo(self);
+            make.right.equalTo(self);
             make.left.equalTo(self).offset(5);
             make.top.equalTo(self.segmentView.mas_bottom);
         }];
@@ -64,6 +72,7 @@
            // make.bottom.left.top.equalTo(self);
             make.right.left.equalTo(self);
             AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+            
             if(appdelegate.isEable == YES){
                 make.top.equalTo(self);
             }
@@ -76,8 +85,6 @@
     }
     return _segmentView;
 }
-
-
 
 #pragma --mark itemModels的setter方法
 - (void)setItemModels:(NSArray *)itemModels
@@ -129,6 +136,8 @@
 
 - (void)y_StockChartSegmentView:(Y_StockChartSegmentView *)segmentView clickSegmentButtonIndex:(NSInteger)index
 {
+ 
+    
     self.currentIndex = index;
     if (index == 105) {
         
@@ -150,7 +159,10 @@
         [self.kLineView reDraw];
         [self bringSubviewToFront:self.segmentView];
     
-    } else {
+    }
+    //主图
+    else {
+        //获取数据 数据源代理  也可以从订阅当中获取
         if(self.dataSource && [self.dataSource respondsToSelector:@selector(stockDatasWithIndex:)])
         {
             //获得数据
@@ -159,7 +171,6 @@
             {
                 return;
             }
-            
             Y_StockChartViewItemModel *itemModel = self.itemModels[index];
             Y_StockChartCenterViewType type = itemModel.centerViewType;
             if(type != self.currentCenterViewType)
@@ -169,7 +180,7 @@
                 switch (type) {
                     case Y_StockChartcenterViewTypeKline:
                     {
-                        self.kLineView.hidden = NO;
+                        self.kLineView.hidden = NO;//显示K线图
                      //[self bringSubviewToFront:self.kLineView];
                      //[self bringSubviewToFront:self.segmentView];
                         
@@ -179,14 +190,16 @@
                         break;
                 }
             }
-            
+            //其它
             if(type == Y_StockChartcenterViewTypeOther)
             {
                 
-            } else {
-                self.kLineView.kLineModels = (NSArray *)stockData;
+            }
+            //type = Y_StockChartcenterViewTypeTimeLine时间线或者K线图
+            else {
+                self.kLineView.kLineModels = (NSArray *)stockData;//更改数据
                 self.kLineView.MainViewType = type;
-                [self.kLineView reDraw];
+                [self.kLineView reDraw];//重绘图像
             }
             //[self bringSubviewToFront:self.segmentView];
         }

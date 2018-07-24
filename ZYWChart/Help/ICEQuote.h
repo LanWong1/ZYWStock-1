@@ -20,10 +20,15 @@
 @end
 
 @protocol ICEQuoteDelegate<NSObject>
+
+@optional
+//传递数据
 - (void)refreshTimeline:(NSString*)s;
 @end
 
 @interface ICEQuote : NSObject
+@property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
+
 
 - (WpQuoteServerCallbackReceiverI*)Connect2Quote;
 - (void)initiateCallback:(NSString*)strAcc;

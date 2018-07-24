@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "Y_StockChartConstant.h"
+#import "Y_KLineView.h"
 
 //种类
 typedef NS_ENUM(NSInteger, Y_KLineType) {
@@ -55,6 +56,10 @@ typedef NS_ENUM(NSInteger, Y_KLineType) {
  */
 @property (nonatomic, weak) id<Y_StockChartViewDataSource> dataSource;
 
+/**
+ *  K线图View
+ */
+@property (nonatomic, strong) Y_KLineView *kLineView;
 /**
  *  当前选中的索引
  */

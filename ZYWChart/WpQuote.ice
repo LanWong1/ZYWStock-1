@@ -25,6 +25,7 @@ module WpQuoteServer
 	{
 		void SendMsg(int itype, string strMessage);
 	};
+
 	interface ClientApi
 	{
 		int Login(string strCmdType, string strCmd, out string strOut, out string strErrInfo);

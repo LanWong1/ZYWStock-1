@@ -211,9 +211,13 @@
 		42E7292F1E13C80200682B3E /* ZYWCandleModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E7292E1E13C80200682B3E /* ZYWCandleModel.m */; };
 		42E729341E13CAF200682B3E /* CandleLineVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E729331E13CAF200682B3E /* CandleLineVC.m */; };
 		4C5E070420E269100053F7CB /* searchNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5E070320E2690F0053F7CB /* searchNormal.png */; };
+		4CC3E91A20FD71950073A7FB /* QuickOrder.ice in Resources */ = {isa = PBXBuildFile; fileRef = 4CC3E91820FD71930073A7FB /* QuickOrder.ice */; };
+		4CC3E91B20FD71950073A7FB /* config3.client in Resources */ = {isa = PBXBuildFile; fileRef = 4CC3E91920FD71940073A7FB /* config3.client */; };
+		4CC3E91D20FD72060073A7FB /* QuickOrder.ice in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3E91820FD71930073A7FB /* QuickOrder.ice */; };
+		4CC3E92020FD73770073A7FB /* ICEQuickOrder.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3E91F20FD73770073A7FB /* ICEQuickOrder.m */; };
+		4CC3E96120FDB8BC0073A7FB /* WYLoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3E96020FDB8BC0073A7FB /* WYLoginVC.m */; };
 		79715BAE312AE6B07031DB82 /* libPods-ZYWChart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E2B8C997449299EE5E08697 /* libPods-ZYWChart.a */; };
 		BA0EF4C820BD3D3300E5F974 /* CodeListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA0EF4C720BD3D3300E5F974 /* CodeListVC.m */; };
-		BA24DD9420D350AE008A1B9C /* TabVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA24DD9320D350AE008A1B9C /* TabVC.m */; };
 		BA3D61C620EDA08400665888 /* Y_StockChartGlobalVariable.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3D619020EDA08400665888 /* Y_StockChartGlobalVariable.m */; };
 		BA3D61C720EDA08400665888 /* UIColor+Y_StockChart.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3D619320EDA08400665888 /* UIColor+Y_StockChart.m */; };
 		BA3D61C820EDA08400665888 /* Y_AccessoryMAView.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3D619720EDA08400665888 /* Y_AccessoryMAView.m */; };
@@ -547,12 +551,16 @@
 		42E729321E13CAF200682B3E /* CandleLineVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CandleLineVC.h; sourceTree = "<group>"; };
 		42E729331E13CAF200682B3E /* CandleLineVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CandleLineVC.m; sourceTree = "<group>"; };
 		4C5E070320E2690F0053F7CB /* searchNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchNormal.png; sourceTree = "<group>"; };
+		4CC3E91820FD71930073A7FB /* QuickOrder.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = QuickOrder.ice; sourceTree = "<group>"; };
+		4CC3E91920FD71940073A7FB /* config3.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config3.client; sourceTree = "<group>"; };
+		4CC3E91E20FD73770073A7FB /* ICEQuickOrder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICEQuickOrder.h; sourceTree = "<group>"; };
+		4CC3E91F20FD73770073A7FB /* ICEQuickOrder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICEQuickOrder.m; sourceTree = "<group>"; };
+		4CC3E95F20FDB8BC0073A7FB /* WYLoginVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYLoginVC.h; sourceTree = "<group>"; };
+		4CC3E96020FDB8BC0073A7FB /* WYLoginVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WYLoginVC.m; sourceTree = "<group>"; };
 		4F7C1CFF0292A45235298718 /* Pods-ZYWChart.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZYWChart.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ZYWChart/Pods-ZYWChart.debug.xcconfig"; sourceTree = "<group>"; };
 		A8CBF1D36897BA6C3C8ABB35 /* Pods-ZYWChart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZYWChart.release.xcconfig"; path = "Pods/Target Support Files/Pods-ZYWChart/Pods-ZYWChart.release.xcconfig"; sourceTree = "<group>"; };
 		BA0EF4C620BD3D3300E5F974 /* CodeListVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodeListVC.h; sourceTree = "<group>"; };
 		BA0EF4C720BD3D3300E5F974 /* CodeListVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeListVC.m; sourceTree = "<group>"; };
-		BA24DD9220D350AE008A1B9C /* TabVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TabVC.h; sourceTree = "<group>"; };
-		BA24DD9320D350AE008A1B9C /* TabVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TabVC.m; sourceTree = "<group>"; };
 		BA3D618D20EDA08400665888 /* Y_StockChartConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Y_StockChartConstant.h; sourceTree = "<group>"; };
 		BA3D618F20EDA08400665888 /* Y_StockChartGlobalVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Y_StockChartGlobalVariable.h; sourceTree = "<group>"; };
 		BA3D619020EDA08400665888 /* Y_StockChartGlobalVariable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Y_StockChartGlobalVariable.m; sourceTree = "<group>"; };
@@ -723,6 +731,8 @@
 				BAE5985620C7718000524CB7 /* LoginVC.m */,
 				BA78AC8F20DB74E800F07D40 /* LoginVC1.h */,
 				BA78AC9020DB74E800F07D40 /* LoginVC1.m */,
+				4CC3E95F20FDB8BC0073A7FB /* WYLoginVC.h */,
+				4CC3E96020FDB8BC0073A7FB /* WYLoginVC.m */,
 				422787861E04F18600DB5CEC /* HomeVC.h */,
 				422787871E04F18600DB5CEC /* HomeVC.m */,
 				424347141EF69C570021F2C5 /* BaseNavigationController.h */,
@@ -736,6 +746,8 @@
 				BA78AC8D20DB745300F07D40 /* config2.client */,
 				BA3EB02420CE21A4008F11E9 /* config1.client */,
 				422787911E04F18600DB5CEC /* Info.plist */,
+				4CC3E91920FD71940073A7FB /* config3.client */,
+				4CC3E91820FD71930073A7FB /* QuickOrder.ice */,
 				BAE5985B20CA69B000524CB7 /* WpTrade.ice */,
 				BAE5985820C7CDE000524CB7 /* NpTrade.ice */,
 				BA51D57A20B6881F00B34DA7 /* WpQuote.ice */,
@@ -776,8 +788,6 @@
 		422787BE1E04F73900DB5CEC /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				BA24DD9220D350AE008A1B9C /* TabVC.h */,
-				BA24DD9320D350AE008A1B9C /* TabVC.m */,
 				BA0EF4C620BD3D3300E5F974 /* CodeListVC.h */,
 				BA0EF4C720BD3D3300E5F974 /* CodeListVC.m */,
 				4204E0C81E12375D00A47FCF /* LineVC.h */,
@@ -1029,6 +1039,8 @@
 				420577581E4AEF8600E8C15E /* ZYWCalcuteTool.m */,
 				4205775D1E4AFAD500E8C15E /* ZYWCalcuteUntil.h */,
 				4205775E1E4AFAD500E8C15E /* ZYWCalcuteUntil.m */,
+				4CC3E91E20FD73770073A7FB /* ICEQuickOrder.h */,
+				4CC3E91F20FD73770073A7FB /* ICEQuickOrder.m */,
 				BA3EB02220CE08EB008F11E9 /* ICETool.h */,
 				BA3EB02120CE08EB008F11E9 /* ICETool.m */,
 				BA3EB02620CE4137008F11E9 /* ICEQuote.h */,
@@ -1427,9 +1439,11 @@
 				4227878D1E04F18600DB5CEC /* Assets.xcassets in Resources */,
 				4242362A1EC1ED8400C161A8 /* N225.xml in Resources */,
 				BAE5985C20CA69B000524CB7 /* WpTrade.ice in Resources */,
+				4CC3E91A20FD71950073A7FB /* QuickOrder.ice in Resources */,
 				423942841E2B6D0300F2A873 /* ta_retcode.csv in Resources */,
 				BA51D57920B6880E00B34DA7 /* config.client in Resources */,
 				BA78AC8E20DB745400F07D40 /* config2.client in Resources */,
+				4CC3E91B20FD71950073A7FB /* config3.client in Resources */,
 				BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1476,8 +1490,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CC3E91D20FD72060073A7FB /* QuickOrder.ice in Sources */,
 				BA3D61D820EDA08400665888 /* Y_KLineView.m in Sources */,
-				BA24DD9420D350AE008A1B9C /* TabVC.m in Sources */,
 				BA3D61CF20EDA08400665888 /* Y_KLineGroupModel.m in Sources */,
 				BAE5985D20CA6EB200524CB7 /* WpTrade.ice in Sources */,
 				BAE5985A20C7CE2C00524CB7 /* NpTrade.ice in Sources */,
@@ -1624,6 +1638,7 @@
 				423942DC1E2B6D0300F2A873 /* ta_EMA.c in Sources */,
 				423942E51E2B6D0300F2A873 /* ta_KAMA.c in Sources */,
 				4274010F1E768B2300864702 /* ZYWMacdPostionModel.m in Sources */,
+				4CC3E92020FD73770073A7FB /* ICEQuickOrder.m in Sources */,
 				423942D11E2B6D0300F2A873 /* ta_CDLUNIQUE3RIVER.c in Sources */,
 				423942CB1E2B6D0300F2A873 /* ta_CDLSTALLEDPATTERN.c in Sources */,
 				423942E91E2B6D0300F2A873 /* ta_LINEARREG_SLOPE.c in Sources */,
@@ -1668,6 +1683,7 @@
 				423943241E2B6D0300F2A873 /* ta_WCLPRICE.c in Sources */,
 				4239430B1E2B6D0300F2A873 /* ta_RSI.c in Sources */,
 				423942C31E2B6D0300F2A873 /* ta_CDLONNECK.c in Sources */,
+				4CC3E96120FDB8BC0073A7FB /* WYLoginVC.m in Sources */,
 				4239431D1E2B6D0300F2A873 /* ta_TRIMA.c in Sources */,
 				423942F91E2B6D0300F2A873 /* ta_MININDEX.c in Sources */,
 				BA3D61DE20EDA0B900665888 /* Y_StockChartLandScapeViewController.m in Sources */,

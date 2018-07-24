@@ -9,7 +9,7 @@
 #import "ICEQuote.h"
 #import <objc/Ice.h>
 #import <objc/Glacier2.h>
-#import <WpQuote.h>
+
 
 
 @interface WpQuoteServerCallbackReceiverI()<WpQuoteServerCallbackReceiver>
@@ -26,7 +26,7 @@
 @property (nonatomic) id<ICECommunicator> communicator;
 @property (nonatomic) id<WpQuoteServerCallbackReceiverPrx> twowayR;
 @property (nonatomic) id<GLACIER2RouterPrx> router;
-@property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
+
 @property (nonatomic)  WpQuoteServerCallbackReceiverI* wpQuoteServerCallbackReceiverI;
 //@property (nonatomic) WpQuoteServerDayKLineList* DLL;
 //@property (nonatomic) NSTimer *timer;
@@ -70,14 +70,12 @@
     {
         NSLog(@"%@",s);
     }
-   
     return DLL;
 }
 
 - (void)initiateCallback:(NSString*)strAcc{
     
     [self.WpQuoteServerclientApiPrx initiateCallback:strAcc proxy:self.twowayR];
-    
 }
 - (void)Login:(NSString*)StrCmd{
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
@@ -101,8 +99,9 @@
 - (void)sendmsg{
     NSLog(@"sendmsg");
     if(self.delegate && [self.delegate respondsToSelector:@selector(refreshTimeline:)]){
-        [self.delegate refreshTimeline:@"哒哒哒哒哒哒多多多多多"];
+        [self.delegate refreshTimeline:@"refresh timeline"];
     }
+   
 }
 
 - (int)HeartBeat:(NSString*)strCmd{

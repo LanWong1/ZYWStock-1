@@ -24,25 +24,38 @@
 #define SCREEN_MAX_LENGTH MAX(kScreenWidth,kScreenHeight)
 #define IS_IPHONE_X (IS_IPHONE && SCREEN_MAX_LENGTH == 812.0)
 
-@interface Y_StockChartViewController ()<Y_StockChartViewDataSource>
-
+@interface Y_StockChartViewController ()<Y_StockChartViewDataSource,ICEQuoteDelegate>
 @property (nonatomic, strong) Y_StockChartView *stockChartView;
-
 @property (nonatomic, strong) Y_KLineGroupModel *groupModel;
-
 @property (nonatomic, copy) NSMutableDictionary <NSString*, Y_KLineGroupModel*> *modelsDict;
-
-
 @property (nonatomic, assign) NSInteger currentIndex;
-
 @property (nonatomic, copy) NSString *type;
-
 @property (nonatomic, copy) NSString* sCode;
 @property (nonatomic, copy) WpQuoteServerDayKLineList* KlineData;
 
 @end
 
 @implementation Y_StockChartViewController
+
+
+#pragma --mark icetool delegate 用于传值 更新数据
+//从icequote中获取数据 更新图像
+- (void)refreshTimeline:(NSString *)s{
+    NSLog(@"delegate.........%@",s);
+    /*
+     Y_StockChartViewItemModel *itemModel = self.itemModels[index];
+     Y_StockChartCenterViewType type = itemModel.centerViewType;
+     self.kLineView.kLineModels = (NSArray *)stockData;//新的数据
+     self.kLineView.MainViewType = type;
+     [self.kLineView reDraw];//重绘图像
+     */
+    //可从这里传入新的数据 然后重绘数据
+}
+#pragma --mark ice quote delegate
+
+-(void)refrenshTest:(NSString *)s{
+    NSLog(@"aaaa     %@",s);
+}
 
 -(instancetype)initWithScode:(NSString *)sCodeSelect KlineDataList:(WpQuoteServerDayKLineList *)KlineDataList{
     
@@ -77,9 +90,8 @@
     self.view.backgroundColor = [UIColor backgroundColor];
     self.currentIndex = -1;
     self.stockChartView.backgroundColor = [UIColor backgroundColor];//调用了getter方法[UIColor whiteColor]; // [UIColor backgroundColor];//调用了getter方法
-
 }
-
+//getter方法 of modelsDict
 - (NSMutableDictionary<NSString *,Y_KLineGroupModel *> *)modelsDict
 {
     if (!_modelsDict) {
@@ -100,6 +112,9 @@
     switch (index) {
         case 0:
         {
+            //分时图时 打开代理 实时更新数据
+            AppDelegate * app = [UIApplication sharedApplication].delegate;
+            app.iceQuote.delegate = self; //设置代理在stockChartView中实现
             type = @"1min";
         }
             break;
@@ -148,7 +163,6 @@
     //无数据 重新下载数据
     if(![self.modelsDict objectForKey:type])
     {
-        NSLog(@"type = %@ data = %@",type, [self.modelsDict objectForKey:type]);
         [self reloadData];
     } else {
         return [self.modelsDict objectForKey:type].models;
@@ -161,8 +175,8 @@
         AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
         //[app.iceQuote Connect2Quote];
         //self.timeData =
-        [app.iceQuote getKlineData:self.sCode type:self.type];
-        NSMutableArray *timeArray = [NSMutableArray array];
+        //[app.iceQuote getKlineData:self.sCode type:self.type];
+        NSMutableArray *dataArray = [NSMutableArray array];
         NSMutableArray *data = [NSMutableArray array];
         //[self.timeData removeLastObject];
         NSEnumerator *enumerator = [[NSEnumerator alloc]init];
@@ -189,7 +203,7 @@
                 array[3] = @([array1[5] floatValue]);
                 array[4] = @([array1[4] floatValue]);
                 array[5] = @([array1[7] floatValue]);
-                [timeArray addObject:array];
+                [dataArray addObject:array];
             }
             else if ([self.type isEqualToString:@"1day"]){
                 NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
@@ -204,21 +218,19 @@
                 [data addObject:array];
             }
            // NSMutableArray * newMarray = [NSMutableArray array];
-
-      
         }
        if ([self.type isEqualToString:@"1day"]){
            NSEnumerator * enumerator1 = [data reverseObjectEnumerator];//倒序排列
            id object;
            while (object = [enumerator1 nextObject])
            {
-               [timeArray addObject:object];
+               [dataArray addObject:object];
            }
        }
-        Y_KLineGroupModel *groupModel = [Y_KLineGroupModel objectWithArray:timeArray];
-        self.groupModel = groupModel;
-        [self.modelsDict setObject:groupModel forKey:self.type];
+        self.groupModel  = [Y_KLineGroupModel objectWithArray:dataArray];
+        [self.modelsDict setObject:_groupModel forKey:self.type];//model 字典 键值编程 更新M_groupModel
         [self.stockChartView reloadData];
+        [self.stockChartView.kLineView reDraw];//重绘kline
     
 //    
 //    if([self.type isEqualToString: @"1day"]){
@@ -275,8 +287,6 @@
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"日线" type:Y_StockChartcenterViewTypeKline],
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"周线" type:Y_StockChartcenterViewTypeKline],
                                        ];
-        
-       // _stockChartView.backgroundColor = [UIColor orangeColor];
         _stockChartView.dataSource = self;
         [self.view addSubview:_stockChartView];
         [_stockChartView mas_makeConstraints:^(MASConstraintMaker *make) {

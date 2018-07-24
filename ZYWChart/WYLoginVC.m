@@ -1,48 +1,57 @@
 //
-//  LoginVC1.m
+//  WYLoginVC.m
 //  ZYWChart
 //
-//  Created by zdqh on 2018/6/21.
+//  Created by IanWong on 2018/7/17.
 //  Copyright © 2018 zyw113. All rights reserved.
 //
 
-#import "LoginVC1.h"
-#import "BaseNavigationController.h"
-#import "WpTrade.h"
-#import "ICENpTrade.h"
-#import "BuyVC.h"
+#import "WYLoginVC.h"
 #import "AppDelegate.h"
+#import "QuickOrder.h"
+#import "BuyVC.h"
+#import "ICEQuickOrder.h"
+
+#import "checkVC.h"
 #import "CodeListVC.h"
-#define USERNAME @"380018"
-#define PASSWORD @"888888"
-@interface LoginVC1 ()<UITextFieldDelegate>
+#define USERNAME @"063607"
+#define PASSWORD @"123456"
+
+
+@interface WYLoginVC ()<UITextFieldDelegate>
 @property (nonatomic,strong)  UIButton *LoginButton;
 @property (nonatomic,strong)  UITextField *UserNameTextField;
 @property (nonatomic,strong)  UITextField *PassWordTextField;
 @property (nonatomic, strong) dispatch_source_t timer;
 @property (nonatomic,strong)  UILabel *label;
 @property (nonatomic,strong)  UIActivityIndicatorView *activeId;
-@property (nonatomic,strong) ICENpTrade* iceNpTrade;
+@property (nonatomic,strong) ICETool* iceTool;
 @property (nonatomic) NSMutableString* strFundAcc;
 @property (nonatomic) NSMutableString* strAcc;
 @property (nonatomic) NSMutableString* strUserId;
-
 @property (nonatomic,strong)  BuyVC *buyVC;
 @property (nonatomic) WpTradeAPIServerCallbackReceiverI* wpTradeAPIServerCallbackReceiverI;
 @property (nonatomic) int connectFlag;
+@property (nonatomic) int quoteConnectFlag;
+@property (nonatomic) int tradeConnectFlag;
 @property (nonatomic) AppDelegate* app;
 @end
 
-@implementation LoginVC1
+@implementation WYLoginVC
 
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
     NSInteger timer_ = (NSInteger) [NSProcessInfo processInfo].systemUptime*100;
     NSString* userId = [NSString stringWithFormat:@"%ld",(long)timer_];
     self.strUserId = [[NSMutableString alloc]initWithString:userId];
+    
+    
     self.LoginButton = [self addLoginButton];
     self.UserNameTextField = [self addTextField:@"UserName" PositionX:100 PositionY:70];
     self.PassWordTextField = [self addTextField:@"Password" PositionX:100 PositionY:10];
+    _quoteConnectFlag = 0;
+    _tradeConnectFlag = 0;
     self.UserNameTextField.text = USERNAME;
     self.PassWordTextField.text = PASSWORD;
     self.PassWordTextField.secureTextEntry = YES;
@@ -52,7 +61,6 @@
     app.userName = USERNAME;
     app.passWord = PASSWORD;
     app.userID = self.strUserId;
-    // Do any additional setup after loading the view.
     // Do any additional setup after loading the view.
 }
 - (void)addActiveId{
@@ -75,30 +83,59 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
         @try
         {
+            
             AppDelegate* app = (AppDelegate*)[UIApplication sharedApplication].delegate;
-            app.iceNpTrade = [[ICENpTrade alloc]init];
-            app.npTradeAPIServerCallbackReceiverI = [app.iceNpTrade Connect2ICE];
-            self.strAcc = [[NSMutableString alloc]initWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId ];
-            [app.iceNpTrade initiateCallback:self.strAcc];
-            [app.iceNpTrade Login:app.strCmd];
+            app.QuickOrder= [[ICEQuickOrder alloc]init];
+            app.autoTradeCallback = [app.QuickOrder Connect2ICE];
+            [app.QuickOrder initiateCallback:self.strFundAcc];
+            NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+            NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+            int ret = [app.QuickOrder.quickOrder Login:@"" strCmd:app.strCmd strOut:&strOut strErrInfo:&strErroInfo];
+            //[app.QuickOrder.quickOrder QueryFund:@"" strCmd:self.strFundAcc strOut:&strOut strErrInfo:&strErroInfo];
+            //异步 获取数据
+            [app.QuickOrder.quickOrder begin_QueryFund:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
+                NSLog(@"l = %d s = %@  a = %@",l,s,a);
+            } exception:^(ICEException *s) {
+                NSLog(@"%@",s);
+            }];
+            [app.QuickOrder.quickOrder begin_QueryOrder:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
+                NSLog(@"l = %d s = %@  a = %@",l,s,a);
+            } exception:^(ICEException *s) {
+                NSLog(@"%@",s);
+            }];
+            [app.QuickOrder.quickOrder begin_QueryCode:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
+                NSLog(@"l = %d s = %@  a = %@",l,s,a);
+            } exception:^(ICEException *s) {
+                NSLog(@"%@",s);
+            }];
+
             dispatch_sync(dispatch_get_main_queue(), ^{
+                //NSLog(@"strout = %@",strOut);
                 [self setHeartbeat];
                 [self.activeId removeFromSuperview];
                 [self.label removeFromSuperview];
-                
                 //判断是否重新连接 若是重新连接 无需跳转页面
                 if(self.connectFlag == 0){
                     self.connectFlag = 1;
-                    UITabBarController *tab = [[UITabBarController alloc]init];
                     BuyVC* buy = [[BuyVC alloc]init];
+                    checkVC* check = [[checkVC alloc]init];
                     CodeListVC* list = [[CodeListVC alloc]init];
+                    UITabBarController *tab = [[UITabBarController alloc]init];
                     UINavigationController* listNav = [[UINavigationController alloc]initWithRootViewController:list];
                     UINavigationController* buyNav = [[UINavigationController alloc]initWithRootViewController:buy];
+                    UINavigationController* checkNav = [[UINavigationController alloc]initWithRootViewController:check];
                     buyNav.tabBarItem.title = @"交易";
-                    buyNav.tabBarItem.image = [[UIImage imageNamed:@"coin.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    buyNav.tabBarItem.image = [UIImage imageNamed:@"tradeNotSelected"];
+                    buyNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"tradeSelected"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    
                     listNav.tabBarItem.title = @"行情";
-                    listNav.tabBarItem.image = [[UIImage imageNamed:@"quo.png"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-                    tab.viewControllers = @[listNav,buyNav];
+                    listNav.tabBarItem.image = [UIImage imageNamed:@"quoNotSelectet"];
+                    listNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"quoSelected"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    
+                    checkNav.tabBarItem.title = @"账户";
+                    checkNav.tabBarItem.image = [UIImage imageNamed:@"checkNotSelected"];
+                    checkNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"checkSelected"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                    tab.viewControllers = @[listNav,buyNav,checkNav];
                     [self presentViewController:tab animated:NO completion:nil];
                 }
             });
@@ -131,6 +168,36 @@
         }
     });
 }
+- (void)setHeartbeat{
+    // 创建GCD定时器
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行
+    // 事件回调
+    //NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
+    
+    dispatch_source_set_event_handler(_timer, ^{
+        int iRet = -2;
+        @try{
+            AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+            NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+            NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+            iRet = [app.QuickOrder.quickOrder HeartBeat:@"" strCmd:app.strCmd strOut:&strOut strErrInfo:&strErroInfo];
+            //iRet = [app.QuickOrder.quickOrder HeartBeat:app.strCmd];
+        }
+        @catch(ICEException* s){
+            NSLog(@"heart beat fail");
+        }
+        if(iRet == -2){
+            //重新连接
+            dispatch_source_cancel(self->_timer);
+            [self connect2Server];
+        }
+    });
+    // 开启定时器
+    dispatch_resume(_timer);
+}
+
 -(UITextField*)addTextField:(NSString* )placeholder PositionX:(CGFloat)x PositionY:(CGFloat)y{
     UITextField* TextField = [[UITextField alloc]initWithFrame:CGRectMake(self.view.centerX-x, self.view.centerY-y, 200, 30)];
     [TextField setPlaceholder:placeholder];
@@ -153,7 +220,7 @@
     [btn setTitle:@"Login" forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
-    btn.backgroundColor = RoseColor;
+    btn.backgroundColor = DropColor;
     btn.layer.cornerRadius = 20;
     //btn.enabled = NO;
     [btn addTarget:self action:@selector(ButtonPressed) forControlEvents:UIControlEventTouchUpInside];
@@ -177,7 +244,11 @@
         {
             AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
             app.strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
-            self.strFundAcc = [[NSMutableString alloc]initWithString:self.UserNameTextField.text];
+            app.strFundAcc = [[NSMutableString alloc]initWithString:self.UserNameTextField.text];
+            
+            self.strAcc = [[NSMutableString alloc]initWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId ];
+            app.strAcc = self.strAcc;
+            //app.strFundAcc = self.strFundAcc
             [self connect2Server];
         }
     }
@@ -196,32 +267,38 @@
 }
 
 
-- (void)setHeartbeat{
-    // 创建GCD定时器
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
-    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行
-    // 事件回调
-    NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
-    
-    dispatch_source_set_event_handler(_timer, ^{
-        int iRet = -2;
-        @try{
-            AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-            //iRet = [self.iceNpTrade HeartBeat:strCmd];
-            iRet = [app.iceNpTrade HeartBeat:strCmd];
-        }
-        @catch(ICEException* s){
-            NSLog(@"heart beat fail");
-        }
-        if(iRet == -2){
-            //重新连接
-            dispatch_source_cancel(self->_timer);
-            [self connect2Server];
-        }
-    });
-    // 开启定时器
-    dispatch_resume(_timer);
+//- (void)setHeartbeat{
+//    // 创建GCD定时器
+//    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+//    _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+//    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行
+//    // 事件回调
+//    NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
+//
+//    dispatch_source_set_event_handler(_timer, ^{
+//        int iRet = -2;
+//        @try{
+//            AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+//            iRet = [app.iceTool HeartBeat:strCmd];
+//        }
+//        @catch(ICEException* s){
+//            NSLog(@"heart beat fail");
+//        }
+//        if(iRet == -2){
+//            //重新连接
+//            dispatch_source_cancel(self->_timer);
+//            [self connect2Server];
+//        }
+//    });
+//    // 开启定时器
+//    dispatch_resume(_timer);
+//}
+
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
 }
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     [textField resignFirstResponder];
@@ -234,11 +311,6 @@
     }
     return YES;
 }
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 /*
 #pragma mark - Navigation
 

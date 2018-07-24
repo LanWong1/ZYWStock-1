@@ -77,9 +77,8 @@
  *  长按后显示的View
  */
 @property (nonatomic, strong) UIView *verticalView;
-@property (nonatomic, strong) Y_KlineMAVLabelView *kLineMALabelViewLeft;
-@property (nonatomic, strong) Y_KlineMAVLabelView *kLineMALabelViewRight;
-
+//@property (nonatomic, strong) Y_KlineMAVLabelView *kLineMALabelViewLeft;
+//@property (nonatomic, strong) Y_KlineMAVLabelView *kLineMALabelViewRight;
 @property (nonatomic, strong) Y_KlineMAVLabelView *kLineMALabelView;
 
 
@@ -213,7 +212,14 @@
         [_kLineMainView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(self.scrollView).offset(5);
             make.left.equalTo(self.scrollView);
-            self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView).multipliedBy(self.mainViewRatio);
+//            AppDelegate *app = [UIApplication sharedApplication].delegate;
+//            if(app.isEable == NO){
+//                self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView);
+//            }
+//            else{
+//                self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView).multipliedBy(self.mainViewRatio);
+//            }
+            make.height.equalTo(self.scrollView).multipliedBy(self.mainViewRatio);
             make.width.equalTo(@0);
         }];
         
@@ -498,6 +504,7 @@
         self.scrollView.scrollEnabled = YES;
         Y_KLineModel *lastModel = self.kLineModels.lastObject;
         [self.kLineMAView maProfileWithModel:lastModel];
+         //横屏时显示其它技术数据
         AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
         if( appdelegate.isEable == YES){
             [self.kLineMALabelView maProfileWithModel:lastModel];

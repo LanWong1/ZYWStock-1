@@ -1,0 +1,13 @@
+#
+# The IceGrid locator proxy.
+
+#本机模拟
+#Ice.Default.Router=DemoGlacier2/router:tcp -p 14064 -h 127.0.0.1
+
+#易捷模拟
+Ice.Default.Router=DemoGlacier2/router:tcp -p 14064 -h 118.31.40.30
+
+Ice.Trace.Locator=1
+Ice.ACM.Client=0
+Ice.RetryIntervals= 1
+#站点列表=1,2

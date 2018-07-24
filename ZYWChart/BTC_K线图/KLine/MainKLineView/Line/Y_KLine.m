@@ -68,6 +68,8 @@
 //    NSDateFormatter *formatter = [NSDateFormatter new];
 //    formatter.dateFormat = @"HH:mm";
 //    NSString *dateStr = [formatter stringFromDate:date];
+    
+    
     CGPoint drawDatePoint;
     if(CGPointEqualToPoint(self.lastDrawDatePoint, CGPointZero)){
          drawDatePoint = CGPointMake(self.kLinePositionModel.LowPoint.x-3, self.maxY + 1.5);

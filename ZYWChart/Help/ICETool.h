@@ -22,6 +22,11 @@
 
 @interface ICETool : NSObject
 
+@property (nonatomic) id<WpTradeAPIServerClientApiPrx> WpTrade;
+
+
+
+
 - (void)queryOrder:(NSString*)StrCmd;
 - (void)queryFund:(NSString*)StrCmd;
 - (void)initiateCallback:(NSString*)strAcc;
@@ -33,6 +38,7 @@
 - (void)SendOrder:(NSString*)StrCmd;
 - (void)CancelOrder:(NSString*)StrCmd;
 @end
+
 
 
 

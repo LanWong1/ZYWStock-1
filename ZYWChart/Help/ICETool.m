@@ -7,18 +7,18 @@
 //
 
 #import "ICETool.h"
-#import "WpTrade.h"
+//#import "WpTrade.h"
 #import "BuyVC.h"
 
 @interface WpTradeAPIServerCallbackReceiverI()<WpTradeAPIServerCallbackReceiver>
 @property (nonatomic) NSMutableArray* Msg;
 @property (nonatomic) BuyVC* buy;
-
 @end
 
 
 @implementation WpTradeAPIServerCallbackReceiverI
 
+#pragma --mark delegate of WpTradeAPIServerCallbackReceiver
 - (void)SendMsg:(NSMutableString *)stype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current {
     NSLog(@"%@%@",stype,strMessage);
     if([stype isEqualToString:@"OnQryMoney"]|[stype isEqualToString:@"OnQryOrder"]|[stype isEqualToString:@"OnQryHold"]){
@@ -32,6 +32,7 @@
         NSLog(@"Login");
     }
 }
+
 - (NSMutableArray*)messageForBuyVC{
     NSMutableArray* arry = [[NSMutableArray alloc]initWithCapacity:0];;
     arry = self.Msg;
@@ -45,7 +46,7 @@
 @property (nonatomic) id<ICECommunicator> communicator;
 @property (nonatomic) id<WpTradeAPIServerCallbackReceiverPrx> twowayR;
 @property (nonatomic) id<GLACIER2RouterPrx> router;
-@property (nonatomic) id<WpTradeAPIServerClientApiPrx> WpTrade;
+
 @property (nonatomic) NSMutableString* Message;
 @property (nonatomic)  WpTradeAPIServerCallbackReceiverI* wpTradeAPIServerCallbackReceiverI;
 

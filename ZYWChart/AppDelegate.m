@@ -10,7 +10,7 @@
 #import "FHHFPSIndicator.h"
 #import "LoginVC.h"
 #import "LoginVC1.h"
-
+#import "WYLoginVC.h"
 @interface AppDelegate ()
 
 @end
@@ -40,7 +40,8 @@
 #if NpTradeTest
     LoginVC1* Controller = [[LoginVC1 alloc]init];
 #else
-    LoginVC* Controller = [[LoginVC alloc]init];
+    //LoginVC* Controller = [[LoginVC alloc]init];
+    WYLoginVC* Controller = [[WYLoginVC alloc]init];
 #endif
     //Controller.view.backgroundColor = [UIColor whiteColor];
     [self.window setRootViewController:Controller];
