@@ -100,9 +100,9 @@
 #pragma mark drawRect方法
 - (void)drawRect:(CGRect)rect{
     [super drawRect:rect];
-    
+
+    CGContextRef context = UIGraphicsGetCurrentContext();//#获取上下文
     //如果数组为空，则不进行绘制，直接设置本view为背景
-    CGContextRef context = UIGraphicsGetCurrentContext();
     if(!self.kLineModels)
     {
         CGContextClearRect(context, rect);
@@ -120,7 +120,6 @@
     //设置显示日期的区域背景颜色
     CGContextSetFillColorWithColor(context, [UIColor assistBackgroundColor].CGColor);
     CGContextFillRect(context, CGRectMake(0, Y_StockChartKLineMainViewMaxY, self.frame.size.width, self.frame.size.height - Y_StockChartKLineMainViewMaxY));
-
     Y_MALine *MALine = [[Y_MALine alloc]initWithContext:context];
     //K线图
     if(self.MainViewType == Y_StockChartcenterViewTypeKline)

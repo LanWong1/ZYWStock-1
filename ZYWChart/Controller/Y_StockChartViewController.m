@@ -294,7 +294,10 @@
                 make.edges.equalTo(self.view).insets(UIEdgeInsetsMake(0, 30, 0, 0));
             } else {
                 make.top.equalTo(self.view);
-                make.bottom.left.right.equalTo(self.view);
+                make.left.right.equalTo(self.view);
+                //make.bottom.equalTo(self.view);
+                make.bottom.equalTo(self.view).offset(-200);
+                
                 //make.edges.equalTo(self.view);
             }
         }];

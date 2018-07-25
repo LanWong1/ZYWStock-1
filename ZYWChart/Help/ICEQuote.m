@@ -97,7 +97,7 @@
 }
 //传递数据的
 - (void)sendmsg{
-    NSLog(@"sendmsg");
+    NSLog(@"sendmsg111111111");
     if(self.delegate && [self.delegate respondsToSelector:@selector(refreshTimeline:)]){
         [self.delegate refreshTimeline:@"refresh timeline"];
     }

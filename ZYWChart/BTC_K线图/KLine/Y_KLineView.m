@@ -140,9 +140,8 @@
     }
     return _scrollView;
 }
-
+//标签
 - (Y_KLineMAView *)kLineMAView
-
 {
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
     if( appdelegate.isEable == YES){
@@ -161,7 +160,7 @@
     _kLineMAView=nil;
     return _kLineMAView;
 }
-
+//标签
 - (Y_VolumeMAView *)volumeMAView
 {
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
@@ -209,17 +208,17 @@
         _kLineMainView = [Y_KLineMainView new];
         _kLineMainView.delegate = self;
         [self.scrollView addSubview:_kLineMainView];
-        [_kLineMainView mas_makeConstraints:^(MASConstraintMaker *make) {
+        [_kLineMainView mas_makeConstraints:^(MASConstraintMaker *make){
             make.top.equalTo(self.scrollView).offset(5);
             make.left.equalTo(self.scrollView);
-//            AppDelegate *app = [UIApplication sharedApplication].delegate;
-//            if(app.isEable == NO){
-//                self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView);
-//            }
-//            else{
-//                self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView).multipliedBy(self.mainViewRatio);
-//            }
-            make.height.equalTo(self.scrollView).multipliedBy(self.mainViewRatio);
+            AppDelegate *app = [UIApplication sharedApplication].delegate;
+            if(app.isEable == NO){
+                self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView).multipliedBy(1);
+            }
+            else{
+                self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView).multipliedBy(self.mainViewRatio);
+            }
+            //make.height.equalTo(self.scrollView).multipliedBy(self.mainViewRatio);
             make.width.equalTo(@0);
         }];
         
