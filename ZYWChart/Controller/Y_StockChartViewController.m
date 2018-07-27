@@ -180,11 +180,14 @@
         NSMutableArray *data = [NSMutableArray array];
         //[self.timeData removeLastObject];
         NSEnumerator *enumerator = [[NSEnumerator alloc]init];
+        ICEQuote* iceQuote = [ICEQuote shareInstance];
         if([self.type isEqualToString: @"1min"]){
-        enumerator =[[app.iceQuote getKlineData:self.sCode type:@"minute"] objectEnumerator];
+        //enumerator =[[app.iceQuote getKlineData:self.sCode type:@"minute"] objectEnumerator];
+            enumerator =[[iceQuote getKlineData:self.sCode type:@"minute"] objectEnumerator];
         }
        if([self.type isEqualToString: @"1day"]){
-        enumerator =[[app.iceQuote getKlineData:self.sCode type:@"day"] objectEnumerator];
+        //enumerator =[[app.iceQuote getKlineData:self.sCode type:@"day"] objectEnumerator];
+            enumerator =[[iceQuote getKlineData:self.sCode type:@"day"] objectEnumerator];
         }
         id obj = nil;
         while (obj = [enumerator nextObject]){

@@ -29,6 +29,7 @@
 @interface ICEQuote : NSObject
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
 
++ (ICEQuote*)shareInstance;
 
 - (WpQuoteServerCallbackReceiverI*)Connect2Quote;
 - (void)initiateCallback:(NSString*)strAcc;

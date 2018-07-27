@@ -17,6 +17,9 @@
 #import "Y_StockChartViewController.h"
 
 #define new 1
+
+
+
 @interface CodeListVC ()<UITableViewDelegate,UITableViewDataSource,UISearchResultsUpdating, UISearchControllerDelegate>
 @property (nonatomic,strong)  UISearchController *searchController;
 @property (nonatomic, retain) UIRefreshControl * refreshControl;
@@ -82,6 +85,7 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sayHello:) name:@"changedata" object:(nil)];
     self.allTitlesArray = [[NSMutableArray alloc]init];
     self.KlineListAll = [[NSMutableArray alloc]init];
     self.navigationItem.title = @"合约代码";
@@ -93,7 +97,9 @@
     // Do any additional setup after loading the view.
 }
 
-
+- (void)sayHello:(NSNotification*)notification{
+    NSLog(@"%@",notification.userInfo);
+}
 //添加放大镜
 - (void)addSearchButton{
     UIImage* searchImgNormal = [UIImage imageNamed:@"searchNormal.png"];
@@ -117,11 +123,20 @@
         @try
         {
             AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-            app.iceQuote = [[ICEQuote alloc]init];
-            app.iceQuote.delegate = self;
-            app.wpQuoteServerCallbackReceiverI =  [app.iceQuote Connect2Quote];
-            [app.iceQuote initiateCallback:app.strAcc];
-            [app.iceQuote Login:app.strCmd];
+            //app.iceQuote = [[ICEQuote alloc]init];
+            //app.iceQuote.delegate = self;
+            //app.wpQuoteServerCallbackReceiverI =  [app.iceQuote Connect2Quote];
+            //[app.iceQuote initiateCallback:app.strAcc];
+            //[app.iceQuote Login:app.strCmd];
+            
+            
+            ICEQuote *iceQuote = [ICEQuote shareInstance];
+            iceQuote.delegate = self;
+            app.wpQuoteServerCallbackReceiverI = [[ICEQuote shareInstance] Connect2Quote];
+            [[ICEQuote shareInstance] initiateCallback:app.strAcc];
+            [[ICEQuote shareInstance] Login:app.strCmd];
+
+       
             
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self.activeId stopAnimating];
@@ -203,7 +218,7 @@
             [self.activeId stopAnimating];
             [self.activeId removeFromSuperview];
             [self.label removeFromSuperview];
-             [self loadData];
+            [self loadData];
             [self addTableView];
             [self addRefreshControl];
         });
@@ -214,9 +229,11 @@
 //GetDayKLine
 - (void)getKline
 {
-    AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    [app.iceQuote Connect2Quote];
-    self.KlineList = [app.iceQuote GetDayKline:self.sExchangeID];
+//    AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+//    [app.iceQuote Connect2Quote];
+    
+    ICEQuote* iceQuote = [ICEQuote shareInstance];
+    self.KlineList = [iceQuote GetDayKline:self.sExchangeID];
     
 //    NSString* cmdType = @"CTP,";
 //    cmdType =  [cmdType stringByAppendingString:app.strAcc];

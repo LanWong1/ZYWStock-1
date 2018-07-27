@@ -36,6 +36,19 @@
 @implementation ICEQuote
 
 
+static ICEQuote* iceQuote = nil;
+
++ (ICEQuote*)shareInstance{
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        if (iceQuote == nil){
+            iceQuote = [[self alloc]init];
+        }
+    });
+    return iceQuote;
+}
+
 - (WpQuoteServerCallbackReceiverI*)Connect2Quote{
     ICEInitializationData* initData = [ICEInitializationData initializationData];
     initData.properties = [ICEUtil createProperties];
@@ -98,12 +111,15 @@
 //传递数据的
 - (void)sendmsg{
     NSLog(@"sendmsg111111111");
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"changedata" object:self userInfo:@"aaaaasdsdasdasd"];
     if(self.delegate && [self.delegate respondsToSelector:@selector(refreshTimeline:)]){
         [self.delegate refreshTimeline:@"refresh timeline"];
     }
-   
 }
-
+- (void)dealloc{
+    NSLog(@"dealloc");
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"changedata" object:nil];
+}
 - (int)HeartBeat:(NSString*)strCmd{
     int iRet = -2;
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];

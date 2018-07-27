@@ -28,7 +28,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
    
-    [NSThread sleepForTimeInterval:3.0];
+    //[NSThread sleepForTimeInterval:3.0];
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
@@ -42,6 +42,7 @@
 #else
     //LoginVC* Controller = [[LoginVC alloc]init];
     WYLoginVC* Controller = [[WYLoginVC alloc]init];
+    //Controller.view.frame = self.window.bounds;
 #endif
     //Controller.view.backgroundColor = [UIColor whiteColor];
     [self.window setRootViewController:Controller];
