@@ -110,7 +110,7 @@ static ICEQuote* iceQuote = nil;
 }
 //传递数据的
 - (void)sendmsg{
-    NSLog(@"sendmsg111111111");
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"changedata" object:self userInfo:@"aaaaasdsdasdasd"];
     if(self.delegate && [self.delegate respondsToSelector:@selector(refreshTimeline:)]){
         [self.delegate refreshTimeline:@"refresh timeline"];
@@ -137,9 +137,6 @@ static ICEQuote* iceQuote = nil;
     {
         NSLog(@"%@",s);
     }
-    
-    //NSLog(@"strout%@%d",strOut,ret);
-    //NSLog(@"erro %@",strErroInfo);
 }
 
 

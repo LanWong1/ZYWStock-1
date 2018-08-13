@@ -399,16 +399,18 @@
     
     static CGFloat oldScale = 1.0f;
     CGFloat difValue = pinch.scale - oldScale;
+    //#缩放比例大于1.03时 view才会改变
+    
+    
     if(ABS(difValue) > Y_StockChartScaleBound) {
+        
         CGFloat oldKLineWidth = [Y_StockChartGlobalVariable kLineWidth];
-
         NSInteger oldNeedDrawStartIndex = self.kLineMainView.needDrawStartIndex;
         NSLog(@"原来的index%ld",self.kLineMainView.needDrawStartIndex);
         [Y_StockChartGlobalVariable setkLineWith:oldKLineWidth * (difValue > 0 ? (1 + Y_StockChartScaleFactor) : (1 - Y_StockChartScaleFactor))];
         oldScale = pinch.scale;
         //更新MainView的宽度
         [self.kLineMainView updateMainViewWidth];
-        
         if( pinch.numberOfTouches == 2 ) {
             CGPoint p1 = [pinch locationOfTouch:0 inView:self.scrollView];
             CGPoint p2 = [pinch locationOfTouch:1 inView:self.scrollView];

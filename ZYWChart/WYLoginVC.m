@@ -42,6 +42,7 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
+    NSLog(@"wyloginVC/////////");
     NSInteger timer_ = (NSInteger) [NSProcessInfo processInfo].systemUptime*100;
     NSString* userId = [NSString stringWithFormat:@"%ld",(long)timer_];
     self.strUserId = [[NSMutableString alloc]initWithString:userId];
@@ -245,8 +246,7 @@
             AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
             app.strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
             app.strFundAcc = [[NSMutableString alloc]initWithString:self.UserNameTextField.text];
-            
-            self.strAcc = [[NSMutableString alloc]initWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId ];
+            self.strAcc = [[NSMutableString alloc]initWithFormat:@"%@%@%@",app.strFundAcc,@"=",self.strUserId ];
             app.strAcc = self.strAcc;
             //app.strFundAcc = self.strFundAcc
             [self connect2Server];

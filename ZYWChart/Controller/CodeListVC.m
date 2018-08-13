@@ -133,9 +133,10 @@
             ICEQuote *iceQuote = [ICEQuote shareInstance];
             iceQuote.delegate = self;
             app.wpQuoteServerCallbackReceiverI = [[ICEQuote shareInstance] Connect2Quote];
-            [[ICEQuote shareInstance] initiateCallback:app.strAcc];
-            [[ICEQuote shareInstance] Login:app.strCmd];
-
+//          [[ICEQuote shareInstance] initiateCallback:app.strAcc];
+//          [[ICEQuote shareInstance] Login:app.strCmd];
+            [iceQuote initiateCallback:app.strAcc];
+            [iceQuote Login:app.strCmd];
        
             
             dispatch_sync(dispatch_get_main_queue(), ^{
@@ -185,14 +186,17 @@
     dispatch_source_set_event_handler(_timer, ^{
         int iRet = -2;
         @try{
+            ICEQuote *iceQuote = [ICEQuote shareInstance];
             AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-            iRet = [app.iceTool HeartBeat:app.strCmd];
+            [iceQuote HeartBeat:app.strCmd];
+            //iRet = [app.iceTool HeartBeat:app.strCmd];
         }
         @catch(ICEException* s){
             NSLog(@"heart beat fail");
         }
         if(iRet == -2){
             //重新连接
+            NSLog(@"重新连接");
             dispatch_source_cancel(self->_timer);
             [self GetData];
         }
@@ -229,15 +233,17 @@
 //GetDayKLine
 - (void)getKline
 {
-//    AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-//    [app.iceQuote Connect2Quote];
+    AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    //[app.iceQuote Connect2Quote];
     
     ICEQuote* iceQuote = [ICEQuote shareInstance];
     self.KlineList = [iceQuote GetDayKline:self.sExchangeID];
     
-//    NSString* cmdType = @"CTP,";
-//    cmdType =  [cmdType stringByAppendingString:app.strAcc];
-//    [app.iceQuote SubscribeQuote:cmdType strCmd:@"c1809"];
+    NSString* cmdType = @"CTP,";
+    cmdType =  [cmdType stringByAppendingString:app.strAcc];
+    //[iceQuote SubscribeQuote:cmdType strCmd:@""];
+    
+    //[app.iceQuote SubscribeQuote:cmdType strCmd:@"c1809"];
     
 }
 

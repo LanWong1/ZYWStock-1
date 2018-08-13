@@ -275,7 +275,7 @@
 
   
 }
-#pragma --mark Getter of Y_StockChartView
+#pragma --mark Getter方法 of Y_StockChartView
 - (Y_StockChartView *)stockChartView
 {
     if(!_stockChartView) {
@@ -293,14 +293,15 @@
         _stockChartView.dataSource = self;
         [self.view addSubview:_stockChartView];
         [_stockChartView mas_makeConstraints:^(MASConstraintMaker *make) {
+            
             if (IS_IPHONE_X) {
                 make.edges.equalTo(self.view).insets(UIEdgeInsetsMake(0, 30, 0, 0));
-            } else {
+            }
+            else {
                 make.top.equalTo(self.view);
                 make.left.right.equalTo(self.view);
                 //make.bottom.equalTo(self.view);
                 make.bottom.equalTo(self.view).offset(-200);
-                
                 //make.edges.equalTo(self.view);
             }
         }];
