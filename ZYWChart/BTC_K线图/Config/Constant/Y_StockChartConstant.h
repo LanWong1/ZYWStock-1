@@ -99,7 +99,7 @@
 /**
  *  K线图上可画区域最大的Y
  */
-#define Y_StockChartKLineMainViewMaxY (self.frame.size.height - 15)
+#define Y_StockChartKLineMainViewMaxY (self.frame.size.height - 20)
 
 /**
  *  K线图的成交量上最小的Y

@@ -85,7 +85,6 @@
                 [self setHeartbeat];
                 [self.activeId removeFromSuperview];
                 [self.label removeFromSuperview];
-                
                 //判断是否重新连接 若是重新连接 无需跳转页面
                 if(self.connectFlag == 0){
                     self.connectFlag = 1;

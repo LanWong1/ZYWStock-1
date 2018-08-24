@@ -11,7 +11,7 @@
 #import "QuickOrder.h"
 #import "BuyVC.h"
 #import "ICEQuickOrder.h"
-
+#import "ICEQuote.h"
 #import "checkVC.h"
 #import "CodeListVC.h"
 #define USERNAME @"063607"
@@ -35,6 +35,8 @@
 @property (nonatomic) int quoteConnectFlag;
 @property (nonatomic) int tradeConnectFlag;
 @property (nonatomic) AppDelegate* app;
+
+@property (nonatomic) NSString* strCmd;
 @end
 
 @implementation WYLoginVC
@@ -46,7 +48,6 @@
     NSInteger timer_ = (NSInteger) [NSProcessInfo processInfo].systemUptime*100;
     NSString* userId = [NSString stringWithFormat:@"%ld",(long)timer_];
     self.strUserId = [[NSMutableString alloc]initWithString:userId];
-    
     
     self.LoginButton = [self addLoginButton];
     self.UserNameTextField = [self addTextField:@"UserName" PositionX:100 PositionY:70];
@@ -84,32 +85,8 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
         @try
         {
-            
-            AppDelegate* app = (AppDelegate*)[UIApplication sharedApplication].delegate;
-            app.QuickOrder= [[ICEQuickOrder alloc]init];
-            app.autoTradeCallback = [app.QuickOrder Connect2ICE];
-            [app.QuickOrder initiateCallback:self.strFundAcc];
-            NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-            NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-            int ret = [app.QuickOrder.quickOrder Login:@"" strCmd:app.strCmd strOut:&strOut strErrInfo:&strErroInfo];
-            //[app.QuickOrder.quickOrder QueryFund:@"" strCmd:self.strFundAcc strOut:&strOut strErrInfo:&strErroInfo];
-            //异步 获取数据
-            [app.QuickOrder.quickOrder begin_QueryFund:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
-                NSLog(@"l = %d s = %@  a = %@",l,s,a);
-            } exception:^(ICEException *s) {
-                NSLog(@"%@",s);
-            }];
-            [app.QuickOrder.quickOrder begin_QueryOrder:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
-                NSLog(@"l = %d s = %@  a = %@",l,s,a);
-            } exception:^(ICEException *s) {
-                NSLog(@"%@",s);
-            }];
-            [app.QuickOrder.quickOrder begin_QueryCode:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
-                NSLog(@"l = %d s = %@  a = %@",l,s,a);
-            } exception:^(ICEException *s) {
-                NSLog(@"%@",s);
-            }];
-
+            NSLog(@"connect to server");
+            [self quickOrderTest];
             dispatch_sync(dispatch_get_main_queue(), ^{
                 //NSLog(@"strout = %@",strOut);
                 [self setHeartbeat];
@@ -169,6 +146,33 @@
         }
     });
 }
+- (void)quickOrderTest{
+    NSLog(@"quickOrderTest");
+    AppDelegate* app = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    app.QuickOrder= [[ICEQuickOrder alloc]init];
+    app.autoTradeCallback = [app.QuickOrder Connect2ICE];
+    [app.QuickOrder initiateCallback:self.strFundAcc];
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    int ret = [app.QuickOrder.quickOrder Login:@"" strCmd:app.strCmd strOut:&strOut strErrInfo:&strErroInfo];
+    //[app.QuickOrder.quickOrder QueryFund:@"" strCmd:self.strFundAcc strOut:&strOut strErrInfo:&strErroInfo];
+    //异步 获取数据
+    [app.QuickOrder.quickOrder begin_QueryFund:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
+        NSLog(@"l = %d s = %@  a = %@",l,s,a);
+    } exception:^(ICEException *s) {
+        NSLog(@"%@",s);
+    }];
+    [app.QuickOrder.quickOrder begin_QueryOrder:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
+        NSLog(@"l = %d s = %@  a = %@",l,s,a);
+    } exception:^(ICEException *s) {
+        NSLog(@"%@",s);
+    }];
+    [app.QuickOrder.quickOrder begin_QueryCode:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
+        NSLog(@"l = %d s = %@  a = %@",l,s,a);
+    } exception:^(ICEException *s) {
+        NSLog(@"%@",s);
+    }];
+}
 - (void)setHeartbeat{
     // 创建GCD定时器
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -217,7 +221,7 @@
 }
 
 -(UIButton*)addLoginButton{
-    UIButton* btn = [[UIButton alloc]initWithFrame:CGRectMake(self.view.centerX-50, self.view.centerY+50, 100, 30)];
+    UIButton* btn = [[UIButton alloc]initWithFrame:CGRectMake(self.view.centerX-50, self.view.centerY+50, 100, 80)];
     [btn setTitle:@"Login" forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
@@ -228,7 +232,7 @@
     [self.view addSubview:btn];
     return btn;
 }
-//login button pressed
+//login button pressed 登录
 -(void)ButtonPressed{
     
     if(self.UserNameTextField.text.length ==0|self.PassWordTextField.text.length == 0)
@@ -245,6 +249,8 @@
         {
             AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
             app.strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
+            
+            self.strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
             app.strFundAcc = [[NSMutableString alloc]initWithString:self.UserNameTextField.text];
             self.strAcc = [[NSMutableString alloc]initWithFormat:@"%@%@%@",app.strFundAcc,@"=",self.strUserId ];
             app.strAcc = self.strAcc;
@@ -265,36 +271,6 @@
     
     [self presentViewController:alert animated:YES completion:nil];
 }
-
-
-//- (void)setHeartbeat{
-//    // 创建GCD定时器
-//    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-//    _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
-//    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行
-//    // 事件回调
-//    NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
-//
-//    dispatch_source_set_event_handler(_timer, ^{
-//        int iRet = -2;
-//        @try{
-//            AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-//            iRet = [app.iceTool HeartBeat:strCmd];
-//        }
-//        @catch(ICEException* s){
-//            NSLog(@"heart beat fail");
-//        }
-//        if(iRet == -2){
-//            //重新连接
-//            dispatch_source_cancel(self->_timer);
-//            [self connect2Server];
-//        }
-//    });
-//    // 开启定时器
-//    dispatch_resume(_timer);
-//}
-
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

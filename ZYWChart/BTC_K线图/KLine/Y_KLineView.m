@@ -213,13 +213,14 @@
             make.left.equalTo(self.scrollView);
             AppDelegate *app = [UIApplication sharedApplication].delegate;
             if(app.isEable == NO){
-                self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView).multipliedBy(1);
+                self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView);
             }
             else{
                 self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView).multipliedBy(self.mainViewRatio);
             }
-            //make.height.equalTo(self.scrollView).multipliedBy(self.mainViewRatio);
-            make.width.equalTo(@0);
+           // make.height.equalTo(self.scrollView).multipliedBy(self.mainViewRatio);
+            //make.height.equalTo(self.scrollView).multipliedBy(0.9);
+            //make.width.equalTo(@0);
         }];
         
     }

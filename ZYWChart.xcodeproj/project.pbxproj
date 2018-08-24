@@ -256,7 +256,9 @@
 		BA78AC8E20DB745400F07D40 /* config2.client in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8D20DB745300F07D40 /* config2.client */; };
 		BA78AC9120DB74E800F07D40 /* LoginVC1.m in Sources */ = {isa = PBXBuildFile; fileRef = BA78AC9020DB74E800F07D40 /* LoginVC1.m */; };
 		BA8209C320C66E5700A5BCAE /* BuyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA8209C220C66E5700A5BCAE /* BuyVC.m */; };
-		BAE4496B211D7614004A5412 /* Contents.json in Resources */ = {isa = PBXBuildFile; fileRef = BAE4496A211D7614004A5412 /* Contents.json */; };
+		BA84422C212BF55300892E68 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BA84422B212BF55300892E68 /* Images.xcassets */; };
+		BA84422E212BF71300892E68 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BA84422D212BF71300892E68 /* Launch Screen.storyboard */; };
+		BA844232212FB1A400892E68 /* buttonView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BA844231212FB1A400892E68 /* buttonView.xib */; };
 		BAE5985720C7718000524CB7 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985620C7718000524CB7 /* LoginVC.m */; };
 		BAE5985920C7CDE000524CB7 /* NpTrade.ice in Resources */ = {isa = PBXBuildFile; fileRef = BAE5985820C7CDE000524CB7 /* NpTrade.ice */; };
 		BAE5985A20C7CE2C00524CB7 /* NpTrade.ice in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985820C7CDE000524CB7 /* NpTrade.ice */; };
@@ -633,7 +635,9 @@
 		BA78AC9020DB74E800F07D40 /* LoginVC1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginVC1.m; sourceTree = "<group>"; };
 		BA8209C120C66E5700A5BCAE /* BuyVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BuyVC.h; sourceTree = "<group>"; };
 		BA8209C220C66E5700A5BCAE /* BuyVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BuyVC.m; sourceTree = "<group>"; };
-		BAE4496A211D7614004A5412 /* Contents.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = Contents.json; path = Assets.xcassets/LaunchImage.launchimage/Contents.json; sourceTree = "<group>"; };
+		BA84422B212BF55300892E68 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		BA84422D212BF71300892E68 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		BA844231212FB1A400892E68 /* buttonView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = buttonView.xib; sourceTree = "<group>"; };
 		BAE5985520C7718000524CB7 /* LoginVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginVC.h; sourceTree = "<group>"; };
 		BAE5985620C7718000524CB7 /* LoginVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginVC.m; sourceTree = "<group>"; };
 		BAE5985820C7CDE000524CB7 /* NpTrade.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NpTrade.ice; sourceTree = "<group>"; };
@@ -740,10 +744,10 @@
 				424347141EF69C570021F2C5 /* BaseNavigationController.h */,
 				424347151EF69C570021F2C5 /* BaseNavigationController.m */,
 				422787841E04F18600DB5CEC /* AppDelegate.m */,
-				BAE4496A211D7614004A5412 /* Contents.json */,
 				422787831E04F18600DB5CEC /* AppDelegate.h */,
 				BA78AC8120D9ECE800F07D40 /* searchSelected.png */,
 				4C5E070320E2690F0053F7CB /* searchNormal.png */,
+				BA84422D212BF71300892E68 /* Launch Screen.storyboard */,
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
 				BA51D57820B6880E00B34DA7 /* config.client */,
 				BA78AC8D20DB745300F07D40 /* config2.client */,
@@ -756,6 +760,7 @@
 				BA51D57A20B6881F00B34DA7 /* WpQuote.ice */,
 				424236291EC1ED8300C161A8 /* N225.xml */,
 				422BF0B91EC7081400DF8F4A /* data.plist */,
+				BA84422B212BF55300892E68 /* Images.xcassets */,
 				422787801E04F18600DB5CEC /* Supporting Files */,
 			);
 			path = ZYWChart;
@@ -809,6 +814,7 @@
 				BA3D61DC20EDA0B800665888 /* Y_StockChartLandScapeViewController.m */,
 				BA3D61DA20EDA0B800665888 /* Y_StockChartViewController.h */,
 				BA3D61DD20EDA0B900665888 /* Y_StockChartViewController.m */,
+				BA844231212FB1A400892E68 /* buttonView.xib */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1438,12 +1444,14 @@
 				4C5E070420E269100053F7CB /* searchNormal.png in Resources */,
 				BA78AC8220D9ECE800F07D40 /* searchSelected.png in Resources */,
 				422BF0BA1EC7081400DF8F4A /* data.plist in Resources */,
+				BA844232212FB1A400892E68 /* buttonView.xib in Resources */,
 				BA3EB02520CE21A5008F11E9 /* config1.client in Resources */,
-				BAE4496B211D7614004A5412 /* Contents.json in Resources */,
 				4227878D1E04F18600DB5CEC /* Assets.xcassets in Resources */,
+				BA84422C212BF55300892E68 /* Images.xcassets in Resources */,
 				4242362A1EC1ED8400C161A8 /* N225.xml in Resources */,
 				BAE5985C20CA69B000524CB7 /* WpTrade.ice in Resources */,
 				4CC3E91A20FD71950073A7FB /* QuickOrder.ice in Resources */,
+				BA84422E212BF71300892E68 /* Launch Screen.storyboard in Resources */,
 				423942841E2B6D0300F2A873 /* ta_retcode.csv in Resources */,
 				BA51D57920B6880E00B34DA7 /* config.client in Resources */,
 				BA78AC8E20DB745400F07D40 /* config2.client in Resources */,

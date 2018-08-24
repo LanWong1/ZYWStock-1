@@ -203,12 +203,12 @@
 }
 
 -(UIButton*)addLoginButton{
-    UIButton* btn = [[UIButton alloc]initWithFrame:CGRectMake(self.view.centerX-50, self.view.centerY+50, 100, 30)];
+    UIButton* btn = [[UIButton alloc]initWithFrame:CGRectMake(self.view.centerX-50, self.view.centerY+50, 100, 80)];
     [btn setTitle:@"Login" forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [btn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
     btn.backgroundColor = DropColor;
-    btn.layer.cornerRadius = 20;
+    btn.layer.cornerRadius = 10;
     //btn.enabled = NO;
     [btn addTarget:self action:@selector(ButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn];
@@ -252,32 +252,7 @@
 }
 
 
-//- (void)setHeartbeat{
-//    // 创建GCD定时器
-//    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-//    _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
-//    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行
-//    // 事件回调
-//    NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
-//    
-//    dispatch_source_set_event_handler(_timer, ^{
-//        int iRet = -2;
-//        @try{
-//            AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-//            iRet = [app.iceTool HeartBeat:strCmd];
-//        }
-//        @catch(ICEException* s){
-//            NSLog(@"heart beat fail");
-//        }
-//        if(iRet == -2){
-//            //重新连接
-//            dispatch_source_cancel(self->_timer);
-//            [self connect2Server];
-//        }
-//    });
-//    // 开启定时器
-//    dispatch_resume(_timer);
-//}
+
 
 
 

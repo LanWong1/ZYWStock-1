@@ -17,7 +17,6 @@
  */
 @property (nonatomic, assign) CGPoint lastDrawDatePoint;
 @end
-
 @implementation Y_MALine
 
 /**
@@ -39,22 +38,13 @@
     {
         return;
     }
-    
-    
     if (_MAType == Y_BOLL_DN || _MAType == Y_BOLL_MB || _MAType == Y_BOLL_UP){
-        
-        
         if(!self.BOLLPositions) {
             return;
         }
-        
-        
         UIColor *lineColor = self.MAType == Y_BOLL_UP? [UIColor BOLL_UPColor] : (self.MAType == Y_BOLL_MB ? [UIColor BOLL_MBColor] : self.MAType == Y_BOLL_DN ? [UIColor BOLL_DNColor] : [UIColor mainTextColor]);
-        
         CGContextSetStrokeColorWithColor(self.context, lineColor.CGColor);
-        
         CGContextSetLineWidth(self.context, Y_StockChartMALineWidth);
-        
         CGPoint firstPoint = [self.BOLLPositions.firstObject CGPointValue];
         NSAssert(!isnan(firstPoint.x) && !isnan(firstPoint.y), @"出现NAN值：BOLL画线");
         CGContextMoveToPoint(self.context, firstPoint.x, firstPoint.y);
@@ -64,29 +54,20 @@
             CGPoint point = [self.BOLLPositions[idx] CGPointValue];
             CGContextAddLineToPoint(self.context, point.x, point.y);
         }
-        
-        
     } else {
         if(!self.MAPositions) {
             return;
         }
-        
         UIColor *lineColor = self.MAType == Y_MA7Type ? [UIColor ma7Color] : (self.MAType == Y_MA30Type ? [UIColor ma30Color] : [UIColor mainTextColor]);
-        
         CGContextSetStrokeColorWithColor(self.context, lineColor.CGColor);
-        
         CGContextSetLineWidth(self.context, Y_StockChartMALineWidth);
-        
         CGPoint firstPoint = [self.MAPositions.firstObject CGPointValue];
         NSAssert(!isnan(firstPoint.x) && !isnan(firstPoint.y), @"出现NAN值：MA画线");
         CGContextMoveToPoint(self.context, firstPoint.x, firstPoint.y);
-        
         for (NSInteger idx = 1; idx < self.MAPositions.count ; idx++)
         {
             CGPoint point = [self.MAPositions[idx] CGPointValue];
             CGContextAddLineToPoint(self.context, point.x, point.y);
-            //
-            //
             //        //日期
             //        NSDate *date = [NSDate dateWithTimeIntervalSince1970:self.kLineModel.Date.doubleValue/1000];
             //        NSDateFormatter *formatter = [NSDateFormatter new];
@@ -100,9 +81,6 @@
             //            self.lastDrawDatePoint = drawDatePoint;
             //        }
         }
-        //
-        
-        
     }
     
     CGContextStrokePath(self.context);

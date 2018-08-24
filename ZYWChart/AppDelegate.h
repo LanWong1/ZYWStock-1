@@ -22,10 +22,6 @@
 @property (strong, nonatomic) ICENpTrade* iceNpTrade;
 @property (strong, nonatomic) ICEQuote* iceQuote;
 @property (strong, nonatomic) ICEQuickOrder* QuickOrder;
-
-
-
-
 @property (strong,nonatomic) NSString* userName;
 @property (strong,nonatomic) NSString* passWord;
 @property (strong,nonatomic) NSString* userID;

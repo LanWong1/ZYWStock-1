@@ -21,7 +21,7 @@
 
 - (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current{
     
-    NSLog(@"autoTrade  %@",strMessage);
+    NSLog(@"lllllllllllllllll  %@",strMessage);
 }
 @end
 
@@ -70,47 +70,47 @@
     [self.quickOrder initiateCallback:strAcc proxy:self.twowayR];
 }
 
-//- (void)Login:(NSString*)StrCmd{
-//    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-//    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-//    //[self.NpTrade Login:@"" strCmd:_loginStrCmd strOut:&strOut strErrInfo:&strErroInfo];
-//    [self.quickOrder Login:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
-//}
-//- (int)HeartBeat:(NSString*)strCmd{
-//    int iRet = -2;
-//    NSLog(@"hearbeat");
-//    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-//    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-//    iRet = [self.quickOrder HeartBeat:@"" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
-//    //iRet = [self.quickOrder begin_HeartBeat:@"" strCmd:strCmd];
-//    return iRet;
-//}
-//- (void)sendOrder:(NSString*)StrCmdType strCmd:(NSString *)StrCmd{
-//    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-//    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-//    //[self.NpTrade Login:@"" strCmd:_loginStrCmd strOut:&strOut strErrInfo:&strErroInfo];
-//    [self.quickOrder SendOrder:StrCmdType strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
-//}
-//- (void)queryOrder:(NSString *)StrCmd strout:(NSMutableString*)strOut {
-//    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-//    //NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-//    [self.quickOrder QueryOrder:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
-//}
-//- (void)queryFund:(NSString*)StrCmd{
-//    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-//    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-//    [self.quickOrder QueryFund:@"" strCmd:StrCmd  strOut:&strOut strErrInfo:&strErroInfo];
-//}
-//- (void)queryCode:(NSString*)StrCmd{
-//    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-//    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-//    [self.quickOrder QueryCode:@"" strCmd:StrCmd  strOut:&strOut strErrInfo:&strErroInfo];
-//}
-//- (void)clearOrder:(NSString*)StrCmd{
-//    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-//    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-//    [self.quickOrder ClearOrder:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
-//}
+- (void)Login:(NSString*)StrCmd{
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    //[self.NpTrade Login:@"" strCmd:_loginStrCmd strOut:&strOut strErrInfo:&strErroInfo];
+    [self.quickOrder Login:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
+}
+- (int)HeartBeat:(NSString*)strCmd{
+    int iRet = -2;
+    NSLog(@"hearbeat");
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    iRet = [self.quickOrder HeartBeat:@"" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+    //iRet = [self.quickOrder begin_HeartBeat:@"" strCmd:strCmd];
+    return iRet;
+}
+- (void)sendOrder:(NSString*)StrCmdType strCmd:(NSString *)StrCmd{
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    //[self.NpTrade Login:@"" strCmd:_loginStrCmd strOut:&strOut strErrInfo:&strErroInfo];
+    [self.quickOrder SendOrder:StrCmdType strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
+}
+- (void)queryOrder:(NSString *)StrCmd strout:(NSMutableString*)strOut {
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    //NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    [self.quickOrder QueryOrder:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
+}
+- (void)queryFund:(NSString*)StrCmd{
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    [self.quickOrder QueryFund:@"" strCmd:StrCmd  strOut:&strOut strErrInfo:&strErroInfo];
+}
+- (void)queryCode:(NSString*)StrCmd{
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    [self.quickOrder QueryCode:@"" strCmd:StrCmd  strOut:&strOut strErrInfo:&strErroInfo];
+}
+- (void)clearOrder:(NSString*)StrCmd{
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    [self.quickOrder ClearOrder:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
+}
 
 
 @end

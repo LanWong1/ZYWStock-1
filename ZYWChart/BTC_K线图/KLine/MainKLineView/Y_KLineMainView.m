@@ -14,6 +14,7 @@
 #import "Y_KLinePositionModel.h"
 #import "Y_StockChartGlobalVariable.h"
 #import "Masonry.h"
+#import "AppDelegate.h"
 @interface Y_KLineMainView()
 
 /**
@@ -115,6 +116,7 @@
     NSMutableArray *kLineColors = @[].mutableCopy;
     CGContextClearRect(context, rect);
     CGContextSetFillColorWithColor(context, [UIColor backgroundColor].CGColor);
+    //CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
     CGContextFillRect(context, rect);
     
     //设置显示日期的区域背景颜色
@@ -126,7 +128,6 @@
     {
         Y_KLine *kLine = [[Y_KLine alloc]initWithContext:context];
         kLine.maxY = Y_StockChartKLineMainViewMaxY;
-        
         [self.needDrawKLinePositionModels enumerateObjectsUsingBlock:^(Y_KLinePositionModel * _Nonnull kLinePositionModel, NSUInteger idx, BOOL * _Nonnull stop) {
             kLine.kLinePositionModel = kLinePositionModel;
             kLine.kLineModel = self.needDrawKLineModels[idx];
@@ -389,10 +390,7 @@
                 if (maxAssert < kLineModel.BOLL_DN.floatValue) {
                     maxAssert = kLineModel.BOLL_DN.floatValue;
                 }
-            }
-            
-            
-            
+            }    
         } else {
             
             
@@ -414,17 +412,19 @@
                     maxAssert = kLineModel.MA30.floatValue;
                 }
             }
-            
-            
         }
-        
-        
-        
     }];
     maxAssert *= 1.0001;
     minAssert *= 0.9991;
     CGFloat minY = Y_StockChartKLineMainViewMinY;
-    CGFloat maxY = self.parentScrollView.frame.size.height * [Y_StockChartGlobalVariable kLineMainViewRadio] - 15;
+    CGFloat maxY ; 
+    AppDelegate *app  = [UIApplication sharedApplication].delegate;
+    if (app.isEable == YES){
+        maxY = self.parentScrollView.frame.size.height * [Y_StockChartGlobalVariable kLineMainViewRadio] - 25;
+    }
+    else{
+        maxY = self.parentScrollView.frame.size.height  - 25;
+    }
     
     CGFloat unitValue = (maxAssert - minAssert)/(maxY - minY);
     //    CGFloat ma7UnitValue = (maxMA7 - minMA7) / (maxY - minY);
@@ -442,7 +442,6 @@
     {
         //K线坐标转换
         Y_KLineModel *kLineModel = kLineModels[idx];
-        
         CGFloat xPosition = self.startXPosition + idx * ([Y_StockChartGlobalVariable kLineWidth] + [Y_StockChartGlobalVariable kLineGap]);
         CGPoint openPoint = CGPointMake(xPosition, ABS(maxY - (kLineModel.Open.floatValue - minAssert)/unitValue));
         CGFloat closePointY = ABS(maxY - (kLineModel.Close.floatValue - minAssert)/unitValue);

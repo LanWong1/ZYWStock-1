@@ -15,8 +15,6 @@
 #import "ICEQuote.h"
 @interface Y_StockChartView() <Y_StockChartSegmentViewDelegate>
 
-
-
 /**
  *  底部选择View
  */
@@ -40,19 +38,21 @@
 
 - (Y_KLineView *)kLineView
 {
+   
     if(!_kLineView)
     {
         _kLineView = [Y_KLineView new];
         [self addSubview:_kLineView];
         [_kLineView mas_makeConstraints:^(MASConstraintMaker *make) {
             AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-            if(appdelegate.isEable == NO){
-                make.bottom.equalTo(self).offset(-100);
-            }
-            else{
-                make.bottom.equalTo(self);
-            }
-           // make.bottom.equalTo(self);
+//            if(appdelegate.isEable == NO){
+//                //make.bottom.equalTo(self).offset(-100);
+//                make.bottom.equalTo(self);
+//            }
+//            else{
+//                make.bottom.equalTo(self);
+//            }
+            make.bottom.equalTo(self);
             make.right.equalTo(self);
             make.left.equalTo(self).offset(5);
             make.top.equalTo(self.segmentView.mas_bottom);
@@ -72,7 +72,6 @@
            // make.bottom.left.top.equalTo(self);
             make.right.left.equalTo(self);
             AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-            
             if(appdelegate.isEable == YES){
                 make.top.equalTo(self);
             }
@@ -182,7 +181,6 @@
                         self.kLineView.hidden = NO;//显示K线图
                      //[self bringSubviewToFront:self.kLineView];
                      //[self bringSubviewToFront:self.segmentView];
-                        
                     }
                         break;
                     default:
@@ -203,11 +201,9 @@
             //[self bringSubviewToFront:self.segmentView];
         }
     }
-
 }
 
 @end
-
 
 /************************ItemModel类************************/
 @implementation Y_StockChartViewItemModel

@@ -76,6 +76,7 @@
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear: animated];
+    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
     self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor blackColor]};
     self.navigationController.navigationBar.barTintColor  = [UIColor whiteColor];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
@@ -85,6 +86,8 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
+    
+    //注册通知中心
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sayHello:) name:@"changedata" object:(nil)];
     self.allTitlesArray = [[NSMutableArray alloc]init];
     self.KlineListAll = [[NSMutableArray alloc]init];
@@ -93,10 +96,10 @@
     [self addSementView];
     self.sExchangeID = @"CZCE";//默认为中金所
     self.segmentIndex = 1;
-    [self GetData];
+    [self GetData];//获取数据
     // Do any additional setup after loading the view.
 }
-
+//通知调用方法
 - (void)sayHello:(NSNotification*)notification{
     NSLog(@"%@",notification.userInfo);
 }
@@ -128,8 +131,6 @@
             //app.wpQuoteServerCallbackReceiverI =  [app.iceQuote Connect2Quote];
             //[app.iceQuote initiateCallback:app.strAcc];
             //[app.iceQuote Login:app.strCmd];
-            
-            
             ICEQuote *iceQuote = [ICEQuote shareInstance];
             iceQuote.delegate = self;
             app.wpQuoteServerCallbackReceiverI = [[ICEQuote shareInstance] Connect2Quote];
@@ -181,14 +182,12 @@
     _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
     dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行
     // 事件回调
-    //NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
-    
     dispatch_source_set_event_handler(_timer, ^{
         int iRet = -2;
         @try{
             ICEQuote *iceQuote = [ICEQuote shareInstance];
             AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-            [iceQuote HeartBeat:app.strCmd];
+            iRet = [iceQuote HeartBeat:app.strCmd];
             //iRet = [app.iceTool HeartBeat:app.strCmd];
         }
         @catch(ICEException* s){
@@ -235,14 +234,11 @@
 {
     AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     //[app.iceQuote Connect2Quote];
-    
     ICEQuote* iceQuote = [ICEQuote shareInstance];
     self.KlineList = [iceQuote GetDayKline:self.sExchangeID];
-    
     NSString* cmdType = @"CTP,";
     cmdType =  [cmdType stringByAppendingString:app.strAcc];
-    //[iceQuote SubscribeQuote:cmdType strCmd:@""];
-    
+    [iceQuote SubscribeQuote:cmdType strCmd:@""];
     //[app.iceQuote SubscribeQuote:cmdType strCmd:@"c1809"];
     
 }
@@ -335,7 +331,7 @@
 }
 //tableview
 - (void)addTableView{
-    self->_tableView = [[UITableView alloc] init];
+    self->_tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     self->_tableView.delegate = self;
     self->_tableView.dataSource = self;
     [self.view addSubview:self->_tableView];
@@ -345,6 +341,8 @@
         make.right.equalTo(self.view);
         make.height.equalTo(@(DEVICE_HEIGHT-120));
     }];
+    //[self.tableView setEditing:YES animated:YES];
+    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"identifier"];//cell 重用
 }
 #pragma -mark 添加segment
 //添加segment
@@ -479,14 +477,20 @@
     if (!cell)
     {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.selectionStyle = UITableViewCellSelectionStyleBlue; //设置选中的颜色
     }
+    [cell setEditingAccessoryType:UITableViewCellAccessoryCheckmark];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    NSString* title = [_searchResult[indexPath.row] uppercaseString];//_searchResult[indexPath.row];
-
+    NSString* title = [_searchResult[indexPath.row] uppercaseString];
     cell.textLabel.text = title;
     return cell;
 }
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+}
+
+
 
 #pragma -mark searchbar delegate
 //search bar 过滤字符串 setter

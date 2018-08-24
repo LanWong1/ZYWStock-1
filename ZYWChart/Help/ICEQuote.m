@@ -26,7 +26,6 @@
 @property (nonatomic) id<ICECommunicator> communicator;
 @property (nonatomic) id<WpQuoteServerCallbackReceiverPrx> twowayR;
 @property (nonatomic) id<GLACIER2RouterPrx> router;
-
 @property (nonatomic)  WpQuoteServerCallbackReceiverI* wpQuoteServerCallbackReceiverI;
 //@property (nonatomic) WpQuoteServerDayKLineList* DLL;
 //@property (nonatomic) NSTimer *timer;
@@ -90,6 +89,7 @@ static ICEQuote* iceQuote = nil;
     
     [self.WpQuoteServerclientApiPrx initiateCallback:strAcc proxy:self.twowayR];
 }
+
 - (void)Login:(NSString*)StrCmd{
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
@@ -97,6 +97,8 @@ static ICEQuote* iceQuote = nil;
     NSLog(@"login%d",ret);
     [self setHeartbeat];//设置心跳
 }
+
+//每三秒发送通知
 - (void)setHeartbeat{
     // 创建GCD定时器
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -110,8 +112,8 @@ static ICEQuote* iceQuote = nil;
 }
 //传递数据的
 - (void)sendmsg{
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"changedata" object:self userInfo:@"aaaaasdsdasdasd"];
+    //传递通知
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"changedata" object:self userInfo:@"KVO通知测试"];
     if(self.delegate && [self.delegate respondsToSelector:@selector(refreshTimeline:)]){
         [self.delegate refreshTimeline:@"refresh timeline"];
     }

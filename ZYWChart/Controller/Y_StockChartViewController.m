@@ -33,9 +33,30 @@
 @property (nonatomic, copy) NSString* sCode;
 @property (nonatomic, copy) WpQuoteServerDayKLineList* KlineData;
 
+@property (nonatomic,strong) UIView *tradeButtonView;
+@property (strong, nonatomic) IBOutlet UIView *buttonView;
+@property (weak, nonatomic) IBOutlet UIView *tradeSetView;
+
 @end
 
 @implementation Y_StockChartViewController
+- (IBAction)press:(id)sender {
+    
+    UIButton *btn = (UIButton*)sender;
+  
+    //看涨
+    if (btn.tag == 400) {
+        NSLog(@"kanzhang");
+    }
+    //清仓
+    else if(btn.tag == 401){
+        NSLog(@"qingcang");
+    }
+    //看跌
+    else{
+        NSLog(@"kandie");
+    }
+}
 
 
 #pragma --mark icetool delegate 用于传值 更新数据
@@ -78,19 +99,53 @@
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;//设置状态栏文字为白色
 }
 
-//- (void)viewWillDisappear:(BOOL)animated
-//{
-//    [super viewWillDisappear:animated];
-//}
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor blackColor]};
+}
+- (void)addTradeButtonView{
+    //添加xib文件 buttonView  三键
+   NSArray *views = [[NSBundle mainBundle]loadNibNamed:@"buttonView" owner:self options:nil];
+    _buttonView = views[0];
+    [self.view addSubview:_buttonView];
+    [_buttonView mas_makeConstraints:^(MASConstraintMaker *make) {
+        //make.top.equalTo(self.stockChartView.mas_bottom).offset(100);
+        make.left.equalTo(self.view.mas_left);
+        make.width.equalTo(self.view);
+        make.height.equalTo(@80);
+        make.bottom.equalTo(self.view.mas_bottom);
+    }];
+}
 
+- (void)addTradeSetView{
+    //添加xib文件 buttonView  三键
+    NSArray *views = [[NSBundle mainBundle]loadNibNamed:@"buttonView" owner:self options:nil];
+    _tradeSetView = views[1];
+    [self.view addSubview:_tradeSetView];
+    [_tradeSetView mas_makeConstraints:^(MASConstraintMaker *make) {
+        //make.top.equalTo(self.stockChartView.mas_bottom).offset(100);
+        make.left.equalTo(self.view.mas_left);
+        make.width.equalTo(self.view);
+        make.height.equalTo(@300);
+        make.top.equalTo(self.stockChartView.mas_bottom);
+    }];
+}
 - (void)viewDidLoad {
    
     [super viewDidLoad];
+    [self addTradeButtonView];
+    [self addTradeSetView];
     self.navigationItem.title = self.sCode;
     self.view.backgroundColor = [UIColor backgroundColor];
     self.currentIndex = -1;
     self.stockChartView.backgroundColor = [UIColor backgroundColor];//调用了getter方法[UIColor whiteColor]; // [UIColor backgroundColor];//调用了getter方法
+    
 }
+
+
+
+
 //getter方法 of modelsDict
 - (NSMutableDictionary<NSString *,Y_KLineGroupModel *> *)modelsDict
 {
@@ -181,6 +236,7 @@
         //[self.timeData removeLastObject];
         NSEnumerator *enumerator = [[NSEnumerator alloc]init];
         ICEQuote* iceQuote = [ICEQuote shareInstance];
+    
         if([self.type isEqualToString: @"1min"]){
         //enumerator =[[app.iceQuote getKlineData:self.sCode type:@"minute"] objectEnumerator];
             enumerator =[[iceQuote getKlineData:self.sCode type:@"minute"] objectEnumerator];
@@ -189,6 +245,7 @@
         //enumerator =[[app.iceQuote getKlineData:self.sCode type:@"day"] objectEnumerator];
             enumerator =[[iceQuote getKlineData:self.sCode type:@"day"] objectEnumerator];
         }
+        //数据处理应该在model中 移动处理
         id obj = nil;
         while (obj = [enumerator nextObject]){
             NSString *string = obj;
@@ -301,7 +358,7 @@
                 make.top.equalTo(self.view);
                 make.left.right.equalTo(self.view);
                 //make.bottom.equalTo(self.view);
-                make.bottom.equalTo(self.view).offset(-200);
+                make.bottom.equalTo(self.view).offset(-350);
                 //make.edges.equalTo(self.view);
             }
         }];
@@ -311,16 +368,20 @@
     }
     return _stockChartView;
 }
+
+//横竖屏切换
 - (void)dismiss
 {
+    NSLog(@"dismisss");
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
     appdelegate.isEable = YES;//横屏
     Y_StockChartLandScapeViewController *stockChartVC = [Y_StockChartLandScapeViewController new];
     stockChartVC.sCode = _sCode;
-    stockChartVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    stockChartVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     [self presentViewController:stockChartVC animated:YES completion:nil];
  
 }
+
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskLandscape;
