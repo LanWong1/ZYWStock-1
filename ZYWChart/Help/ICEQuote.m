@@ -133,7 +133,13 @@ static ICEQuote* iceQuote = nil;
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     @try{
-        [self.WpQuoteServerclientApiPrx SubscribeQuote:strCmdType strCmd:strcmd strOut:&strOut strErrInfo:&strErroInfo];
+        //[self.WpQuoteServerclientApiPrx SubscribeQuote:strCmdType strCmd:strcmd strOut:&strOut strErrInfo:&strErroInfo];
+        
+        [self.WpQuoteServerclientApiPrx begin_SubscribeQuote:strCmdType strCmd:strcmd response:^(ICEInt i, NSMutableString *string, NSMutableString *string2) {
+            NSLog(@"%d %@ %@",i, string, string2);
+        } exception:^(ICEException *s) {
+            NSLog(@"%@",s);
+        }];
     }
     @catch(ICEException* s)
     {
@@ -141,7 +147,23 @@ static ICEQuote* iceQuote = nil;
     }
 }
 
-
+- (void)UnSubscribeQuote:(NSString *)strCmdType strCmd:(NSString *)strcmd{
+    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+    @try{
+        //[self.WpQuoteServerclientApiPrx SubscribeQuote:strCmdType strCmd:strcmd strOut:&strOut strErrInfo:&strErroInfo];
+        
+        [self.WpQuoteServerclientApiPrx begin_UnSubscribeQuote:strCmdType strCmd:strcmd response:^(ICEInt i, NSMutableString *string, NSMutableString *string2) {
+            NSLog(@"%d %@ %@",i, string, string2);
+        } exception:^(ICEException *s) {
+            NSLog(@"%@",s);
+        }];
+    }
+    @catch(ICEException* s)
+    {
+        NSLog(@"%@",s);
+    }
+}
 
 
 //获取timedata
@@ -173,6 +195,7 @@ static ICEQuote* iceQuote = nil;
 //获取timedata
 - (NSMutableArray*)getKlineData:(NSString*)sCode type:(NSString*)type{
     @try{
+        NSLog(@"getklinedata    aaa  ");
         // [self reconnect];//重连
         NSMutableString* strOut = [[NSMutableString alloc]init];
         NSString* Time = [self getCurrentTime];
@@ -180,6 +203,12 @@ static ICEQuote* iceQuote = nil;
         NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
         NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,Code,@"=",Time];
         [self.WpQuoteServerclientApiPrx GetKLine:type strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+//        [self.WpQuoteServerclientApiPrx begin_GetKLine:type strCmd:strCmd response:^(ICEInt ret, NSMutableString *str1, NSMutableString *str2) {
+//            NSLog(@"respoinse %d %@ %@ ", ret, str1, str2);
+//        } exception:^(ICEException *s) {
+//            NSLog(@"错误是 %@",s);
+//        }];
+        //[self.WpQuoteServerclientApiPrx begin_GetKLine:type strCmd:strCmd];
         NSMutableArray* array = [NSMutableArray array];
         if([strOut length]> 0){
             array = [NSMutableArray array];

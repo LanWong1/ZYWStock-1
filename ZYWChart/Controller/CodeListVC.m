@@ -86,7 +86,7 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-    
+    NSLog(@"view did load");
     //注册通知中心
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sayHello:) name:@"changedata" object:(nil)];
     self.allTitlesArray = [[NSMutableArray alloc]init];
@@ -133,13 +133,11 @@
             //[app.iceQuote Login:app.strCmd];
             ICEQuote *iceQuote = [ICEQuote shareInstance];
             iceQuote.delegate = self;
-            app.wpQuoteServerCallbackReceiverI = [[ICEQuote shareInstance] Connect2Quote];
+            app.wpQuoteServerCallbackReceiverI = [iceQuote Connect2Quote];
 //          [[ICEQuote shareInstance] initiateCallback:app.strAcc];
 //          [[ICEQuote shareInstance] Login:app.strCmd];
             [iceQuote initiateCallback:app.strAcc];
             [iceQuote Login:app.strCmd];
-       
-            
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self.activeId stopAnimating];
                 [self.label removeFromSuperview];
@@ -210,6 +208,7 @@
     //[self addTableView];
     if(self.refreshFlag!= 1)
     {
+        NSLog(@"jjjjjjjj");
         [self addActiveId];
         [self addLabel];
         [self.activeId startAnimating];
@@ -232,20 +231,36 @@
 //GetDayKLine
 - (void)getKline
 {
+    ICEQuote* iceQuote = [ICEQuote shareInstance];
+   
+
+    //[app.iceQuote Connect2Quote]
+    self.KlineList = [iceQuote GetDayKline:self.sExchangeID];
+ 
+   //[iceQuote SubscribeQuote:cmdType strCmd:@""];
+    //[iceQuote SubscribeQuote:cmdType strCmd:@"CF905"];
+    
+}
+- (void)subscibe{
+    ICEQuote* iceQuote = [ICEQuote shareInstance];
+    AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    NSString* cmdType = @"CTP,";
+    cmdType =  [cmdType stringByAppendingString:app.strAcc];
+    [iceQuote SubscribeQuote:cmdType strCmd:@"CF1905"];
+}
+- (void)unSubscibe{
     AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     //[app.iceQuote Connect2Quote];
     ICEQuote* iceQuote = [ICEQuote shareInstance];
     self.KlineList = [iceQuote GetDayKline:self.sExchangeID];
     NSString* cmdType = @"CTP,";
     cmdType =  [cmdType stringByAppendingString:app.strAcc];
-    [iceQuote SubscribeQuote:cmdType strCmd:@""];
-    //[app.iceQuote SubscribeQuote:cmdType strCmd:@"c1809"];
-    
+    [iceQuote UnSubscribeQuote:cmdType strCmd:@""];
 }
 
 //get titlesArray
 - (void)loadData{
-    NSLog(@"load data");
+
     NSMutableArray* sCodeAll = [[NSMutableArray alloc]init];
     _titlesArray = [[NSMutableArray alloc]init];
     //_searchResult = [[NSMutableArray alloc]init];
@@ -445,7 +460,18 @@
     NSString *klinesCode = _searchResult[indexPath.row];
     //NSString *klinesCode = _searchResult[btn.tag];
     NSLog(@"历史行情 %@",klinesCode);
+    
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
+//        [self unSubscibe];
+//        dispatch_sync(dispatch_get_main_queue(), ^{
+//            Y_StockChartViewController* vc = [[Y_StockChartViewController alloc]initWithScode:klinesCode KlineDataList:self.KlineListAll];
+//            vc.hidesBottomBarWhenPushed = YES;
+//            [self.navigationController pushViewController:vc animated:YES];
+//
+//        });
+//    });
 #if new
+
     Y_StockChartViewController* vc = [[Y_StockChartViewController alloc]initWithScode:klinesCode KlineDataList:self.KlineListAll];
     vc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];

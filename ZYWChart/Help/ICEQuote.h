@@ -36,6 +36,7 @@
 - (void)Login:(NSString*)StrCmd;
 - (int)HeartBeat:(NSString*)strCmd;
 - (void)SubscribeQuote:(NSString*)strCmdType strCmd:(NSString*)strCmd;
+- (void)UnSubscribeQuote:(NSString *)strCmdType strCmd:(NSString *)strcmd;
 - (WpQuoteServerDayKLineList*)GetDayKline:(NSString*)ExchangeID;
 - (NSMutableArray*)getTimeData:(NSString*)sCode;
 - (NSMutableArray*)getKlineData:(NSString*)sCode type:(NSString*)type;
