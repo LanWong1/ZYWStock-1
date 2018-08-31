@@ -20,6 +20,10 @@
 #import "Y_KLineAccessoryView.h"
 #import "Y_KlineMAVLabelView.h"
 #import "AppDelegate.h"
+
+
+
+
 @interface Y_KLineView() <UIScrollViewDelegate, Y_KLineMainViewDelegate, Y_KLineVolumeViewDelegate, Y_KLineAccessoryViewDelegate>
 
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -144,6 +148,8 @@
 - (Y_KLineMAView *)kLineMAView
 {
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+    
+    
     if( appdelegate.isEable == YES){
         if (!_kLineMAView) {
             _kLineMAView = [Y_KLineMAView view];

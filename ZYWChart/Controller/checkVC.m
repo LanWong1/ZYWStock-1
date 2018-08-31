@@ -27,7 +27,7 @@
 @property (nonatomic) NpTradeAPIServerCallbackReceiverI* npTradeAPIServerCallbackReceiverI;
 @property (nonatomic) WpTradeAPIServerCallbackReceiverI* wpTradeAPIServerCallbackReceiverI;
 @property (nonatomic) CheckFundVC* checkFundVC;
-@property (nonatomic,strong) UISegmentedControl *segment;
+@property (nonatomic,strong)  UISegmentedControl *segment;
 @property (nonatomic,strong)  NSMutableArray<__kindof HoldDataModel*> *modleHoldArray;
 @property (nonatomic,strong)  NSMutableArray<__kindof FundDataModel*> *modleFundArray;
 @property (nonatomic,strong)  NSMutableArray<__kindof OrderDataModel*> *modleOrderArray;

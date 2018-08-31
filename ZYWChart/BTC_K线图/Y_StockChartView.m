@@ -44,7 +44,7 @@
         _kLineView = [Y_KLineView new];
         [self addSubview:_kLineView];
         [_kLineView mas_makeConstraints:^(MASConstraintMaker *make) {
-            AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+           // AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
 //            if(appdelegate.isEable == NO){
 //                //make.bottom.equalTo(self).offset(-100);
 //                make.bottom.equalTo(self);

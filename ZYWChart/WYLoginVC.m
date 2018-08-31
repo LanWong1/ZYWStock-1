@@ -155,26 +155,26 @@
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     int ret = [app.QuickOrder.quickOrder Login:@"" strCmd:app.strCmd strOut:&strOut strErrInfo:&strErroInfo];
-    [app.QuickOrder.quickOrder QueryOrder:@"" strCmd:self.strFundAcc strOut:&strOut strErrInfo:&strErroInfo];
-    NSLog(@"dddddddddddddd %@",strOut);
-    [app.QuickOrder.quickOrder QueryCode:@"" strCmd:self.strFundAcc strOut:&strOut strErrInfo:&strErroInfo];
-    NSLog(@"dddddddddddddd %@",strOut);
+//    [app.QuickOrder.quickOrder QueryOrder:@"" strCmd:self.strFundAcc strOut:&strOut strErrInfo:&strErroInfo];
+//    NSLog(@"dddddddddddddd %@",strOut);
+//    [app.QuickOrder.quickOrder QueryCode:@"" strCmd:self.strFundAcc strOut:&strOut strErrInfo:&strErroInfo];
+//    NSLog(@"dddddddddddddd %@",strOut);
     //异步 获取数据
-//    [app.QuickOrder.quickOrder begin_QueryFund:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
-//        NSLog(@"l = %d s = %@  a = %@",l,s,a);
-//    } exception:^(ICEException *s) {
-//        NSLog(@"%@",s);
-//    }];
-//    [app.QuickOrder.quickOrder begin_QueryOrder:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
-//        NSLog(@"l = %d s = %@  a = %@",l,s,a);
-//    } exception:^(ICEException *s) {
-//        NSLog(@"%@",s);
-//    }];
-//    [app.QuickOrder.quickOrder begin_QueryCode:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
-//        NSLog(@"l = %d s = %@  a = %@",l,s,a);
-//    } exception:^(ICEException *s) {
-//        NSLog(@"%@",s);
-//    }];
+    [app.QuickOrder.quickOrder begin_QueryFund:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
+        NSLog(@"l = %d s = %@  a = %@",l,s,a);
+    } exception:^(ICEException *s) {
+        NSLog(@"%@",s);
+    }];
+    [app.QuickOrder.quickOrder begin_QueryOrder:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
+        NSLog(@"l = %d s = %@  a = %@",l,s,a);
+    } exception:^(ICEException *s) {
+        NSLog(@"%@",s);
+    }];
+    [app.QuickOrder.quickOrder begin_QueryCode:@"" strCmd:app.strFundAcc response:^(ICEInt l, NSMutableString *s, NSMutableString *a) {
+        NSLog(@"l = %d s = %@  a = %@",l,s,a);
+    } exception:^(ICEException *s) {
+        NSLog(@"%@",s);
+    }];
 }
 - (void)setHeartbeat{
     // 创建GCD定时器

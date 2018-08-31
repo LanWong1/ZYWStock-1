@@ -38,12 +38,54 @@
 @property (nonatomic,copy) NSString *loseLimit;//下单手数
 @property (nonatomic,copy) NSString *winLimit;//下单手数
 
+//交易按钮 看涨 清仓 分批清仓 看跌
+@property (strong,nonatomic) UIButton *riseButton;
+@property (strong,nonatomic) UIButton *dropButton;
+@property (strong,nonatomic) UIButton *clearButton;
+@property (strong,nonatomic) UIButton *clearEachButton;
+
+//止盈止损picker
+@property (strong,nonatomic) UIPickerView *lossLimitPicker;
+@property (strong,nonatomic) UIPickerView *winLimitPicker;
+//总权益
+@property (strong,nonatomic) UILabel *totalEquityLable;
+//保证金
+@property (strong,nonatomic) UILabel *cashDepositLable;
+//可用资金
+@property (strong,nonatomic) UILabel *availableCapitalLable;
+
+//总权益 保证金 可用资金数字
+@property (assign,nonatomic) NSInteger totalEquityNumber;
+@property (assign,nonatomic) NSInteger cashDepositNumber;
+@property (assign,nonatomic) NSInteger availableCapitalNumber;
+
+//下单次数
+@property (assign,nonatomic) NSInteger OrderCount;
+//持仓数量
+@property (assign,nonatomic) NSInteger buyCountValue;
+
+@property (nonatomic, strong) NSMutableArray *buyCountArray;
 
 
-@property (strong, nonatomic) IBOutlet UIView *buttonView;
+//持仓方向
+@property (weak, nonatomic) IBOutlet   UILabel *holdDirectLable;
+//持仓数量
+@property (weak, nonatomic) IBOutlet UILabel *holdCountLable;
+//持仓均价
+@property (weak, nonatomic) IBOutlet UILabel *holdAverageLable;
+//持仓盈亏
+@property (weak, nonatomic) IBOutlet UILabel *holdWinLossLable;
+
+
+
+//持仓情况view
+@property (weak, nonatomic) IBOutlet   UIView *lableView;
+//交易设置 view
 @property (weak, nonatomic) IBOutlet   UIView *tradeSetView;
+//止盈止损 输入
 @property (weak, nonatomic) IBOutlet UITextField *loseLimtedTextField;
 @property (weak, nonatomic) IBOutlet UITextField *winLimitedTextField;
+//筹码
 @property (weak, nonatomic) IBOutlet UIButton *button1;
 @property (weak, nonatomic) IBOutlet UIButton *button2;
 @property (weak, nonatomic) IBOutlet UIButton *button4;
@@ -51,16 +93,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *button6;
 
 
-@property (weak, nonatomic) IBOutlet UIButton *riseOrderBtn;
-@property (weak, nonatomic) IBOutlet UIButton *clearOrderBtn;
-@property (weak, nonatomic) IBOutlet UIButton *dropOrderBtn;
-@property (strong,nonatomic) UIButton *riseButton;
-@property (strong,nonatomic) UIButton *dropButton;
-@property (strong,nonatomic) UIButton *clearButton;
-@property (strong,nonatomic) UIPickerView *lossLimitPicker;
-@property (strong,nonatomic) UIPickerView *winLimitPicker;
 
-@property (strong,nonatomic) UITextField *textfield;
 
 
 
@@ -123,49 +156,40 @@
 - (void)viewDidLoad {
    
     [super viewDidLoad];
-    
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(orderSuccessful:) name:@"success"object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-    
-    //[[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(transformView:) name:UIKeyboardDidShowNotification object:nil];
-    //[[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(transformView:) name:UIKeyboardDidChangeFrameNotification object:nil];
-    //[self chipsButtonAddLongPress];
-   // [self addTradeButtonView];
-    [self addTradeSetView];
-    [self addTradeButtons];
-    
+  
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];//键盘将要隐藏通知
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];//键盘将要显示
     self.navigationItem.title = self.sCode;
     self.view.backgroundColor = [UIColor backgroundColor];
     self.currentIndex = -1;
-    self.stockChartView.backgroundColor = [UIColor backgroundColor];//调用了getter方法[UIColor whiteColor]; // [UIColor backgroundColor];//调用了getter方法
-    _textfield = [[UITextField alloc]init];
+    self.stockChartView.backgroundColor = [UIColor backgroundColor];//调用了getter方法
+    [self addTradeButtons];
+    [self addXibViews];
+    _buyCountArray = [NSMutableArray array];
 }
 
+
+
+
+
 #pragma --mark 添加views
-- (void)addTradeButtonView{
-    //添加xib文件 buttonView  三键
-    NSArray *views = [[NSBundle mainBundle]loadNibNamed:@"buttonView" owner:self options:nil];
-    _buttonView = views[0];
-    [self.view addSubview:_buttonView];
-    [_buttonView mas_makeConstraints:^(MASConstraintMaker *make) {
+
+- (void)addXibViews{
+    [[NSBundle mainBundle]loadNibNamed:@"buttonView" owner:self options:nil];
+     [self.view addSubview:_lableView];
+    [_lableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.view.mas_left);
         make.width.equalTo(self.view);
+        make.bottom.equalTo(self.view.mas_bottom).offset(-90);
         make.height.equalTo(@80);
-        make.bottom.equalTo(self.view.mas_bottom);
+        //make.top.equalTo(_tradeSetView.mas_bottom);
     }];
-}
-//筹码 止损止盈
-- (void)addTradeSetView{
-    //添加xib文件 buttonView  三键
-    NSArray *views = [[NSBundle mainBundle]loadNibNamed:@"buttonView" owner:self options:nil];
-    _tradeSetView = views[1];
     [self.view addSubview:_tradeSetView];
     [_tradeSetView mas_makeConstraints:^(MASConstraintMaker *make) {
         //make.top.equalTo(self.stockChartView.mas_bottom).offset(100);
         make.left.equalTo(self.view.mas_left);
         make.width.equalTo(self.view);
-        make.height.equalTo(@200);
+        make.height.equalTo(@150);
         //make.bottom.equalTo(_buttonView.mas_top);
         make.top.equalTo(self.stockChartView.mas_bottom);
     }];
@@ -176,42 +200,41 @@
     [self addLimitPicker];
 }
 
+
 //止损止盈picker
 - (void)addLimitPicker{
     _lossLimitPicker = [[UIPickerView alloc]init];
-    _winLimitPicker  = [[UIPickerView alloc]init];
-   
+    //止损
     [_tradeSetView addSubview:_lossLimitPicker];
-    [_tradeSetView addSubview:_winLimitPicker];
+   
     [_lossLimitPicker mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.view.mas_left).offset(120);
         make.width.equalTo(@40);
         //make.bottom.equalTo(_tradeSetView.mas_bottom).offset(-18);
-        make.height.equalTo(@60);
+        make.height.equalTo(@80);
         make.centerY.equalTo(_loseLimtedTextField.mas_centerY);
     }];
+    _lossLimitPicker.tag = 1000;
+    _lossLimitPicker.delegate = self;
+    _lossLimitPicker.dataSource = self;
+    //止盈
+     _winLimitPicker  = [[UIPickerView alloc]init];
+     [_tradeSetView addSubview:_winLimitPicker];
     [_winLimitPicker mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self.view.mas_right).offset(-120);
         make.width.equalTo(@40);
         //make.bottom.equalTo(_tradeSetView.mas_bottom).offset(-18);
-        make.height.equalTo(@60);
+        make.height.equalTo(@80);
         make.centerY.equalTo(_winLimitedTextField.mas_centerY);
 
     }];
-    _lossLimitPicker.delegate = self;
-    _lossLimitPicker.dataSource = self;
     _winLimitPicker.dataSource = self;
     _winLimitPicker.delegate = self;
-    
-    _lossLimitPicker.tag = 1000;
     _winLimitPicker.tag = 1001;
-    
-//    _lossLimitPicker.backgroundColor = [UIColor greenColor];
-//    _winLimitPicker.backgroundColor = [UIColor redColor];
-    _winLimitPicker.userInteractionEnabled = YES;
 }
 // 交易三键
 -(void)addTradeButtons{
+    
     //看涨按键
     _riseButton = [[UIButton alloc]init];
     [_riseButton setTitle:@"看涨" forState:UIControlStateNormal];
@@ -219,55 +242,113 @@
     [_riseButton setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
     _riseButton.backgroundColor = RoseColor;
     _riseButton.layer.cornerRadius = 35;
+    _riseButton.titleLabel.font = [UIFont systemFontOfSize:16];
     [self.view addSubview:_riseButton];
     [_riseButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.view.mas_bottom).offset(-20);
+        make.bottom.equalTo(self.view.mas_bottom);
         make.left.equalTo(self.view.mas_left).offset(30);
         make.width.equalTo(@70);
         make.height.equalTo(@70);
-        
     }];
-    
     //看跌按键
     _dropButton = [[UIButton alloc]init];
     [_dropButton setTitle:@"看跌" forState:UIControlStateNormal];
     [_dropButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [_dropButton setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
     _dropButton.backgroundColor = DropColor;
+    _dropButton.titleLabel.font = [UIFont systemFontOfSize:16];
     _dropButton.layer.cornerRadius = 35;
     [self.view addSubview:_dropButton];
     [_dropButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.view.mas_bottom).offset(-20);
+        make.bottom.equalTo(self.view.mas_bottom);
         make.right.equalTo(self.view.mas_right).offset(-30);
         make.width.equalTo(@70);
         make.height.equalTo(@70);
     }];
     //清仓按键
-    _clearButton = [[UIButton alloc]initWithFrame:CGRectMake(150, self.view.frame.size.height - 90, 35, 70)];
+    _clearButton = [[UIButton alloc]initWithFrame:CGRectMake(130, self.view.frame.size.height - 70, 70, 70)];
     [_clearButton setTitle:@"清\n仓" forState:UIControlStateNormal];
     [_clearButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [_clearButton setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
     _clearButton.backgroundColor = [UIColor blueColor];
     _clearButton.titleLabel.numberOfLines = 2;
+     _clearButton.titleLabel.font = [UIFont systemFontOfSize:16];
    [self.view addSubview:_clearButton];
-    NSLog(@"with = %f height = %f",_clearButton.frame.size.width,_clearButton.frame.size.height);
-    
-    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:_clearButton.bounds byRoundingCorners:(UIRectCornerTopLeft | UIRectCornerBottomLeft) cornerRadii:CGSizeMake(_clearButton.frame.size.height,_clearButton.frame.size.height)];//圆角大小
+    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:_clearButton.bounds byRoundingCorners:(UIRectCornerTopLeft | UIRectCornerBottomLeft) cornerRadii:CGSizeMake(_clearButton.frame.size.height/2,_clearButton.frame.size.height/2)];//圆角大小
     CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
     maskLayer.frame = _clearButton.bounds;
     maskLayer.path = maskPath.CGPath;
     _clearButton.layer.mask = maskLayer;
+    //分批清仓
+    _clearEachButton = [[UIButton alloc]initWithFrame:CGRectMake(self.view.frame.size.width - 200, self.view.frame.size.height - 70, 70, 70)];
+    [_clearEachButton setTitle:@"分批\n清仓" forState:UIControlStateNormal];
+    [_clearEachButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [_clearEachButton setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
+    _clearEachButton.backgroundColor = [UIColor orangeColor];
+    _clearEachButton.titleLabel.numberOfLines = 2;
+    _clearEachButton.titleLabel.font = [UIFont systemFontOfSize:16];
+    [self.view addSubview:_clearEachButton];
+    UIBezierPath *maskPath1 = [UIBezierPath bezierPathWithRoundedRect:_clearEachButton.bounds byRoundingCorners:(UIRectCornerTopRight | UIRectCornerBottomRight) cornerRadii:CGSizeMake(_clearEachButton.frame.size.height/2,_clearButton.frame.size.height/2)];//圆角大小
+    CAShapeLayer *maskLayer1 = [[CAShapeLayer alloc] init];
+    maskLayer1.frame = _clearEachButton.bounds;
+    maskLayer1.path = maskPath1.CGPath;
+    _clearEachButton.layer.mask = maskLayer1;
     
     
     
     [_riseButton addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
     [_dropButton addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
     [_clearButton addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
+     [_clearEachButton addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
     //_clearButton = [[UIButton alloc]init];
     _dropButton.tag = 501;
     _riseButton.tag = 500;
     _clearButton.tag = 502;
+    _clearEachButton.tag = 503;
 
+}
+
+-(void)addCountView{
+    
+    _totalEquityLable = [[UILabel alloc]init];
+    _totalEquityLable.text = [NSString stringWithFormat:@"%@%ld",@"总权益:",(long)_totalEquityNumber];
+    _totalEquityLable.textAlignment = NSTextAlignmentCenter;
+    _totalEquityLable.backgroundColor = [UIColor clearColor];
+    _totalEquityLable.textColor = [UIColor whiteColor];
+    _totalEquityLable.font = [UIFont systemFontOfSize:14];
+    [self.view addSubview:_totalEquityLable];
+    [_totalEquityLable mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_riseButton);
+        make.right.equalTo(_riseButton);
+        make.bottom.equalTo(_riseButton.mas_top);
+    }];
+    
+     _cashDepositLable = [[UILabel alloc]init];
+    _cashDepositLable.text = [NSString stringWithFormat:@"%@%ld",@"保证金:",(long)_cashDepositNumber];
+    _cashDepositLable.textAlignment = NSTextAlignmentCenter;
+    _cashDepositLable.backgroundColor = [UIColor clearColor];
+    _cashDepositLable.textColor = [UIColor whiteColor];
+    _cashDepositLable.font = [UIFont systemFontOfSize:14];
+    [self.view addSubview:_cashDepositLable];
+    [_cashDepositLable mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_clearButton.mas_left).offset(10);
+        make.right.equalTo(_clearEachButton.mas_right);
+        make.bottom.equalTo(_clearButton.mas_top);
+    }];
+    
+    _availableCapitalLable = [[UILabel alloc]init];
+    _availableCapitalLable.text = [NSString stringWithFormat:@"%@%ld",@"可用资金:",(long)_availableCapitalLable];
+    _availableCapitalLable.textAlignment = NSTextAlignmentCenter;
+    _availableCapitalLable.backgroundColor = [UIColor clearColor];
+    _availableCapitalLable.textColor = [UIColor whiteColor];
+    _availableCapitalLable.font = [UIFont systemFontOfSize:14];
+    [self.view addSubview:_availableCapitalLable];
+    [_availableCapitalLable mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_dropButton.mas_left);
+        make.right.equalTo(_dropButton.mas_right);
+        make.bottom.equalTo(_dropButton.mas_top);
+    }];
+    
 }
 #pragma --mark 按键相关
 //长按手势
@@ -281,32 +362,12 @@
     [self editChip:btn];
 }
 
-- (IBAction)press:(UIButton*)sender {
-    //看涨
-    if (sender.tag == 400 || sender.tag  == 402) {
-        NSLog(@"交易");
-        if([_winLimitedTextField.text  isEqual: @""]||[_loseLimtedTextField.text  isEqual: @""]){
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:@"输入止损止盈" preferredStyle:UIAlertControllerStyleAlert];
-            [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
-            [self presentViewController:alert animated:YES completion:nil];
-        }
-        else{
-            NSLog(@"%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
-            NSLog(@"order successfully");
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"success" object:self userInfo:@"看涨"];
-        }
-    }
-    //清仓
-    else{
-        
-        NSLog(@"qingcang");
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"success" object:self userInfo:@"清仓"];
-    }
-}
 
 
 //下单键按下
 -(void)pressed:(UIButton*)sender{
+    
+    
     if (sender.tag == 500 || sender.tag  == 501) {
         
         if([_winLimitedTextField.text  isEqual: @""]||[_loseLimtedTextField.text  isEqual: @""]){
@@ -315,65 +376,103 @@
             [self presentViewController:alert animated:YES completion:nil];
         }
         else if(sender.tag == 500){
+
+            _holdDirectLable.text = @"多";//看涨按钮按下 持仓就为多
+            [_holdDirectLable setTextColor:RoseColor];
             
+           //看涨
             if([sender.titleLabel.text isEqualToString:@"看涨"]){
+               
                 [_riseButton setTitle:@"追单" forState:UIControlStateNormal];
                 [_dropButton setTitle:@"反向开仓" forState:UIControlStateNormal];
                  NSLog(@"看涨下单:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
             }
+            //反向开仓
             else if ([sender.titleLabel.text isEqualToString:@"反向开仓"]){
+                
+                //反向开仓 重新计数 清空现在的数据
+                _buyCountValue = 0;
+                _OrderCount = 0;
+                [_buyCountArray removeAllObjects];
+                
                 [_riseButton setTitle:@"追单" forState:UIControlStateNormal];
                 [_dropButton setTitle:@"反向开仓" forState:UIControlStateNormal];
                 NSLog(@"看涨反向开仓:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
             }
+            //追单
             else{
+                
                 NSLog(@"看涨追单:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
             }
+            [_buyCountArray addObject:@([_buyCount integerValue])];
+             _buyCountValue += [_buyCount integerValue];
+            _OrderCount += 1;
            // [[NSNotificationCenter defaultCenter] postNotificationName:@"success" object:self userInfo:@"看涨"];
         }
+        
         else{
+
+            _holdDirectLable.text = @"空";//看跌按钮按下 持仓就为多
+            [_holdDirectLable setTextColor:DropColor];
+            //看跌开仓
             if([sender.titleLabel.text isEqualToString:@"看跌"]){
                 [_dropButton setTitle:@"追单" forState:UIControlStateNormal];
                 [_riseButton setTitle:@"反向开仓" forState:UIControlStateNormal];
                 NSLog(@"看跌下单:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
             }
+            //反向开仓
             else if ([sender.titleLabel.text isEqualToString:@"反向开仓"]){
+                 //反向开仓 重新计数 清空现在的数据
+                _buyCountValue = 0;
+                _OrderCount = 0;
+                 [_buyCountArray removeAllObjects];
+                
+                
                 [_dropButton setTitle:@"追单" forState:UIControlStateNormal];
                 [_riseButton setTitle:@"反向开仓" forState:UIControlStateNormal];
                 NSLog(@"看跌反向开仓:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
             }
+            //追单
             else{
                 NSLog(@"看跌追单:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
             }
+            _buyCountValue += [_buyCount integerValue];
+             [_buyCountArray addObject:@([_buyCount integerValue])];
+            _OrderCount += 1;
             //[[NSNotificationCenter defaultCenter] postNotificationName:@"success" object:self userInfo:@"看跌"];
         }
     }
     //清仓
     else{
-        
-        NSLog(@"qingcang");
-        [_dropButton setTitle:@"看跌" forState:UIControlStateNormal];
-        [_riseButton setTitle:@"看涨" forState:UIControlStateNormal];
+        if(sender.tag == 502){
+            NSLog(@"qingcang");
+            _OrderCount = 0;
+            _buyCountValue  = 0;
+            [_buyCountArray removeAllObjects];
+            _holdDirectLable.text = @"--";
+            [_holdDirectLable setTextColor:[UIColor yellowColor]];
+            [_dropButton setTitle:@"看跌" forState:UIControlStateNormal];
+            [_riseButton setTitle:@"看涨" forState:UIControlStateNormal];
+        }
+        else{
+            NSLog(@"分批清仓");
+            if(_OrderCount>0){
+                _buyCountValue -= [[_buyCountArray lastObject] integerValue];
+                [_buyCountArray removeLastObject];
+                _OrderCount -= 1;
+                if(_OrderCount == 0){
+                    _holdDirectLable.text = @"--";
+                    [_dropButton setTitle:@"看跌" forState:UIControlStateNormal];
+                    [_riseButton setTitle:@"看涨" forState:UIControlStateNormal];
+                }
+            }
+        }
         //[[NSNotificationCenter defaultCenter] postNotificationName:@"success" object:self userInfo:@"清仓"];
     }
+    _holdCountLable.text = [NSString stringWithFormat:@"%ld%@",(long)_buyCountValue,@"手"];
 }
-#pragma --mark  下单成功通知 succesful notifications
-//- (void)orderSuccessful:(NSNotification *)notification{
-//
-//    if([notification.userInfo isEqual:@"看涨"]){
-//
-//        [_riseButton setTitle:@"追单" forState:UIControlStateNormal];
-//        [_dropButton setTitle:@"反向开单" forState:UIControlStateNormal];
-//    }
-//    else if([notification.userInfo isEqual:@"看跌"]){
-//        [_dropButton setTitle:@"追单" forState:UIControlStateNormal];
-//        _riseButton setTitle:@"反向开单" forState:UIControlStateNormal];
-//    }
-//    else{
-//        [_dropButton setTitle:@"看跌" forState:UIControlStateNormal];
-//        [_riseButton setTitle:@"看涨" forState:UIControlStateNormal];
-//    }
-//}
+
+
 // 下单手数按键按下
 - (IBAction)setCountOfChips:(UIButton *)sender{
     
@@ -691,6 +790,7 @@
         [self.view setFrame:CGRectMake(self.view.frame.origin.x, 0, self.view.frame.size.width, self.view.frame.size.height)];
     }];
 }
+
 - (void)keyboardWillShow:(NSNotification*)aNSNotification{
     NSLog(@"willshow");
     NSValue *keyBoardBeginBounds=[[aNSNotification userInfo]objectForKey:UIKeyboardFrameBeginUserInfoKey];
@@ -700,13 +800,13 @@
         [self.view setFrame:CGRectMake(self.view.frame.origin.x, -deltaY, self.view.frame.size.width, self.view.frame.size.height)];
     }];
 }
-
+//移除通知
 - (void)dealloc{
     NSLog(@"dealloc");
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"success" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
-      [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
 }
+
 #pragma --mark Pickerview delegate
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
@@ -728,21 +828,18 @@
     return [NSString stringWithFormat:@"%ld",row+1];
 }
 
-
-
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
     NSLog(@"selected");
-    //pickerView bringSubviewToFront:
+    //止损
     if(pickerView.tag == 1000 ){
         _loseLimtedTextField.text = [NSString stringWithFormat:@"%ld",row+1];
-        //_loseLimit = [NSString stringWithFormat:@"%ld",row+1];
     }
+    //止盈
     else{
         _winLimitedTextField.text = [NSString stringWithFormat:@"%ld",row+1];
-        //_winLimit = [NSString stringWithFormat:@"%ld",row+1];
     }
 }
-
+//设置uipicker 的每个选项的view 这里设为uitextfield
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view{
 
     UITextField *lossField = [[UITextField alloc]initWithFrame:CGRectMake(0, 0, 80, 40)];
@@ -752,10 +849,8 @@
     else{
         lossField.backgroundColor = RoseColor;
     }
-    
     lossField.textAlignment = NSTextAlignmentCenter;
-    //lossField.hidden = YES;
-    lossField.text = [NSString stringWithFormat:@"%ld",row+1];
+    lossField.text = [NSString stringWithFormat:@"%ld",row+1];//字符串转数字
     lossField.textColor = [UIColor whiteColor];
     return lossField;
 
