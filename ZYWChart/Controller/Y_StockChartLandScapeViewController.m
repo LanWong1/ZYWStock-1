@@ -9,7 +9,7 @@
 #import "Y_StockChartLandScapeViewController.h"
 #import "Masonry.h"
 #import "Y_StockChartView.h"
-#import "Y_StockChartView.h"
+
 //#import "NetWorking.h"
 #import "Y_KLineGroupModel.h"
 #import "UIColor+Y_StockChart.h"
@@ -27,17 +27,11 @@
 
 
 @property (nonatomic, strong) Y_StockChartView *stockChartView;
-
 @property (nonatomic, strong) Y_KLineGroupModel *groupModel;
-
 @property (nonatomic, copy) NSMutableDictionary <NSString*, Y_KLineGroupModel*> *modelsDict;
-
-
 @property (nonatomic, assign) NSInteger currentIndex;
-
-@property (nonatomic, copy) NSString *type;
-
-
+@property (nonatomic, copy)   NSString *type;
+@property (nonatomic, strong) NSTimer *refreshTimer;
 @end
 
 @implementation Y_StockChartLandScapeViewController
@@ -56,7 +50,7 @@
 }
 
 - (void)viewDidLoad {
-
+   
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor backgroundColor];
     self.currentIndex = -1;
@@ -128,6 +122,19 @@
     
     self.currentIndex = index;
     self.type = type;
+    
+    //定时刷新数据
+    if(index == 0){
+        if(!_refreshTimer){
+            _refreshTimer = [NSTimer scheduledTimerWithTimeInterval:60.0 target:self selector:@selector(reloadData) userInfo:nil repeats:YES];//每分钟刷新
+        }
+    }
+    else{
+        if(_refreshTimer != nil){
+            [_refreshTimer invalidate];
+            _refreshTimer = nil;
+        }
+    }
     if(![self.modelsDict objectForKey:type])
     {
         [self reloadData];
@@ -139,37 +146,41 @@
 
 - (void)reloadData
 {
-//    NSMutableDictionary *param = [NSMutableDictionary dictionary];
-//    param[@"type"] = self.type;
-//    param[@"market"] = @"btc_usdt";
-//    param[@"size"] = @"1000";
-//    [NetWorking requestWithApi:@"http://api.bitkk.com/data/v1/kline" param:param thenSuccess:^(NSDictionary *responseObject) {
-//
-//        Y_KLineGroupModel *groupModel = [Y_KLineGroupModel objectWithArray:responseObject[@"data"]];//很多组数据组成的array 每个元素包含时间 开盘价等数据
-//        NSLog(@"%@",responseObject[@"data"]);
-//        self.groupModel = groupModel;
-//        [self.modelsDict setObject:groupModel forKey:self.type];
-//        // NSLog(@"%@",groupModel);
-//        [self.stockChartView reloadData];
-//    } fail:^{
-//
-//    }];
-    AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    //[app.iceQuote Connect2Quote];
-    //self.timeData =
-    //[app.iceQuote getKlineData:self.sCode type:self.type];
-    NSMutableArray *timeArray = [NSMutableArray array];
-    NSMutableArray *data = [NSMutableArray array];
-    //[self.timeData removeLastObject];
-    ICEQuote* iceQuote = [ICEQuote shareInstance];
     
+    NSMutableArray *dataArray = [NSMutableArray array];
+    NSMutableArray *data = [NSMutableArray array];
     NSEnumerator *enumerator = [[NSEnumerator alloc]init];
+    ICEQuote* iceQuote = [ICEQuote shareInstance];
     if([self.type isEqualToString: @"1min"]){
-        enumerator =[[iceQuote getKlineData:self.sCode type:@"minute"] objectEnumerator];
+        @try{
+            NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,self.sCode,@"=",iceQuote.userID];
+            NSMutableArray *arrayTemp = [iceQuote getKlineData:strCmd type:@"minute"];
+            //NSMutableArray *arrayTemp = [iceQuote getKlineData:self.sCode type:@"minute"];
+            if(arrayTemp.count == 0){
+                NSLog(@"分钟线 ++++++++++++");
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:@"无数据" preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
+            else{
+                enumerator =[arrayTemp objectEnumerator];
+            }
+        }
+        @catch(ICEException *s){
+            NSLog(@"get min erro is %@",s);
+        }
     }
     if([self.type isEqualToString: @"1day"]){
-        enumerator =[[iceQuote getKlineData:self.sCode type:@"day"] objectEnumerator];
+        @try{
+            NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,self.sCode,@"=",iceQuote.userID];
+            NSMutableArray *arrayTemp = [iceQuote getKlineData:strCmd type:@"day"];
+            enumerator =[arrayTemp objectEnumerator];
+        }
+        @catch(ICEException *s){
+            NSLog(@"getday kline erro is %@",s);
+        }
     }
+    //数据处理应该在model中 移动处理
     id obj = nil;
     while (obj = [enumerator nextObject]){
         NSString *string = obj;
@@ -187,8 +198,9 @@
             array[3] = @([array1[5] floatValue]);
             array[4] = @([array1[4] floatValue]);
             array[5] = @([array1[7] floatValue]);
-            [timeArray addObject:array];
+            [dataArray addObject:array];
         }
+        
         else if ([self.type isEqualToString:@"1day"]){
             NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
             [dateString insertString:@"-" atIndex:4];
@@ -202,29 +214,28 @@
             [data addObject:array];
         }
         // NSMutableArray * newMarray = [NSMutableArray array];
-        
-        
     }
     if ([self.type isEqualToString:@"1day"]){
         NSEnumerator * enumerator1 = [data reverseObjectEnumerator];//倒序排列
         id object;
         while (object = [enumerator1 nextObject])
         {
-            [timeArray addObject:object];
+            [dataArray addObject:object];
         }
     }
-    Y_KLineGroupModel *groupModel = [Y_KLineGroupModel objectWithArray:timeArray];
-    self.groupModel = groupModel;
-    [self.modelsDict setObject:groupModel forKey:self.type];
+    self.groupModel  = [Y_KLineGroupModel objectWithArray:dataArray];
+    [self.modelsDict setObject:_groupModel forKey:self.type];//model 字典 键值编程 更新M_groupModel
     [self.stockChartView reloadData];
+    [self.stockChartView.kLineView reDraw];//重绘kline
 }
-
-- (Y_StockChartView *)stockChartView
+- (Y_StockChartView*)stockChartView
 {
+    
+    
     NSLog(@"stockchartView");
     if(!_stockChartView) {
+
         _stockChartView = [Y_StockChartView new];
-        
         _stockChartView.itemModels = @[
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"指标" type:Y_StockChartcenterViewTypeOther],
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"分时" type:Y_StockChartcenterViewTypeTimeLine],
@@ -235,17 +246,20 @@
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"日线" type:Y_StockChartcenterViewTypeKline],
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"周线" type:Y_StockChartcenterViewTypeKline],
                                        ];
+       
         
         // _stockChartView.backgroundColor = [UIColor orangeColor];
         _stockChartView.dataSource = self;
         [self.view addSubview:_stockChartView];
         [_stockChartView mas_makeConstraints:^(MASConstraintMaker *make) {
             if (IS_IPHONE_X) {
-                make.edges.equalTo(self.view).insets(UIEdgeInsetsMake(0, 30, 0, 0));
+//               make.top.equalTo(self.view);
+//               make.bottom.right.left.equalTo(self.view);
+                make.top.left.right.equalTo(self.view);
+                make.bottom.equalTo(self.view.mas_bottom).offset(-20);
             } else {
                 make.top.equalTo(self.view);
                 make.bottom.left.right.equalTo(self.view);
-                //make.edges.equalTo(self.view);
             }
         }];
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(dismiss)];
@@ -256,22 +270,27 @@
 }
 - (void)dismiss
 {
-    
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-    appdelegate.isEable = NO;
-    
-    [self dismissViewControllerAnimated:self completion:nil ];
+    appdelegate.isEable = NO;//非横屏
+    if(_refreshTimer){
+        [_refreshTimer invalidate];
+    }
+
+    if(_stockChartView){
+        [_stockChartView removeFromSuperview];
+    }
+  
+    [self dismissViewControllerAnimated:YES completion:nil ];
    
 }
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskLandscape;
-}
-- (BOOL)shouldAutorotate
-{
-    return NO;
-}
-
+//- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+//{
+//    return UIInterfaceOrientationMaskLandscape;
+//}
+//- (BOOL)shouldAutorotate
+//{
+//    return NO;
+//}
 
 
 @end

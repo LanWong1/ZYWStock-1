@@ -13,6 +13,7 @@
 #import "Y_StockChartGlobalVariable.h"
 #import "AppDelegate.h"
 #import "ICEQuote.h"
+#import "UIColor+Y_StockChart.h"
 @interface Y_StockChartView() <Y_StockChartSegmentViewDelegate>
 
 /**
@@ -29,6 +30,11 @@
  *  当前索引
  */
 @property(nonatomic,assign,readwrite) NSInteger currentIndex;
+
+@property (weak, nonatomic) IBOutlet UIView *quoteView;
+
+
+
 @end
 
 
@@ -60,7 +66,7 @@
     }
     return _kLineView;
 }
-#pragma --mark sementView Getter 方法
+#pragma --mark sementView Getter 方法 懒加载
 - (Y_StockChartSegmentView *)segmentView
 {
     if(!_segmentView)
@@ -76,7 +82,7 @@
                 make.top.equalTo(self);
             }
             else{
-                 make.top.equalTo(self).offset(60);
+                 make.top.equalTo(_quoteView.mas_bottom);
             }
             make.height.equalTo(@40);
            //make.width.equalTo(@50);
@@ -84,10 +90,26 @@
     }
     return _segmentView;
 }
-
+- (void)addQuoteView{
+     [[NSBundle mainBundle]loadNibNamed:@"quoteView" owner:self options:nil];
+    [self addSubview:_quoteView];
+    [_quoteView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self).offset(60);
+        make.left.right.equalTo(self);
+        make.height.equalTo(@100);
+    }];
+    
+}
 #pragma --mark itemModels的setter方法
 - (void)setItemModels:(NSArray *)itemModels
 {
+    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+    if(appdelegate.isEable == NO){
+        [self addQuoteView];
+        _quoteView.backgroundColor = [UIColor backgroundColor];
+        
+    }
+    
     _itemModels = itemModels;
     if(itemModels)
     {
@@ -178,7 +200,7 @@
                 switch (type) {
                     case Y_StockChartcenterViewTypeKline:
                     {
-                        self.kLineView.hidden = NO;//显示K线图
+                       self.kLineView.hidden = NO;//显示K线图
                      //[self bringSubviewToFront:self.kLineView];
                      //[self bringSubviewToFront:self.segmentView];
                     }

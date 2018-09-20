@@ -218,12 +218,10 @@
 #pragma mark 重新设置相关数据，然后重绘
 - (void)drawMainView{
     NSAssert(self.kLineModels, @"kLineModels不能为空");
-    
     //提取需要的kLineModel
     [self private_extractNeedDrawModels];
     //转换model为坐标model
     [self private_convertToKLinePositionModelWithKLineModels];
-    
     //间接调用drawRect方法
     [self setNeedsDisplay];
 }
@@ -311,7 +309,7 @@
     }
     
     
-    NSLog(@"这是模型开始的index-----------%lu",needDrawKLineStartIndex);
+    //NSLog(@"这是模型开始的index-----------%lu",needDrawKLineStartIndex);
     [self.needDrawKLineModels removeAllObjects];
     
     //赋值数组
@@ -418,14 +416,14 @@
     minAssert *= 0.9991;
     CGFloat minY = Y_StockChartKLineMainViewMinY;
     CGFloat maxY ; 
-    AppDelegate *app  = [UIApplication sharedApplication].delegate;
-    if (app.isEable == YES){
-        maxY = self.parentScrollView.frame.size.height * [Y_StockChartGlobalVariable kLineMainViewRadio] - 25;
-    }
-    else{
-        maxY = self.parentScrollView.frame.size.height  - 25;
-    }
-    
+//    AppDelegate *app  = [UIApplication sharedApplication].delegate;
+//    if (app.isEable == YES){
+//        maxY = self.parentScrollView.frame.size.height * [Y_StockChartGlobalVariable kLineMainViewRadio] - 25;
+//    }
+//    else{
+//        maxY = self.parentScrollView.frame.size.height  - 25;
+//    }
+    maxY = self.parentScrollView.frame.size.height * [Y_StockChartGlobalVariable kLineMainViewRadio] - 25;
     CGFloat unitValue = (maxAssert - minAssert)/(maxY - minY);
     //    CGFloat ma7UnitValue = (maxMA7 - minMA7) / (maxY - minY);
     //    CGFloat ma30UnitValue = (maxMA30 - minMA30) / (maxY - minY);

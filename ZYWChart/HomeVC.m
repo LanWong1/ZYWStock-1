@@ -7,13 +7,13 @@
 //
 #import "AppDelegate.h"
 #import "HomeVC.h"
-#import "CandleLineVC.h"
+//#import "CandleLineVC.h"
 //ICE
 #import <objc/Ice.h>
 #import <objc/Glacier2.h>
 #import <WpQuote.h>
 #import "CodeListVC.h"
-#import "TimeLineVC.h"
+//#import "TimeLineVC.h"
 #import "BuyVC.h"
 #import "WpTrade.h"
 #import "LoginVC.h"

@@ -21,13 +21,13 @@
 
 
 @interface CodeListVC ()<UITableViewDelegate,UITableViewDataSource,UISearchResultsUpdating, UISearchControllerDelegate>
-@property (nonatomic,strong)  UISearchController *searchController;
-@property (nonatomic, retain) UIRefreshControl * refreshControl;
-@property (nonatomic, copy)   NSString *filterString;
-@property (nonatomic,strong)  UITableView    *tableView;
-@property (nonatomic,strong)    NSMutableArray *titlesArray;
-@property (nonatomic,strong)    NSMutableArray *allTitlesArray;
-@property (nonatomic,strong)  UISearchBar *search;
+@property (nonatomic,strong)    UISearchController *searchController;
+@property (nonatomic, retain)   UIRefreshControl   *refreshControl;
+@property (nonatomic, copy)     NSString           *filterString;
+@property (nonatomic,strong)    UITableView        *tableView;
+@property (nonatomic,strong)    NSMutableArray     *titlesArray;
+@property (nonatomic,strong)    NSMutableArray     *allTitlesArray;
+@property (nonatomic,strong)    UISearchBar        *search;
 
 @property (nonatomic,copy)    NSArray* zjsResult;
 @property (nonatomic,copy)    NSArray* zssResult;
@@ -36,27 +36,28 @@
 
 @property (nonatomic,copy)    NSArray* searchResult;
 @property (nonatomic,copy)    NSMutableArray* TimeData;
-@property (nonatomic) WpQuoteServerDayKLineList *KlineList;
-@property (nonatomic,strong) NSMutableArray *KlineListAll;
-@property (nonatomic) WpQuoteServerDayKLineList *KlineList0;
-@property (nonatomic) WpQuoteServerDayKLineList *KlineList1;
-@property (nonatomic) WpQuoteServerDayKLineList *KlineList2;
-@property (nonatomic) WpQuoteServerDayKLineList *KlineList3;
-@property (nonatomic)        ICEInt iRet;
-@property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
-@property (nonatomic) id<GLACIER2RouterPrx> router;
-@property (nonatomic) id<ICECommunicator> communicator;
-@property (nonatomic) id session;
-@property (nonatomic)        ICEInt refreshFlag;
-@property (nonatomic,strong) UILabel *label;
-@property (nonatomic,strong) UIActivityIndicatorView *activeId;
-@property (nonatomic,strong) UIButton *btn;
-@property (nonatomic,strong) UIButton *searchBtn;
-@property (nonatomic) ICEQuote* iceQuote;
-@property (nonatomic,strong) UIView *searchView;
-@property (nonatomic,strong) UISegmentedControl *segment;
-@property (nonatomic,strong) NSString *sExchangeID;//交易所
-@property (nonatomic) int segmentIndex;//
+@property (nonatomic)         WpQuoteServerDayKLineList *KlineList;
+@property (nonatomic)         WpQuoteServerDayKLineList *KlineList0;
+@property (nonatomic)         WpQuoteServerDayKLineList *KlineList1;
+@property (nonatomic)         WpQuoteServerDayKLineList *KlineList2;
+@property (nonatomic)         WpQuoteServerDayKLineList *KlineList3;
+@property (nonatomic,strong)  NSMutableArray *KlineListAll;
+
+@property (nonatomic)         ICEInt iRet;
+@property (nonatomic)         id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
+@property (nonatomic)         id<GLACIER2RouterPrx> router;
+@property (nonatomic)         id<ICECommunicator> communicator;
+@property (nonatomic)         id session;
+@property (nonatomic)         ICEInt refreshFlag;
+@property (nonatomic,strong)  UILabel *label;
+@property (nonatomic,strong)  UIActivityIndicatorView *activeId;
+@property (nonatomic,strong)  UIButton *btn;
+@property (nonatomic,strong)  UIButton *searchBtn;
+@property (nonatomic)         ICEQuote* iceQuote;
+@property (nonatomic,strong)  UIView *searchView;
+@property (nonatomic,strong)  UISegmentedControl *segment;
+@property (nonatomic,strong)  NSString *sExchangeID;//交易所
+@property (nonatomic)         int     segmentIndex;//
 @property (nonatomic, strong) dispatch_source_t timer;
 //@property (nonatomic,strong) TimeLineVC *timeLineVC;
 
@@ -103,6 +104,8 @@
 - (void)sayHello:(NSNotification*)notification{
     NSLog(@"%@",notification.userInfo);
 }
+
+
 //添加放大镜
 - (void)addSearchButton{
     UIImage* searchImgNormal = [UIImage imageNamed:@"searchNormal.png"];
@@ -232,12 +235,8 @@
 - (void)getKline
 {
     ICEQuote* iceQuote = [ICEQuote shareInstance];
-   
-
-    //[app.iceQuote Connect2Quote]
     self.KlineList = [iceQuote GetDayKline:self.sExchangeID];
- 
-   //[iceQuote SubscribeQuote:cmdType strCmd:@""];
+    //[iceQuote SubscribeQuote:cmdType strCmd:@""];
     //[iceQuote SubscribeQuote:cmdType strCmd:@"CF905"];
     
 }
@@ -281,19 +280,19 @@
     switch (_segmentIndex) {
         case 0:
             _KlineList0 = self.KlineList;
-            _zjsResult = _titlesArray;
+            _zjsResult  = _titlesArray;
             break;
         case 1:
             _KlineList1 = self.KlineList;
-            _zssResult = _titlesArray;
+            _zssResult  = _titlesArray;
             break;
         case 2:
             _KlineList2 = self.KlineList;
-            _dssResult = _titlesArray;
+            _dssResult  = _titlesArray;
             break;
         case 3:
             _KlineList3 = self.KlineList;
-            _sqsResult = _titlesArray;
+            _sqsResult  = _titlesArray;
         default:
             break;
     }
@@ -446,7 +445,6 @@
         self.refreshFlag = 1;
         [self getData];
         [self.refreshControl endRefreshing];
-        
     }
 }
 #pragma -mark tableview 代理协议
@@ -470,17 +468,10 @@
 //
 //        });
 //    });
-#if new
-
-    Y_StockChartViewController* vc = [[Y_StockChartViewController alloc]initWithScode:klinesCode KlineDataList:self.KlineListAll];
+    Y_StockChartViewController* vc = [[Y_StockChartViewController alloc]initWithScode:klinesCode];
     vc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];
-#else
 
-    CandleLineVC* vc = [[CandleLineVC alloc]initWithScode:klinesCode KlineDataList:self.KlineListAll];
-    vc.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:vc animated:YES];
-#endif
 //    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
 //        //[self.iceQuote Connect2Quote];
 //        //获取分时图数据
@@ -507,7 +498,8 @@
     }
     [cell setEditingAccessoryType:UITableViewCellAccessoryCheckmark];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    NSString* title = [_searchResult[indexPath.row] uppercaseString];
+    //NSString* title = [_searchResult[indexPath.row] uppercaseString];
+    NSString* title = _searchResult[indexPath.row];
     cell.textLabel.text = title;
     return cell;
 }

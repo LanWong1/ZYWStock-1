@@ -15,12 +15,10 @@
  *  第一个View的高所占比例
  */
 @property (nonatomic, assign) CGFloat mainViewRatio;
-
 /**
  *  第二个View(成交量)的高所占比例
  */
 @property (nonatomic, assign) CGFloat volumeViewRatio;
-
 /**
  *  数据
  */

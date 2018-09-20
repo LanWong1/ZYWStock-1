@@ -13,6 +13,8 @@
 
 @interface Y_StockChartViewController : UIViewController
 
--(instancetype)initWithScode:(NSString *)sCodeSelect KlineDataList:(WpQuoteServerDayKLineList *)KlineDataList;
 
+@property (nonatomic,copy) NSString *futu_price_step;
+
+- (instancetype)initWithScode:(NSString *)sCodeSelect;
 @end

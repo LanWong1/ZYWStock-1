@@ -95,7 +95,7 @@ static ICEQuote* iceQuote = nil;
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     int ret = [self.WpQuoteServerclientApiPrx Login:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
     NSLog(@"login%d",ret);
-    [self setHeartbeat];//设置心跳
+   // [self setHeartbeat];//设置心跳
 }
 
 //每三秒发送通知
@@ -123,33 +123,40 @@ static ICEQuote* iceQuote = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"changedata" object:nil];
 }
 - (int)HeartBeat:(NSString*)strCmd{
+    NSLog(@"quote heart beat");
     int iRet = -2;
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     iRet = [self.WpQuoteServerclientApiPrx HeartBeat:@"" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
     return iRet;
 }
+
+
+
 - (void)SubscribeQuote:(NSString *)strCmdType strCmd:(NSString *)strcmd{
-    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+//    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+//    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+//    NSLog(@" strcmd == %@",strcmd);
+//    int ret = [self.WpQuoteServerclientApiPrx SubscribeQuote:strCmdType strCmd:strcmd strOut:&strOut strErrInfo:&strErroInfo];
+//    NSLog(@"ret ======= %d erro ====== %@  strout======= %@",ret,strErroInfo,strOut);
     @try{
-        //[self.WpQuoteServerclientApiPrx SubscribeQuote:strCmdType strCmd:strcmd strOut:&strOut strErrInfo:&strErroInfo];
-        
+
+        NSLog(@"开始订阅!!strCmdType = %@ strcmd = %@ ",strCmdType,strcmd);
         [self.WpQuoteServerclientApiPrx begin_SubscribeQuote:strCmdType strCmd:strcmd response:^(ICEInt i, NSMutableString *string, NSMutableString *string2) {
-            NSLog(@"%d %@ %@",i, string, string2);
+            NSLog(@"ret========%d string======%@ string======%@",i, string, string2);
         } exception:^(ICEException *s) {
-            NSLog(@"%@",s);
+            NSLog(@"订阅失败 原因 %@",s);
         }];
     }
-    @catch(ICEException* s)
+    @catch(NSException* s)
     {
-        NSLog(@"%@",s);
+        NSLog(@"订阅出错啦 %@",s);
     }
 }
 
 - (void)UnSubscribeQuote:(NSString *)strCmdType strCmd:(NSString *)strcmd{
-    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+//    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+//    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     @try{
         //[self.WpQuoteServerclientApiPrx SubscribeQuote:strCmdType strCmd:strcmd strOut:&strOut strErrInfo:&strErroInfo];
         
@@ -167,48 +174,34 @@ static ICEQuote* iceQuote = nil;
 
 
 //获取timedata
-- (NSMutableArray*)getTimeData:(NSString*)sCode {
-    @try{
-        // [self reconnect];//重连
-        NSMutableString* strOut = [[NSMutableString alloc]init];
-        NSString* Time = [self getCurrentTime];
-        NSString* Code = sCode;
-        NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-        NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,Code,@"=",Time];
-        [self.WpQuoteServerclientApiPrx GetKLine:@"day" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
-        NSMutableArray* array = [NSMutableArray array];
-        if([strOut length]> 0){
-            array = [NSMutableArray array];
-            array = [[strOut componentsSeparatedByString:@"|"] mutableCopy];
-            [array removeLastObject];
-        }
-        else{
-            array = nil;
-        }
-        return array;
-    }
-    @catch(ICEException* s)
-    {
-        NSLog(@"Fail %@",s);
-    }
-}
+//- (NSMutableArray*)getTimeData:(NSString*)sCode {
+//    @try{
+//        NSMutableString* strOut = [[NSMutableString alloc]init];
+//        NSString* Code = sCode;
+//        NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+//        [self.WpQuoteServerclientApiPrx GetKLine:@"day" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+//        NSMutableArray* array = [NSMutableArray array];
+//        if([strOut length]> 0){
+//            array = [NSMutableArray array];
+//            array = [[strOut componentsSeparatedByString:@"|"] mutableCopy];
+//            [array removeLastObject];
+//        }
+//        else{
+//            array = nil;
+//        }
+//        return array;
+//    }
+//    @catch(ICEException* s)
+//    {
+//        NSLog(@"Fail %@",s);
+//    }
+//}
 //获取timedata
-- (NSMutableArray*)getKlineData:(NSString*)sCode type:(NSString*)type{
+- (NSMutableArray*)getKlineData:(NSString*)strCmd type:(NSString*)type{
     @try{
-        NSLog(@"getklinedata    aaa  ");
-        // [self reconnect];//重连
         NSMutableString* strOut = [[NSMutableString alloc]init];
-        NSString* Time = [self getCurrentTime];
-        NSString* Code = sCode;
         NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-        NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,Code,@"=",Time];
         [self.WpQuoteServerclientApiPrx GetKLine:type strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
-//        [self.WpQuoteServerclientApiPrx begin_GetKLine:type strCmd:strCmd response:^(ICEInt ret, NSMutableString *str1, NSMutableString *str2) {
-//            NSLog(@"respoinse %d %@ %@ ", ret, str1, str2);
-//        } exception:^(ICEException *s) {
-//            NSLog(@"错误是 %@",s);
-//        }];
-        //[self.WpQuoteServerclientApiPrx begin_GetKLine:type strCmd:strCmd];
         NSMutableArray* array = [NSMutableArray array];
         if([strOut length]> 0){
             array = [NSMutableArray array];
@@ -216,7 +209,7 @@ static ICEQuote* iceQuote = nil;
             [array removeLastObject];
         }
         else{
-            array = nil;
+            NSLog(@"无数据!!!");
         }
         return array;
     }
@@ -225,13 +218,14 @@ static ICEQuote* iceQuote = nil;
         NSLog(@"Fail %@",s);
     }
 }
-//获取当前时间
-- (NSString*)getCurrentTime{
-    NSDate * date = [NSDate date];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    formatter.dateFormat = @"HHmmss";
-    NSString *string = [formatter stringFromDate:date];
-    return string;
-}
+////获取当前时间
+//- (NSString*)getCurrentTime{
+//    NSDate * date = [NSDate date];
+//    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+//    formatter.dateFormat = @"HHmmss";
+//    NSString *string = [formatter stringFromDate:date];
+//    NSLog(@"uiser id ==== %@",string);
+//    return string;
+//}
 
 @end

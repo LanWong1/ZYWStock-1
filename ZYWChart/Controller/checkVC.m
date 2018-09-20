@@ -12,16 +12,21 @@
 #import "CheckOrderVC.h"
 #import "checkHoldVC.h"
 #import "CheckFundVC.h"
-#import "BaseNavigationController.h"
+//#import "BaseNavigationController.h"
 #import "ICENpTrade.h"
 #import "HoldDataModel.h"
 #import "FundDataModel.h"
 #import "OrderDataModel.h"
+#import "BaoBiaoItem.h"
+#import "BaoBiaoItemHeader.h"
+#import "BaoBiaoLayout.h"
 #define Y 5
-@interface checkVC ()<UITableViewDelegate,UITableViewDataSource>
+@interface checkVC ()<UICollectionViewDataSource,UICollectionViewDelegate>
+
 @property (nonatomic,strong)  UIButton *QueryButton;
 @property (nonatomic,strong)  UIButton *FundButton;
 @property (nonatomic,strong)  UIButton *HoldButton;
+
 @property (nonatomic,strong)  UIActivityIndicatorView *activeId;
 @property (nonatomic) NSMutableArray* Msg;
 @property (nonatomic) NpTradeAPIServerCallbackReceiverI* npTradeAPIServerCallbackReceiverI;
@@ -32,20 +37,47 @@
 @property (nonatomic,strong)  NSMutableArray<__kindof FundDataModel*> *modleFundArray;
 @property (nonatomic,strong)  NSMutableArray<__kindof OrderDataModel*> *modleOrderArray;
 @property (nonatomic) int segmentIndex;
-@property (nonatomic,strong)  UITableView    *tableView;
-@property (nonatomic,strong)  UIView    *titleView;
+@property (nonatomic,strong)  UITableView *tableView;
+@property (nonatomic,strong)  UIView      *titleView;
 @property (nonatomic, retain) UIRefreshControl * refreshControl;
+
+
+
+
+
+@property (nonatomic, strong) NSMutableArray *checkItems;
+@property (nonatomic,strong) NSMutableArray *checkItemsTitle;
+
+
+
+
+
+@property (nonatomic,strong) UICollectionView *collectionView;
+@property(nonatomic,strong)BaoBiaoLayout *layout;
+@property (nonatomic,assign) int mBMaxWith;
+
+
+
+
+
 
 @end
 
 @implementation checkVC
+- (void)viewDidAppear:(BOOL)animated{
+    self.tabBarController.tabBar.hidden = NO;
+    
+    self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];//导航栏背景色
+    self.navigationController.navigationBar.tintColor = [UIColor blackColor];//设置返回字体颜色
+    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;//设置状态时间文字为
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"账户";
-    //self.titleView = [[UIView alloc]initWithFrame:CGRectMake(0, 120, DEVICE_WIDTH, 40)];
+    self.mBMaxWith = DEVICE_WIDTH;
+    self.checkItems = [NSMutableArray array];
     [self addSementView];
-    [self addTitleView];
     [self addActiveId];
     AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
 #if NpTradeTest
@@ -57,18 +89,66 @@
     [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addHoldView) userInfo:nil repeats:NO];
     // Do any additional setup after loading the view.
 }
-- (void)addTitleView{
-    //self.titleView = [[UIView alloc]initWithFrame:CGRectMake(0, 120, DEVICE_WIDTH, 40)];
-    self.titleView = [[UIView alloc]init];
-    //self.titleView.backgroundColor = [UIColor blackColor];
-    [self.view addSubview:self.titleView];
-    [self.titleView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.segment.mas_bottom);
-        make.left.equalTo(self.view);
-        make.right.equalTo(self.view);
-        make.height.equalTo(@(40));
-    }];
+
+#pragma mark 添加collection view
+-(void)addCollectionView{
+ 
+    [self setCollectionViewLayout];
+    if(!self.collectionView){
+        self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, 0, 0) collectionViewLayout:self.layout];
+        [self.collectionView setDirectionalLockEnabled:YES];
+        self.collectionView.delegate = self;
+        self.collectionView.dataSource = self;
+        self.automaticallyAdjustsScrollViewInsets = NO;
+        [self.collectionView registerNib:[UINib nibWithNibName:@"BaoBiaoItem" bundle:nil] forCellWithReuseIdentifier:@"BaoBiaoItem"];//cell
+        [self.collectionView registerNib:[UINib nibWithNibName:@"BaoBiaoItemHeader" bundle:nil] forCellWithReuseIdentifier:@"BaoBiaoItemHeader"];//头部
+        //self.collectionView.backgroundView.backgroundColor = [UIColor whiteColor];
+        self.collectionView.backgroundColor = [UIColor whiteColor];
+        [self.view addSubview:self.collectionView];
+        [self.collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.segment.mas_bottom);
+            make.left.equalTo(self.view);
+            make.right.equalTo(self.view);
+            make.height.equalTo(self.view);
+        }];
+    }
+    [self.layout reset];
+    [self updateMyList];
 }
+//更新数据
+-(void)updateMyList{
+    
+    if (self.checkItems == nil || self.checkItems.count == 0) {
+        self.collectionView.hidden = YES; //无数据 隐藏表格
+        return;
+    }
+    self.collectionView.hidden = NO;//显示
+    [self.collectionView reloadData];
+}
+//设置layout
+- (void)setCollectionViewLayout{
+    //layout 设置
+    if(!self.layout){
+        self.layout = [[BaoBiaoLayout alloc]init];
+        self.collectionView.collectionViewLayout = self.layout;
+    }
+    [self.layout reset];//清空设置
+    if (IS_IPHONE_X) {
+        [self.layout setItemHeight:40];
+    }else{
+        [self.layout setItemHeight:30];//高度
+    }
+    NSArray *array = self.checkItems[0];//第一行数据
+    [self.layout setColumnWidths :(int)array.count withMaxWidth:_mBMaxWith];
+}
+
+- (void)addActiveId{
+    self.activeId = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    self.activeId.center = CGPointMake(self.view.centerX ,self.view.centerY);
+    [self.view addSubview:self.activeId];
+}
+
+
 #pragma -mark 下拉刷新
 - (void)addRefreshControl{
     _refreshControl = [[UIRefreshControl alloc]init];
@@ -78,7 +158,7 @@
     [_tableView addSubview:_refreshControl];
 }
 - (void)refreshControlAction{
-    [self.tableView removeFromSuperview];
+    [self.collectionView removeFromSuperview];
     if(self.refreshControl.refreshing){
         _refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"加载中..."];
         switch (self.segmentIndex) {
@@ -94,94 +174,71 @@
             default:
                 break;
         }
-  
         [self.refreshControl endRefreshing];
         
     }
 }
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
-- (void)addActiveId{
-    self.activeId = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    self.activeId.center = CGPointMake(self.view.centerX ,self.view.centerY);
-    [self.view addSubview:self.activeId];
-}
-- (void)addSementView{
-    NSArray *titleArray = [[NSArray alloc]initWithObjects:@"委托",@"持仓",@"资金", nil];
-    self.segment = [[UISegmentedControl alloc]initWithItems:titleArray];
-    self.segment.selectedSegmentIndex = 1;//默认显示委托的数据
-    self.segment.tintColor = DropColor;
-    self.segment.frame = CGRectMake(0, 65, DEVICE_WIDTH, 40);
-    [self.view addSubview:self.segment];
-    [self.segment addTarget:self action:@selector(touchSegment:) forControlEvents:UIControlEventValueChanged];
-}
-- (void)addOrderTitle{
 
-//    [self.titleView removeFromSuperview];
-//    [self addTitleView];
-    for(UIView* view in [self.titleView subviews]){
-        [view removeFromSuperview];
-    }
-    [self.titleView addSubview: [self addLableWithName:@"商品代码" PositonX:0 PositionY:Y Type:0]];
-    [self.titleView addSubview: [self addLableWithName:@"合约代码" PositonX:70 PositionY:Y Type:0]];
-    [self.titleView addSubview: [self addLableWithName:@"开仓平仓" PositonX:140 PositionY:Y Type:0]];
-    [self.titleView addSubview: [self addLableWithName:@"买卖方向" PositonX:210 PositionY:Y Type:0]];
-    [self.titleView addSubview: [self addLableWithName:@"成交数量" PositonX:280 PositionY:Y Type:0]];
-    [self.titleView addSubview: [self addLableWithName:@"委托价格" PositonX:70*5 PositionY:Y Type:0]];
-    //[self.view addSubview:self.titleView];
 
-}
+
+
+
 - (void)addOrderView{
+    if(self.checkItems){
+        [self.checkItems removeAllObjects];
+    }
     [self.activeId stopAnimating];
     [self getMSg];
-    [self addOrderTitle];
+    //[self addOrderTitle];
+    NSMutableArray *checkItems = [NSMutableArray arrayWithObjects:@"合约名称",@"状态",@"开平",@"委托价",@"委托量",@"已成交",@"已撤单",@"委托时间", nil];
+    [self.checkItems addObject:checkItems];
     self.modleOrderArray = [NSMutableArray array];
     NSEnumerator* enumerator = [self.Msg objectEnumerator];
     id obj = nil;
     while(obj = [enumerator nextObject]){
+        NSMutableArray *arryTemp = [NSMutableArray array];
         NSArray * arry = obj;
         OrderDataModel *M = [[OrderDataModel alloc]init];
         M.CommodityNo = arry[6];
         M.ContractNo  = arry[7];
-        M.OffSet  = arry[14];
+        M.OffSet      = arry[14];
         M.Direction   = arry[13];
         M.MatchVol    = arry[38];
         M.OrderPrice  = arry[16];
+        [arryTemp addObject:arry[6]];
+        [arryTemp addObject:arry[7]];
+        [arryTemp addObject:arry[14]];
+        [arryTemp addObject:arry[13]];
+        [arryTemp addObject:arry[38]];
+        [arryTemp addObject:arry[16]];
+        [self.checkItems addObject:arryTemp];
         [self.modleOrderArray addObject:M];
     }
     if([self.modleOrderArray count] == 0){
         [self setAlertWithMessage:@"无委托"];
     }
+    [self addCollectionView];
     self.segmentIndex = 0;
-    [self addTableView];
+  
 }
-- (void)addHoldTitle{
 
-//    [self.titleView removeFromSuperview];
-//    [self addTitleView];
-    
-    for(UIView* view in [self.titleView subviews]){
-        [view removeFromSuperview];
-    }
-    [self.titleView addSubview:[self addLableWithName:@"商品编号" PositonX:0 PositionY:Y Type:0]];
-    [self.titleView addSubview:[self addLableWithName:@"合约号"  PositonX:70 PositionY:Y Type:0]];
-    [self.titleView addSubview:[self addLableWithName:@"买卖方向" PositonX:140 PositionY:Y Type:0]];
-    [self.titleView addSubview:[self addLableWithName:@"持仓量" PositonX:210 PositionY:Y Type:0]];
-    [self.titleView addSubview:[self addLableWithName:@"保证金" PositonX:280 PositionY:Y Type:0]];
-    [self.titleView addSubview:[self addLableWithName:@"昨结算价" PositonX:70*5 PositionY:Y Type:0]];
-    //[self.view addSubview:self.titleView];
-}
+
 - (void)addHoldView{
+    
+    if(self.checkItems){
+        [self.checkItems removeAllObjects];
+    }
+    NSMutableArray *checkItems = [NSMutableArray arrayWithObjects:@"合约名称",@"多空",@"总仓",@"可用",@"开仓均价",@"逐笔盈亏", nil];
+    [self.checkItems addObject:checkItems];
     [self.activeId stopAnimating];
     [self getMSg];
-    [self addHoldTitle];
+    //[self addHoldTitle];
     self.modleHoldArray = [NSMutableArray array];
     NSEnumerator* enumerator = [self.Msg objectEnumerator];
     id obj = nil;
     while(obj = [enumerator nextObject]){
+        NSMutableArray *arryTemp = [NSMutableArray array];
         NSArray * arry = obj;
         HoldDataModel *M = [[HoldDataModel alloc]init];
         M.CommodityNo = arry[7];
@@ -190,34 +247,39 @@
         M.TradeVol = arry[12];
         M.YSettlePrice = arry[13];
         M.Deposit = arry[17];
+        [arryTemp addObject:arry[7]];
+        [arryTemp addObject:arry[8]];
+        [arryTemp addObject:arry[9]];
+        [arryTemp addObject:arry[12]];
+        [arryTemp addObject:arry[13]];
+        [arryTemp addObject:arry[17]];
+        [self.checkItems addObject:arryTemp];
         [self.modleHoldArray addObject:M];
     }
     if([self.modleHoldArray count] == 0){
         [self setAlertWithMessage:@"无持仓"];
     }
-    self.segmentIndex = 1;
-    [self addTableView];
-}
-- (void)addFunTitle{
     
-//    [self.titleView removeFromSuperview];
-//    [self addTitleView];
-    for(UIView* view in [self.titleView subviews]){
-        [view removeFromSuperview];
-    }
-    [self.titleView addSubview:[self addLableWithName:@"货币编号" PositonX:0 PositionY:Y Type:0]];
-    [self.titleView addSubview:[self addLableWithName:@"今资金"  PositonX:70 PositionY:Y Type:0]];
-    [self.titleView addSubview:[self addLableWithName:@"今权益" PositonX:140 PositionY:Y Type:0]];
-    [self.titleView addSubview:[self addLableWithName:@"今可提" PositonX:210 PositionY:Y Type:0]];
-    [self.titleView addSubview:[self addLableWithName:@"风险率" PositonX:280 PositionY:Y Type:0]];
-    [self.titleView addSubview:[self addLableWithName:@"账户市值" PositonX:70*5 PositionY:Y Type:0]];
+    [self addCollectionView];
+   // [self updateMyList:@[@4,@8,@8,@8,@8]];
+    self.segmentIndex = 1;
 }
+
+
+
+
+
+
 
 
 - (void)addFundView{
+    if(self.checkItems){
+        [self.checkItems removeAllObjects];
+    }
+    NSMutableArray *checkItems = [NSMutableArray arrayWithObjects:@"可用资金",@"动态权益",@"持仓盈亏",@"平仓盈亏",@"静态权益",@"保证金", @"冻结资金",nil];
+    [self.checkItems addObject:checkItems];
     [self.activeId stopAnimating];
     [self getMSg];
-    [self addFunTitle];
     self.modleFundArray = [NSMutableArray array];
     NSEnumerator* enumerator = [self.Msg objectEnumerator];
     id obj = nil;
@@ -235,66 +297,95 @@
     if([self.modleFundArray count] == 1){
         [self setAlertWithMessage:@"无资金"];
     }
+    [self addCollectionView];
     self.segmentIndex = 2;
-    [self addTableView];
 }
 
 - (void)setAlertWithMessage:(NSString*)msg{
     UIAlertController* alert=[UIAlertController alertControllerWithTitle:@"警告"
                                                                  message:msg
                                                           preferredStyle:UIAlertControllerStyleAlert];
-    
     [alert addAction:[UIAlertAction actionWithTitle:@"确定"
                                               style:UIAlertActionStyleDefault
                                             handler:^(UIAlertAction * _Nonnull action) {}]];
     
     [self presentViewController:alert animated:YES completion:nil];
 }
-//选中segment
+
+
+#pragma --mark  segmentView 相关
+
+- (void)addSementView{
+    NSArray *titleArray = [[NSArray alloc]initWithObjects:@"委托",@"持仓",@"资金",@"挂单",@"成交", nil];
+    self.segment = [[UISegmentedControl alloc]initWithItems:titleArray];
+    self.segment.selectedSegmentIndex = 1;//默认显示委托的数据
+    //self.segment.tintColor = DropColor;
+    [self.segment setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} forState:UIControlStateNormal];
+    
+    if(IS_IPHONE_X){
+        self.segment.frame = CGRectMake(0, 65+24, DEVICE_WIDTH, 40);
+    }
+    else{
+        self.segment.frame = CGRectMake(0, 65, DEVICE_WIDTH, 40);
+    }
+    [self.view addSubview:self.segment];
+    [self.segment addTarget:self action:@selector(touchSegment:) forControlEvents:UIControlEventValueChanged];
+}
 -(void)touchSegment:(UISegmentedControl*)segment{
-    [self.tableView removeFromSuperview];//移除tableview 重新创建
+ 
     switch(segment.selectedSegmentIndex){
         case 0:
             NSLog(@"委托");
-            if(_modleOrderArray != nil){
-                self.segmentIndex = 0;
-                [self addOrderTitle];
-                [self addTableView];
-            }
-            else{
-                [self queryOrder];
-            }
+            [self queryOrder];
             break;
         case 1:
             NSLog(@"持仓");
-            if(_modleHoldArray != nil){
-                self.segmentIndex = 1;
-                [self addHoldTitle];
-                [self addTableView];
-            }
-            else{
-                [self queryHold];
-            }
+            [self queryHold];
             break;
         case 2:
-            NSLog(@"资金");
-            if(_modleFundArray != nil){
-                self.segmentIndex = 2;
-                [self addFunTitle];
-                [self addTableView];
-            }
-            else{
-                [self queryFund];
-            }
+
+            [self queryFund];
+            break;
+        case 3:
+            [self checkPendingOrder];
+            NSLog(@"挂单");
+            break;
+        case 4:
+            [self checkDealDown];
+            NSLog(@"成交");
+            
             break;
         default:
             break;
     }
-   
 }
 
+
+- (void)checkPendingOrder{
+    if(self.checkItems){
+        [self.checkItems removeAllObjects];
+    }
+    NSMutableArray *checkItems = [NSMutableArray arrayWithObjects:@"合约名称",@"开平",@"委托价",@"委托量",@"挂单量",nil];
+    [self.checkItems addObject:checkItems];
+    [self.activeId stopAnimating];
+    [self addCollectionView];
+    self.segmentIndex = 3;
+}
+
+- (void)checkDealDown{
+    if(self.checkItems){
+        [self.checkItems removeAllObjects];
+    }
+    NSMutableArray *checkItems = [NSMutableArray arrayWithObjects:@"合约名称",@"开平",@"成交价",@"成交量",@"成交时间",nil];
+    [self.checkItems addObject:checkItems];
+    [self.activeId stopAnimating];
+    [self addCollectionView];
+    self.segmentIndex = 4;
+}
+#pragma --mark 获取数据
 - (void)queryOrder{
     AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    ICEQuote *quote = [ICEQuote shareInstance];
 #if NpTradeTest
     [app.iceNpTrade queryOrder:app.strCmd];
 #else
@@ -326,24 +417,6 @@
     [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(addFundView) userInfo:nil repeats:NO];
 }
 
-- (UILabel*)addLableWithName:(NSString*)name PositonX:(CGFloat)x PositionY:(CGFloat)y Type:(int)type {
-    UILabel* lable = [[UILabel alloc]initWithFrame:CGRectMake(x, y, 70, 40)];
-    lable.text = name;
-    lable.textAlignment = NSTextAlignmentCenter;
-    UIFont *font = [UIFont systemFontOfSize:13];
-    [lable setFont:font];
-    if(type==0){
-        lable.backgroundColor = DropColor;
-        [self.view addSubview:lable];
-    }
-    else{
-        lable.backgroundColor = [UIColor whiteColor];
-    }
-    return lable;
-}
-
-
-
 
 - (void)getMSg{
     self.Msg = [NSMutableArray array];
@@ -367,105 +440,48 @@
 
 
 
-- (void)addTableView{
 
-    self->_tableView = [[UITableView alloc] init];
-    self->_tableView.delegate = self;
-    self->_tableView.dataSource = self;
-    [self.view addSubview:self->_tableView];
-    [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.titleView.mas_bottom);
-        make.left.equalTo(self.view);
-        make.right.equalTo(self.view);
-        make.height.equalTo(@(DEVICE_HEIGHT-120));
-    }];
-    [self addRefreshControl];
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    NSInteger count = 0;
-    switch(self.segmentIndex)
-    {
-        case 0:
-            count =  [self.modleOrderArray count]-1;
-            break;
-        case 1:
-            count = [self.modleHoldArray count]-1;
-            break;
-        case 2:
-            count = [self.modleFundArray count]-1;
-            break;
-        default:
-            NSLog(@"ggggg");
-    }
-    NSLog(@"cout==%ld",(long)count);
-    return count;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    //NSLog(@"dddddd");
-}
-- (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+#pragma --mark  collectionView controller 代理
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
     
-    static NSString *identifier = @"identifier";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-    if (!cell)
-    {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    }
-    if(self.segmentIndex == 0){
-        NSString* CommodityNo = [self.modleOrderArray objectAtIndex:indexPath.row].CommodityNo;
-        NSString* ContractNo = [self.modleOrderArray objectAtIndex:indexPath.row].ContractNo;
-        NSString* OffSet = [self.modleOrderArray objectAtIndex:indexPath.row].OffSet;
-        NSString* Direction = [self.modleOrderArray objectAtIndex:indexPath.row].Direction;
-        NSString* MatchVol = [self.modleOrderArray objectAtIndex:indexPath.row].MatchVol;
-        NSString* OrderPrice = [self.modleOrderArray objectAtIndex:indexPath.row].OrderPrice;
-        [cell addSubview: [self addLableWithName:CommodityNo PositonX:0 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:ContractNo PositonX:70 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:OffSet PositonX:140 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:Direction PositonX:210 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:MatchVol PositonX:280 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:OrderPrice PositonX:350 PositionY:5 Type:1]];
-    }
-    else if(self.segmentIndex == 1){
-        NSString* CommodityNo = [self.modleHoldArray objectAtIndex:indexPath.row].CommodityNo;
-        NSString* ContractNo = [self.modleHoldArray objectAtIndex:indexPath.row].ContractNo;
-        NSString* Direct = [self.modleHoldArray objectAtIndex:indexPath.row].Direct;
-        NSString* TradeVol = [self.modleHoldArray objectAtIndex:indexPath.row].TradeVol;
-        NSString* Deposit = [self.modleHoldArray objectAtIndex:indexPath.row].Deposit;
-        NSString* YSettlePrice = [self.modleHoldArray objectAtIndex:indexPath.row].YSettlePrice;
+    NSLog(@"hahahahahah");
+    return self.checkItems.count;//返回 报表 共有多少行
+    
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
+    
+    NSArray *array = self.checkItems[section];
+    return array.count;//返回 报表 每行有多少列
+    
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
+    
+    if (indexPath.section == 0) {//整个报表最上面的那行
+        BaoBiaoItemHeader *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"BaoBiaoItemHeader" forIndexPath:indexPath ];
+        NSArray *array = self.checkItems[indexPath.section];
+        [cell setMessage:array[indexPath.row]];
+        return cell;
+    }else{//其他行
+        BaoBiaoItem *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"BaoBiaoItem" forIndexPath:indexPath];
         
-        [cell addSubview: [self addLableWithName:CommodityNo PositonX:0 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:ContractNo PositonX:70 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:Direct PositonX:140 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:TradeVol PositonX:210 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:Deposit PositonX:280 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:YSettlePrice PositonX:350 PositionY:5 Type:1]];
+        //设置单元行颜色的间隔的控制
+        if (indexPath.section % 2 == 0) {
+            [cell setBackgroundColor:[UIColor colorWithRed:238/255.0 green:238/255.0 blue:238/255.0 alpha:1]];
+        }else{
+            [cell setBackgroundColor:[UIColor whiteColor]];
+        }
+        NSArray *array = self.checkItems[indexPath.section];
+        [cell setMessage:array[indexPath.row]];
+        return cell;
     }
-    
-    else if (self.segmentIndex == 2){
-        NSString* currencyCode = [self.modleFundArray objectAtIndex:indexPath.row].CurrencyNo;
-        NSString* Tmoney = [self.modleFundArray objectAtIndex:indexPath.row].TMoney;
-        NSString* Tbalance = [self.modleFundArray objectAtIndex:indexPath.row].TBalance;
-        NSString* TcanCashOut = [self.modleFundArray objectAtIndex:indexPath.row].TCanCashOut;
-        NSString* riskRate = [self.modleFundArray objectAtIndex:indexPath.row].RiskRate;
-        NSString* accountMarketValue = [self.modleFundArray objectAtIndex:indexPath.row].AccountMarketValue;
-        [cell addSubview: [self addLableWithName:currencyCode PositonX:0 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:Tmoney PositonX:70 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:Tbalance PositonX:140 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:TcanCashOut PositonX:210 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:riskRate PositonX:280 PositionY:5 Type:1]];
-        [cell addSubview:[self addLableWithName:accountMarketValue PositonX:350 PositionY:5 Type:1]];
-    }
-    return cell;
 }
-- (void)viewDidAppear:(BOOL)animated{
-    self.tabBarController.tabBar.hidden = NO;
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+    NSLog(@"section = %ld  item = %ld",(long)indexPath.section,(long)indexPath.row);
 }
+
 /*
 #pragma mark - Navigation
 
@@ -475,5 +491,8 @@
     // Pass the selected object to the new view controller.
 }
 */
-
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
 @end

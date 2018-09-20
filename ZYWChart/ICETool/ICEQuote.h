@@ -28,7 +28,7 @@
 
 @interface ICEQuote : NSObject
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
-
+@property (copy, nonatomic) NSString *userID;
 + (ICEQuote*)shareInstance;
 
 - (WpQuoteServerCallbackReceiverI*)Connect2Quote;
@@ -38,7 +38,7 @@
 - (void)SubscribeQuote:(NSString*)strCmdType strCmd:(NSString*)strCmd;
 - (void)UnSubscribeQuote:(NSString *)strCmdType strCmd:(NSString *)strcmd;
 - (WpQuoteServerDayKLineList*)GetDayKline:(NSString*)ExchangeID;
-- (NSMutableArray*)getTimeData:(NSString*)sCode;
+//- (NSMutableArray*)getTimeData:(NSString*)sCode;
 - (NSMutableArray*)getKlineData:(NSString*)sCode type:(NSString*)type;
 @property(nonatomic,weak) id<ICEQuoteDelegate>delegate;
 

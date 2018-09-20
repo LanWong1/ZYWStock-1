@@ -21,8 +21,8 @@
 @synthesize  passWord;
 @synthesize  userID;
 @synthesize  wpTradeAPIServerCallbackReceiverI;
-@synthesize loginVC;
-@synthesize loginFlag;
+@synthesize  loginVC;
+@synthesize  loginFlag;
 @synthesize  iceQuote;
 
 
@@ -33,6 +33,7 @@
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
     self.loginFlag = 0;
+    
 #if defined(DEBUG) || defined(_DEBUG)
     [[FHHFPSIndicator sharedFPSIndicator] show];
 #endif

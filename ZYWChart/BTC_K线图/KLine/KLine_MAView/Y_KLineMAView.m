@@ -70,17 +70,13 @@
         _highLabel.textColor = [UIColor whiteColor];
         _lowLabel.textColor = [UIColor whiteColor];
         _closeLabel.textColor = [UIColor whiteColor];
-        
-
         NSNumber *labelWidth = [NSNumber numberWithInt:55];
         
         [_dateDescLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.mas_left);
             make.top.equalTo(self.mas_top);
-            
             //make.bottom.equalTo(self.mas_bottom);
             make.width.equalTo(@100);
-
         }];
         
         [_openDescLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -140,19 +136,16 @@
         }];
         
         [_MA7Label mas_makeConstraints:^(MASConstraintMaker *make) {
-            //make.left.equalTo(_closeLabel.mas_right);
-            make.left.equalTo(_openDescLabel.mas_left);
-            //make.top.equalTo(self.mas_top);
-            make.bottom.equalTo(self.mas_bottom);
+            make.left.equalTo(_closeLabel.mas_right);
+            //make.left.equalTo(_openDescLabel.mas_left);
+            make.top.equalTo(self.mas_top);
+            //make.bottom.equalTo(self.mas_bottom);
 
         }];
-//
         [_MA30Label mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_MA7Label.mas_right);
-            //make.top.equalTo(self.mas_top);
-            make.bottom.equalTo(self.mas_bottom);
+            make.left.equalTo(_MA7Label.mas_right).offset(10);
+            make.top.equalTo(self.mas_top);
         }];
-        
     }
     return self;
 }
@@ -165,18 +158,17 @@
 
 -(void)maProfileWithModel:(Y_KLineModel *)model
 {
-    NSLog(@"model.Date = %@",model.Date);
-    NSDate *date = [NSDate dateWithTimeIntervalSince1970:model.Date.doubleValue/1000];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-    formatter.dateFormat = @"yyyy-MM-dd HH:mm";
-    NSString *dateStr = [formatter stringFromDate:date];
-    _dateDescLabel.text = [@" " stringByAppendingString: dateStr];
-    
+   
+//    NSDate *date = [NSDate dateWithTimeIntervalSince1970:model.Date.doubleValue/1000];
+//    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+//
+//    formatter.dateFormat = @"yyyy-MM-dd";
+//    NSString *dateStr = [formatter stringFromDate:date];
+    _dateDescLabel.text = [@" " stringByAppendingString: model.Date];
     _openLabel.text = [NSString stringWithFormat:@"%.2f",model.Open.floatValue];
     _highLabel.text = [NSString stringWithFormat:@"%.2f",model.High.floatValue];
     _lowLabel.text = [NSString stringWithFormat:@"%.2f",model.Low.floatValue];
     _closeLabel.text = [NSString stringWithFormat:@"%.2f",model.Close.floatValue];
- 
     _MA7Label.text = [NSString stringWithFormat:@" MA7：%.2f ",model.MA7.floatValue];
     _MA30Label.text = [NSString stringWithFormat:@" MA30：%.2f",model.MA30.floatValue];
 }

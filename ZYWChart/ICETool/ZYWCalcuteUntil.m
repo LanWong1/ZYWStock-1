@@ -7,7 +7,7 @@
 //
 
 #import "ZYWCalcuteUntil.h"
-#import "ZYWCandleModel.h"
+//#import "ZYWCandleModel.h"
 
 void NSArrayToCArray(NSArray *array, double outCArray[])
 {

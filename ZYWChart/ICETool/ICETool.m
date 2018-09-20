@@ -9,6 +9,7 @@
 #import "ICETool.h"
 //#import "WpTrade.h"
 #import "BuyVC.h"
+#import "SqlServer.h"
 
 @interface WpTradeAPIServerCallbackReceiverI()<WpTradeAPIServerCallbackReceiver>
 @property (nonatomic) NSMutableArray* Msg;

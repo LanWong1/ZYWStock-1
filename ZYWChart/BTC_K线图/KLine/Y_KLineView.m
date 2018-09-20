@@ -120,8 +120,7 @@
         _scrollView.maximumZoomScale = 1.0f;
 //        _scrollView.alwaysBounceHorizontal = YES;
         _scrollView.delegate = self;
-        _scrollView.bounces = NO;
-        
+        _scrollView.bounces = YES;//回弹
         //缩放手势
         UIPinchGestureRecognizer *pinchGesture = [[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(event_pichMethod:)];
         [_scrollView addGestureRecognizer:pinchGesture];
@@ -129,17 +128,13 @@
         //长按手势
         UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(event_longPressMethod:)];
         [_scrollView addGestureRecognizer:longPressGesture];
-        
         [self addSubview:_scrollView];
-        
         [_scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-            //make.top.equalTo(self);
             make.top.equalTo(self).offset(50);
             make.right.equalTo(self).offset(-48);
             make.left.equalTo(self.mas_left);
             make.bottom.equalTo(self.mas_bottom);
         }];
-        
         [self layoutIfNeeded];
     }
     return _scrollView;
@@ -148,68 +143,111 @@
 - (Y_KLineMAView *)kLineMAView
 {
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+    //横屏的时候加载
+//    if( appdelegate.isEable == YES){
+//        if (!_kLineMAView) {
+//            _kLineMAView = [Y_KLineMAView view];
+//            [self addSubview:_kLineMAView];
+//            [_kLineMAView mas_makeConstraints:^(MASConstraintMaker *make) {
+//                make.right.equalTo(self);
+//                make.left.equalTo(self);
+//                make.top.equalTo(self).offset(5);
+//                make.height.equalTo(@15);
+//            }];
+//        }
+//       return _kLineMAView;
+//    }
     
-    
-    if( appdelegate.isEable == YES){
-        if (!_kLineMAView) {
-            _kLineMAView = [Y_KLineMAView view];
-            [self addSubview:_kLineMAView];
-            [_kLineMAView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.right.equalTo(self);
-                make.left.equalTo(self);
-                make.top.equalTo(self).offset(5);
-                make.height.equalTo(@30);
-            }];
-        }
-       return _kLineMAView;
+    if (!_kLineMAView) {
+        _kLineMAView = [Y_KLineMAView view];
+        [self addSubview:_kLineMAView];
+        [_kLineMAView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.equalTo(self);
+            make.left.equalTo(self);
+            make.top.equalTo(self).offset(5);
+            make.height.equalTo(@15);
+        }];
     }
-    _kLineMAView=nil;
+    //_kLineMAView=nil;
     return _kLineMAView;
 }
 //标签
 - (Y_VolumeMAView *)volumeMAView
 {
-    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-    if( appdelegate.isEable == YES){
-        if (!_volumeMAView) {
-            _volumeMAView = [Y_VolumeMAView view];
-            [self addSubview:_volumeMAView];
-            [_volumeMAView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.right.equalTo(self);
-                make.left.equalTo(self);
-                make.top.equalTo(self.kLineVolumeView.mas_top);
-                make.height.equalTo(@10);
-            }];
-        }
-    return _volumeMAView;
+//    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+//    if( appdelegate.isEable == YES){
+//        NSLog(@"Y_VolumeMAView.............");
+//        if (!_volumeMAView) {
+//            _volumeMAView = [Y_VolumeMAView view];
+//            [self addSubview:_volumeMAView];
+//            [_volumeMAView mas_makeConstraints:^(MASConstraintMaker *make) {
+//                make.right.equalTo(self);
+//                make.left.equalTo(self);
+//                make.top.equalTo(self.kLineVolumeView.mas_top);
+//                make.height.equalTo(@10);
+//            }];
+//        }
+//    return _volumeMAView;
+//    }
+//    _volumeMAView = nil;
+    
+    
+    
+    
+    
+    if (!_volumeMAView) {
+        _volumeMAView = [Y_VolumeMAView view];
+        [self addSubview:_volumeMAView];
+        [_volumeMAView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.equalTo(self);
+            make.left.equalTo(self);
+            make.top.equalTo(self.kLineVolumeView.mas_top);
+            make.height.equalTo(@10);
+        }];
     }
-
-    _volumeMAView = nil;
     return _volumeMAView;
 }
 
 - (Y_AccessoryMAView *)accessoryMAView
 {
-    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-    if( appdelegate.isEable == YES){
-        if(!_accessoryMAView) {
-            _accessoryMAView = [Y_AccessoryMAView new];
-            [self addSubview:_accessoryMAView];
-            [_accessoryMAView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.right.equalTo(self);
-                make.left.equalTo(self);
-                make.top.equalTo(self.kLineAccessoryView.mas_top);
-                make.height.equalTo(@10);
-            }];
-        }
-        return _accessoryMAView;
+//    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+//    if( appdelegate.isEable == YES){
+//        NSLog(@"Y_AccessoryMAView.............");
+//        if(!_accessoryMAView) {
+//            _accessoryMAView = [Y_AccessoryMAView new];
+//            [self addSubview:_accessoryMAView];
+//            [_accessoryMAView mas_makeConstraints:^(MASConstraintMaker *make) {
+//                make.right.equalTo(self);
+//                make.left.equalTo(self);
+//                make.top.equalTo(self.kLineAccessoryView.mas_top);
+//                make.height.equalTo(@10);
+//            }];
+//        }
+//        return _accessoryMAView;
+//    }
+//    _accessoryMAView = nil;
+    
+    
+    
+    
+    
+    if(!_accessoryMAView) {
+        _accessoryMAView = [Y_AccessoryMAView new];
+        [self addSubview:_accessoryMAView];
+        [_accessoryMAView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.equalTo(self);
+            make.left.equalTo(self);
+            make.top.equalTo(self.kLineAccessoryView.mas_top);
+            make.height.equalTo(@10);
+        }];
     }
-    _accessoryMAView = nil;
+    
     return _accessoryMAView;
 }
 
 - (Y_KLineMainView *)kLineMainView
 {
+   
     if (!_kLineMainView && self) {
         _kLineMainView = [Y_KLineMainView new];
         _kLineMainView.delegate = self;
@@ -217,13 +255,15 @@
         [_kLineMainView mas_makeConstraints:^(MASConstraintMaker *make){
             make.top.equalTo(self.scrollView).offset(5);
             make.left.equalTo(self.scrollView);
-            AppDelegate *app = [UIApplication sharedApplication].delegate;
-            if(app.isEable == NO){
-                self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView);
-            }
-            else{
-                self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView).multipliedBy(self.mainViewRatio);
-            }
+            self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView).multipliedBy(self.mainViewRatio);
+            
+//            AppDelegate *app = [UIApplication sharedApplication].delegate;
+//            if(app.isEable == NO){
+//                self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView);
+//            }
+//            else{
+//                self.kLineMainViewHeightConstraint = make.height.equalTo(self.scrollView).multipliedBy(self.mainViewRatio);
+//            }
            // make.height.equalTo(self.scrollView).multipliedBy(self.mainViewRatio);
             //make.height.equalTo(self.scrollView).multipliedBy(0.9);
             //make.width.equalTo(@0);
@@ -239,47 +279,83 @@
 
 - (Y_KLineVolumeView *)kLineVolumeView
 {
-    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-    if( appdelegate.isEable == YES){
-        if(!_kLineVolumeView && self)
-        {
-            _kLineVolumeView = [Y_KLineVolumeView new];
-            _kLineVolumeView.delegate = self;
-            [self.scrollView addSubview:_kLineVolumeView];
-            [_kLineVolumeView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.equalTo(self.kLineMainView);
-                make.top.equalTo(self.kLineMainView.mas_bottom).offset(10);
-                make.width.equalTo(self.kLineMainView.mas_width);
-                self.kLineVolumeViewHeightConstraint = make.height.equalTo(self.scrollView.mas_height).multipliedBy(self.volumeViewRatio);
-            }];
-            [self layoutIfNeeded];
-        }
-        return _kLineVolumeView;
+//    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+//    if( appdelegate.isEable == YES){
+//
+//        if(!_kLineVolumeView && self)
+//        {
+//            _kLineVolumeView = [Y_KLineVolumeView new];
+//            _kLineVolumeView.delegate = self;
+//            [self.scrollView addSubview:_kLineVolumeView];
+//            [_kLineVolumeView mas_makeConstraints:^(MASConstraintMaker *make) {
+//                make.left.equalTo(self.kLineMainView);
+//                make.top.equalTo(self.kLineMainView.mas_bottom).offset(10);
+//                make.width.equalTo(self.kLineMainView.mas_width);
+//                self.kLineVolumeViewHeightConstraint = make.height.equalTo(self.scrollView.mas_height).multipliedBy(self.volumeViewRatio);
+//            }];
+//            [self layoutIfNeeded];
+//        }
+//        return _kLineVolumeView;
+//    }
+//    _kLineVolumeView = nil;
+    
+    
+    
+    
+    if(!_kLineVolumeView && self)
+    {
+        _kLineVolumeView = [Y_KLineVolumeView new];
+        _kLineVolumeView.delegate = self;
+        [self.scrollView addSubview:_kLineVolumeView];
+        [_kLineVolumeView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.kLineMainView);
+            make.top.equalTo(self.kLineMainView.mas_bottom).offset(10);
+            make.width.equalTo(self.kLineMainView.mas_width);
+            self.kLineVolumeViewHeightConstraint = make.height.equalTo(self.scrollView.mas_height).multipliedBy(self.volumeViewRatio);
+        }];
+        [self layoutIfNeeded];
     }
-    _kLineVolumeView = nil;
     return _kLineVolumeView;
 }
 
 - (Y_KLineAccessoryView *)kLineAccessoryView
 {
-    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-    if( appdelegate.isEable == YES){
-        if(!_kLineAccessoryView && self)
-        {
-            _kLineAccessoryView = [Y_KLineAccessoryView new];
-            _kLineAccessoryView.delegate = self;
-            [self.scrollView addSubview:_kLineAccessoryView];
-            [_kLineAccessoryView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.equalTo(self.kLineVolumeView);
-                make.top.equalTo(self.kLineVolumeView.mas_bottom).offset(10);
-                make.width.equalTo(self.kLineVolumeView.mas_width);
-                make.height.equalTo(self.scrollView.mas_height).multipliedBy(0.2);
-            }];
-            [self layoutIfNeeded];
-        }
-        return _kLineAccessoryView;
+//    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+//    if( appdelegate.isEable == YES){
+//
+//        if(!_kLineAccessoryView && self)
+//        {
+//            _kLineAccessoryView = [Y_KLineAccessoryView new];
+//            _kLineAccessoryView.delegate = self;
+//            [self.scrollView addSubview:_kLineAccessoryView];
+//            [_kLineAccessoryView mas_makeConstraints:^(MASConstraintMaker *make) {
+//                make.left.equalTo(self.kLineVolumeView);
+//                make.top.equalTo(self.kLineVolumeView.mas_bottom).offset(10);
+//                make.width.equalTo(self.kLineVolumeView.mas_width);
+//                make.height.equalTo(self.scrollView.mas_height).multipliedBy(0.2);
+//            }];
+//            [self layoutIfNeeded];
+//        }
+//        return _kLineAccessoryView;
+//    }
+//    _kLineAccessoryView = nil;
+    
+    
+    
+    
+    if(!_kLineAccessoryView && self)
+    {
+        _kLineAccessoryView = [Y_KLineAccessoryView new];
+        _kLineAccessoryView.delegate = self;
+        [self.scrollView addSubview:_kLineAccessoryView];
+        [_kLineAccessoryView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.kLineVolumeView);
+            make.top.equalTo(self.kLineVolumeView.mas_bottom).offset(10);
+            make.width.equalTo(self.kLineVolumeView.mas_width);
+            make.height.equalTo(self.scrollView.mas_height).multipliedBy(0.2);
+        }];
+        [self layoutIfNeeded];
     }
-    _kLineAccessoryView = nil;
     return _kLineAccessoryView;
 }
 
@@ -301,44 +377,78 @@
 
 - (Y_StockChartRightYView *)volumeView
 {
-    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-    if( appdelegate.isEable == YES){
-        if(!_volumeView)
-        {
-            _volumeView = [Y_StockChartRightYView new];
-            [self insertSubview:_volumeView aboveSubview:self.scrollView];
-            [_volumeView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(self.kLineVolumeView.mas_top).offset(10);
-                make.right.width.equalTo(self.priceView);
-                make.height.equalTo(self).multipliedBy(self.volumeViewRatio);
-                make.bottom.equalTo(self.kLineVolumeView);
-            }];
-        }
-       return _volumeView;
+//    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+//    if( appdelegate.isEable == YES){
+//
+//        if(!_volumeView)
+//        {
+//            _volumeView = [Y_StockChartRightYView new];
+//            [self insertSubview:_volumeView aboveSubview:self.scrollView];
+//            [_volumeView mas_makeConstraints:^(MASConstraintMaker *make) {
+//                make.top.equalTo(self.kLineVolumeView.mas_top).offset(10);
+//                make.right.width.equalTo(self.priceView);
+//                make.height.equalTo(self).multipliedBy(self.volumeViewRatio);
+//                make.bottom.equalTo(self.kLineVolumeView);
+//            }];
+//        }
+//       return _volumeView;
+//    }
+//
+//    _volumeView = nil;
+    
+    
+    
+    
+    
+    
+    if(!_volumeView)
+    {
+        _volumeView = [Y_StockChartRightYView new];
+        [self insertSubview:_volumeView aboveSubview:self.scrollView];
+        [_volumeView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.kLineVolumeView.mas_top).offset(10);
+            make.right.width.equalTo(self.priceView);
+            make.height.equalTo(self).multipliedBy(self.volumeViewRatio);
+            make.bottom.equalTo(self.kLineVolumeView);
+        }];
     }
-
-    _volumeView = nil;
     return _volumeView;
 }
 
 - (Y_StockChartRightYView *)accessoryView
 {
-    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-    if( appdelegate.isEable == YES){
-        if(!_accessoryView)
-        {
-            _accessoryView = [Y_StockChartRightYView new];
-            [self insertSubview:_accessoryView aboveSubview:self.scrollView];
-            [_accessoryView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(self.kLineAccessoryView.mas_top).offset(10);
-                make.right.width.equalTo(self.volumeView);
-                make.height.equalTo(self.kLineAccessoryView.mas_height);
-            }];
-        }
-        return _accessoryView;
+//    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+//    if( appdelegate.isEable == YES){
+//
+//        if(!_accessoryView)
+//        {
+//            _accessoryView = [Y_StockChartRightYView new];
+//            [self insertSubview:_accessoryView aboveSubview:self.scrollView];
+//            [_accessoryView mas_makeConstraints:^(MASConstraintMaker *make) {
+//                make.top.equalTo(self.kLineAccessoryView.mas_top).offset(10);
+//                make.right.width.equalTo(self.volumeView);
+//                make.height.equalTo(self.kLineAccessoryView.mas_height);
+//            }];
+//        }
+//        return _accessoryView;
+//    }
+//    _accessoryView = nil;
+    
+    
+    
+    
+    
+    
+    if(!_accessoryView)
+    {
+        _accessoryView = [Y_StockChartRightYView new];
+        [self insertSubview:_accessoryView aboveSubview:self.scrollView];
+        [_accessoryView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.kLineAccessoryView.mas_top).offset(10);
+            make.right.width.equalTo(self.volumeView);
+            make.height.equalTo(self.kLineAccessoryView.mas_height);
+        }];
     }
-
-    _accessoryView = nil;
     return _accessoryView;
 }
 #pragma mark - set方法
@@ -364,11 +474,18 @@
     Y_KLineModel *model = [kLineModels lastObject];
     [self.kLineMAView maProfileWithModel:model];
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-    if( appdelegate.isEable == YES){
-        [self.volumeMAView maProfileWithModel:model];
-        self.accessoryMAView.targetLineStatus = self.targetLineStatus;
-        [self.accessoryMAView maProfileWithModel:model];
-    }
+
+    
+//    if( appdelegate.isEable == YES){
+//
+//        [self.volumeMAView maProfileWithModel:model];
+//        self.accessoryMAView.targetLineStatus = self.targetLineStatus;
+//        [self.accessoryMAView maProfileWithModel:model];
+//    }
+    
+    [self.volumeMAView maProfileWithModel:model];
+    self.accessoryMAView.targetLineStatus = self.targetLineStatus;
+    [self.accessoryMAView maProfileWithModel:model];
 
 }
 - (void)setTargetLineStatus:(Y_StockChartTargetLineStatus)targetLineStatus
@@ -407,8 +524,6 @@
     static CGFloat oldScale = 1.0f;
     CGFloat difValue = pinch.scale - oldScale;
     //#缩放比例大于1.03时 view才会改变
-    
-    
     if(ABS(difValue) > Y_StockChartScaleBound) {
         
         CGFloat oldKLineWidth = [Y_StockChartGlobalVariable kLineWidth];
@@ -457,24 +572,30 @@
         self.scrollView.scrollEnabled = NO;
         oldPositionX = _location.x;
         CGFloat offset = 0;
-        if(_location.x-self.scrollView.contentOffset.x < 198){
-            offset = 280;
+        //198
+        NSLog(@"self.frame.size.width/2 = %f",self.frame.size.width/2);
+        if(_location.x-self.scrollView.contentOffset.x < self.frame.size.width/2){
+            //offset = 280;
+            offset = self.frame.size.width-150;
         }
         else{
-            offset = 0;
+            offset = 10;
         }
-
         if(!self.kLineMALabelView){
             
             self.kLineMALabelView = [[Y_KlineMAVLabelView alloc]init];
             //[self.kLineMALabelView addLabels];
             [self addSubview:self.kLineMALabelView];
             [self.kLineMALabelView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(self);
+                make.top.equalTo(self).offset(30);
                 make.height.equalTo(@80);
                 make.left.equalTo(self).offset(offset);
             }];
         }
+        [self.kLineMALabelView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self).offset(offset);
+        }];
+        [self.kLineMALabelView layoutIfNeeded];
         self.kLineMALabelView.hidden = NO;
 
         //更新竖线位置
@@ -514,12 +635,15 @@
         [self.kLineMAView maProfileWithModel:lastModel];
          //横屏时显示其它技术数据
         AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-        if( appdelegate.isEable == YES){
-            [self.kLineMALabelView maProfileWithModel:lastModel];
-            [self.volumeMAView maProfileWithModel:lastModel];
-            [self.accessoryMAView maProfileWithModel:lastModel];
-        }
-      
+//        if( appdelegate.isEable == YES){
+//            [self.kLineMALabelView maProfileWithModel:lastModel];
+//            [self.volumeMAView  maProfileWithModel:lastModel];
+//            [self.accessoryMAView  maProfileWithModel:lastModel];
+//        }
+        
+        [self.kLineMALabelView maProfileWithModel:lastModel];
+        [self.volumeMAView  maProfileWithModel:lastModel];
+        [self.accessoryMAView  maProfileWithModel:lastModel];
     }
 }
 
@@ -594,11 +718,11 @@
     {
            self.kLineVolumeView.targetLineStatus = self.targetLineStatus;
     }
-    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-    if( appdelegate.isEable == YES){
-         [self private_drawKLineVolumeView];
-    }
-   
+//    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+//    if( appdelegate.isEable == YES){
+//         [self private_drawKLineVolumeView];
+//    }
+    [self private_drawKLineVolumeView];
     self.kLineAccessoryView.kLineColors = kLineColors;
     if(self.targetLineStatus < 103)
     {
@@ -611,11 +735,13 @@
 
     [self.kLineMALabelView maProfileWithModel:kLineModel];
     [self.kLineMAView maProfileWithModel:kLineModel];
-    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-    if( appdelegate.isEable == YES){
-        [self.volumeMAView maProfileWithModel:kLineModel];
-        [self.accessoryMAView maProfileWithModel:kLineModel];
-    }
+//    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+//    if( appdelegate.isEable == YES){
+//        [self.volumeMAView maProfileWithModel:kLineModel];
+//        [self.accessoryMAView maProfileWithModel:kLineModel];
+//    }
+    [self.volumeMAView maProfileWithModel:kLineModel];
+    [self.accessoryMAView maProfileWithModel:kLineModel];
     
 }
 #pragma mark - UIScrollView代理

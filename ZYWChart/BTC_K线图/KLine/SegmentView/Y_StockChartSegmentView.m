@@ -55,7 +55,7 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
     return self;
 }
 
-#pragma --mark indicatorView的getter方法
+#pragma --mark indicatorView的getter方法  指标 
 - (UIView *)indicatorView
 {
     if(!_indicatorView)
@@ -128,38 +128,29 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
     NSInteger index = 0;
     NSInteger count = items.count;
     UIButton *preBtn = nil;
-    
     for (NSString *title in items)
     {
         UIButton *btn = [self private_createButtonWithTitle:title tag:Y_StockChartSegmentStartTag+index];//tag从2000开始
-        UIView *view = [UIView new];
-        view.backgroundColor = [UIColor redColor];// [UIColor colorWithRed:52.f/255.f green:56.f/255.f blue:67/255.f alpha:1];
+//        UIView *view = [UIView new];
+//        view.backgroundColor = [UIColor redColor];// [UIColor colorWithRed:52.f/255.f green:56.f/255.f blue:67/255.f alpha:1];
         [self addSubview:btn];
-        [self addSubview:view];
-
+       // [self addSubview:view];
         [btn mas_makeConstraints:^(MASConstraintMaker *make) {
-            //make.left.equalTo(self.mas_left);
-//            make.height.equalTo(self).multipliedBy(1.0f/count);
-//            make.width.equalTo(self);
-            
-            
             make.top.equalTo(self.mas_top);
             make.height.equalTo(@50);
             make.width.equalTo(self).multipliedBy(1.0f/count);;
             if(preBtn)
             {
                 make.left.equalTo(preBtn.mas_right).offset(0.5);
-                //make.top.equalTo(preBtn.mas_bottom).offset(0.5);
             } else {
-                //make.top.equalTo(self);
                  make.left.equalTo(self);
             }
         }];
-        [view mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.equalTo(btn);
-            make.top.equalTo(btn.mas_bottom);
-            make.height.equalTo(@0.5);
-        }];
+//        [view mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.left.right.equalTo(btn);
+//            make.top.equalTo(btn.mas_bottom);
+//            make.height.equalTo(@0.5);
+//        }];
         preBtn = btn;
         index++;
     }
@@ -183,7 +174,6 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
             return;
         }
         else {
-
         }
     }
     if(selectedBtn.tag >= 2100 && selectedBtn.tag < 2103)
@@ -250,7 +240,6 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
     if(appdelegate.isEable == NO)
     {
-        NSLog(@"btn.tag = %d",btn.tag);
         [_selectedBtnPortrit setSelected:NO];
         self.selectedBtnPortrit = btn;//按钮按下的
         [btn setSelected:YES];
@@ -264,8 +253,6 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
             return;
         }
     }
-  
-
     if(self.delegate && [self.delegate respondsToSelector:@selector(y_StockChartSegmentView:clickSegmentButtonIndex:)])
     {
         [self.delegate y_StockChartSegmentView:self clickSegmentButtonIndex: btn.tag-Y_StockChartSegmentStartTag];

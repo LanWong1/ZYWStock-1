@@ -8,8 +8,8 @@
 
 #import "BuyVC.h"
 #import "ICETool.h"
-#import "BaseNavigationController.h"
-#import "HomeVC.h"
+//#import "BaseNavigationController.h"
+//#import "HomeVC.h"
 #import "AppDelegate.h"
 #import "ICENpTrade.h"
 
@@ -51,11 +51,11 @@
 
 }
 //返回主界面
--(void)back2Home{
-    HomeVC* homeVC = [[HomeVC alloc]init];
-    BaseNavigationController* nav = [[BaseNavigationController alloc]initWithRootViewController:homeVC];
-    [self presentViewController:nav animated:NO completion:nil];
-}
+//-(void)back2Home{
+//    HomeVC* homeVC = [[HomeVC alloc]init];
+//    BaseNavigationController* nav = [[BaseNavigationController alloc]initWithRootViewController:homeVC];
+//    [self presentViewController:nav animated:NO completion:nil];
+//}
 - (void)setAlertWithMsg:(NSString*)Msg{
     UIAlertController* alert=[UIAlertController alertControllerWithTitle:@"啊哦" message:Msg preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
@@ -108,7 +108,6 @@
             break;
         }
     }
-
 }
 
 -(void)ButtonPressed:(id)sender{
@@ -117,7 +116,6 @@
     
     if(self.ScodeTextField.text.length==0){
         [self setAlertWithMsg:@"二货,输入合约代码"];
-        
     }
     else if(self.CountTextField.text.length==0){
         [self setAlertWithMsg:@"二货,你要买几手"];
@@ -125,12 +123,10 @@
     else if(self.PriceTextField.text.length == 0){
         [self setAlertWithMsg:@"二货,什么价位买入"];
     }
-    
     else {
         
         NSMutableString* sCodeText = [[NSMutableString alloc]initWithString:[self.ScodeTextField.text uppercaseString]];
         [self getStrCmdWithScodeText:sCodeText];
-        
         if(btn.tag==500){
             NSLog(@"open");
             //开仓
