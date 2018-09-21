@@ -90,15 +90,15 @@
     }
     return _segmentView;
 }
+//实时行情信息 头部
 - (void)addQuoteView{
      [[NSBundle mainBundle]loadNibNamed:@"quoteView" owner:self options:nil];
     [self addSubview:_quoteView];
     [_quoteView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self).offset(60);
+        make.top.equalTo(self);
         make.left.right.equalTo(self);
         make.height.equalTo(@100);
     }];
-    
 }
 #pragma --mark itemModels的setter方法
 - (void)setItemModels:(NSArray *)itemModels
@@ -106,8 +106,7 @@
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
     if(appdelegate.isEable == NO){
         [self addQuoteView];
-        _quoteView.backgroundColor = [UIColor backgroundColor];
-        
+        _quoteView.backgroundColor = DropColor;
     }
     
     _itemModels = itemModels;

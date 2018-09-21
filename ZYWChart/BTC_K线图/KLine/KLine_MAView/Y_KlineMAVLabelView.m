@@ -69,10 +69,10 @@
         _lowLabel = [self private_createLabel];
         _MA7Label.textColor = [UIColor ma7Color];
         _MA30Label.textColor = [UIColor ma30Color];
-        _openLabel.textColor = [UIColor whiteColor];
-        _highLabel.textColor = [UIColor whiteColor];
-        _lowLabel.textColor = [UIColor whiteColor];
-        _closeLabel.textColor = [UIColor whiteColor];
+        _openLabel.textColor = [UIColor blackColor];
+        _highLabel.textColor = [UIColor blackColor];
+        _lowLabel.textColor   = [UIColor blackColor];
+        _closeLabel.textColor = [UIColor blackColor];
    
         NSNumber *labelWidth = [NSNumber numberWithInt:55];
        // NSNumber *labelHeight = [NSNumber numberWithInt:6];

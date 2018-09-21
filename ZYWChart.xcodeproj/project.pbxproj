@@ -13,9 +13,15 @@
 		4227879B1E04F18600DB5CEC /* ZYWChartTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4227879A1E04F18600DB5CEC /* ZYWChartTests.m */; };
 		422787A61E04F18600DB5CEC /* ZYWChartUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 422787A51E04F18600DB5CEC /* ZYWChartUITests.m */; };
 		4C5E070420E269100053F7CB /* searchNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5E070320E2690F0053F7CB /* searchNormal.png */; };
-		4CC3E91A20FD71950073A7FB /* QuickOrder.ice in Resources */ = {isa = PBXBuildFile; fileRef = 4CC3E91820FD71930073A7FB /* QuickOrder.ice */; };
-		4CC3E91B20FD71950073A7FB /* config3.client in Resources */ = {isa = PBXBuildFile; fileRef = 4CC3E91920FD71940073A7FB /* config3.client */; };
-		4CC3E91D20FD72060073A7FB /* QuickOrder.ice in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3E91820FD71930073A7FB /* QuickOrder.ice */; };
+		4CA5EE9B21548E91008907AA /* SqlServer.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA6E0012214A3B480020834C /* SqlServer.ice */; };
+		4CA5EE9C21548EA6008907AA /* QuickOrder.ice in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3E91820FD71930073A7FB /* QuickOrder.ice */; };
+		4CA5EE9D21548EBB008907AA /* WpTrade.ice in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985B20CA69B000524CB7 /* WpTrade.ice */; };
+		4CA5EE9E21548EC4008907AA /* NpTrade.ice in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985820C7CDE000524CB7 /* NpTrade.ice */; };
+		4CA5EE9F21548ECC008907AA /* WpQuote.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
+		4CA5EEA42154929A008907AA /* config.client in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57820B6880E00B34DA7 /* config.client */; };
+		4CA5EEA62154929A008907AA /* config2.client in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8D20DB745300F07D40 /* config2.client */; };
+		4CA5EEA72154929A008907AA /* config1.client in Resources */ = {isa = PBXBuildFile; fileRef = BA3EB02420CE21A4008F11E9 /* config1.client */; };
+		4CA5EEA82154929A008907AA /* config3.client in Resources */ = {isa = PBXBuildFile; fileRef = 4CC3E91920FD71940073A7FB /* config3.client */; };
 		4CC3E96120FDB8BC0073A7FB /* WYLoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3E96020FDB8BC0073A7FB /* WYLoginVC.m */; };
 		79715BAE312AE6B07031DB82 /* libPods-ZYWChart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E2B8C997449299EE5E08697 /* libPods-ZYWChart.a */; };
 		BA0EF4C820BD3D3300E5F974 /* CodeListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA0EF4C720BD3D3300E5F974 /* CodeListVC.m */; };
@@ -51,10 +57,6 @@
 		BA3D61D920EDA08400665888 /* Y_StockChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3D61C520EDA08400665888 /* Y_StockChartView.m */; };
 		BA3D61DE20EDA0B900665888 /* Y_StockChartLandScapeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3D61DC20EDA0B800665888 /* Y_StockChartLandScapeViewController.m */; };
 		BA3D61DF20EDA0B900665888 /* Y_StockChartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA3D61DD20EDA0B900665888 /* Y_StockChartViewController.m */; };
-		BA3EB02520CE21A5008F11E9 /* config1.client in Resources */ = {isa = PBXBuildFile; fileRef = BA3EB02420CE21A4008F11E9 /* config1.client */; };
-		BA51D57920B6880E00B34DA7 /* config.client in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57820B6880E00B34DA7 /* config.client */; };
-		BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
-		BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA51D57A20B6881F00B34DA7 /* WpQuote.ice */; };
 		BA5994C920E20CFC00AB2E76 /* checkVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA5994C820E20CFC00AB2E76 /* checkVC.m */; };
 		BA69E21B20F43FBC0098D327 /* Y_KlineMAVLabelView.m in Sources */ = {isa = PBXBuildFile; fileRef = BA69E21A20F43FBC0098D327 /* Y_KlineMAVLabelView.m */; };
 		BA6E000C2149E7B90020834C /* BaoBiaoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = BA6E00032149E7B90020834C /* BaoBiaoItem.m */; };
@@ -62,11 +64,8 @@
 		BA6E000E2149E7B90020834C /* BaoBiaoItemHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = BA6E00062149E7B90020834C /* BaoBiaoItemHeader.m */; };
 		BA6E000F2149E7B90020834C /* BaoBiaoItemHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = BA6E00072149E7B90020834C /* BaoBiaoItemHeader.xib */; };
 		BA6E00102149E7B90020834C /* BaoBiaoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = BA6E00092149E7B90020834C /* BaoBiaoLayout.m */; };
-		BA6E0013214A3B480020834C /* SqlServer.ice in Resources */ = {isa = PBXBuildFile; fileRef = BA6E0012214A3B480020834C /* SqlServer.ice */; };
-		BA6E0014214A3CB80020834C /* SqlServer.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA6E0012214A3B480020834C /* SqlServer.ice */; };
 		BA6E0017214B38870020834C /* SQLServerAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = BA6E0016214B38870020834C /* SQLServerAPI.m */; };
 		BA78AC8220D9ECE800F07D40 /* searchSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8120D9ECE800F07D40 /* searchSelected.png */; };
-		BA78AC8E20DB745400F07D40 /* config2.client in Resources */ = {isa = PBXBuildFile; fileRef = BA78AC8D20DB745300F07D40 /* config2.client */; };
 		BA78AC9120DB74E800F07D40 /* LoginVC1.m in Sources */ = {isa = PBXBuildFile; fileRef = BA78AC9020DB74E800F07D40 /* LoginVC1.m */; };
 		BA8209C320C66E5700A5BCAE /* BuyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BA8209C220C66E5700A5BCAE /* BuyVC.m */; };
 		BA84422C212BF55300892E68 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BA84422B212BF55300892E68 /* Images.xcassets */; };
@@ -75,10 +74,6 @@
 		BAC242E321538DE000A06F27 /* quoteView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BAC242E221538DE000A06F27 /* quoteView.xib */; };
 		BAD326E02150824E00438A42 /* ContracInfoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BAD326DF2150824E00438A42 /* ContracInfoModel.m */; };
 		BAE5985720C7718000524CB7 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985620C7718000524CB7 /* LoginVC.m */; };
-		BAE5985920C7CDE000524CB7 /* NpTrade.ice in Resources */ = {isa = PBXBuildFile; fileRef = BAE5985820C7CDE000524CB7 /* NpTrade.ice */; };
-		BAE5985A20C7CE2C00524CB7 /* NpTrade.ice in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985820C7CDE000524CB7 /* NpTrade.ice */; };
-		BAE5985C20CA69B000524CB7 /* WpTrade.ice in Resources */ = {isa = PBXBuildFile; fileRef = BAE5985B20CA69B000524CB7 /* WpTrade.ice */; };
-		BAE5985D20CA6EB200524CB7 /* WpTrade.ice in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985B20CA69B000524CB7 /* WpTrade.ice */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -92,7 +87,7 @@
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).h",
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).m",
 			);
-			script = /usr/local/bin/icebuilder;
+			script = "/usr/local/bin/icebuilder\n";
 		};
 /* End PBXBuildRule section */
 
@@ -115,12 +110,11 @@
 
 /* Begin PBXFileReference section */
 		3E2B8C997449299EE5E08697 /* libPods-ZYWChart.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ZYWChart.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4227877D1E04F18600DB5CEC /* ZYWChart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZYWChart.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4227877D1E04F18600DB5CEC /* 中大快赢.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "中大快赢.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		422787811E04F18600DB5CEC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		422787831E04F18600DB5CEC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		422787841E04F18600DB5CEC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		4227878C1E04F18600DB5CEC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		422787911E04F18600DB5CEC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		422787961E04F18600DB5CEC /* ZYWChartTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZYWChartTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4227879A1E04F18600DB5CEC /* ZYWChartTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZYWChartTests.m; sourceTree = "<group>"; };
 		4227879C1E04F18600DB5CEC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -129,6 +123,7 @@
 		422787A71E04F18600DB5CEC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		422787C31E04FD3700DB5CEC /* ZYWChart-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZYWChart-Prefix.pch"; sourceTree = "<group>"; };
 		4C5E070320E2690F0053F7CB /* searchNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchNormal.png; sourceTree = "<group>"; };
+		4CA5EE9821548A4B008907AA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4CC3E91820FD71930073A7FB /* QuickOrder.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = QuickOrder.ice; sourceTree = "<group>"; };
 		4CC3E91920FD71940073A7FB /* config3.client */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config3.client; sourceTree = "<group>"; };
 		4CC3E95F20FDB8BC0073A7FB /* WYLoginVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WYLoginVC.h; sourceTree = "<group>"; };
@@ -281,7 +276,7 @@
 		4227877E1E04F18600DB5CEC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4227877D1E04F18600DB5CEC /* ZYWChart.app */,
+				4227877D1E04F18600DB5CEC /* 中大快赢.app */,
 				422787961E04F18600DB5CEC /* ZYWChartTests.xctest */,
 				422787A11E04F18600DB5CEC /* ZYWChartUITests.xctest */,
 			);
@@ -297,6 +292,7 @@
 				BA3D618A20EDA08400665888 /* BTC_K线图 */,
 				422787BE1E04F73900DB5CEC /* Controller */,
 				BAE5985520C7718000524CB7 /* LoginVC.h */,
+				4CA5EE9821548A4B008907AA /* Info.plist */,
 				BAE5985620C7718000524CB7 /* LoginVC.m */,
 				BA78AC8F20DB74E800F07D40 /* LoginVC1.h */,
 				BA78AC9020DB74E800F07D40 /* LoginVC1.m */,
@@ -308,7 +304,6 @@
 				4C5E070320E2690F0053F7CB /* searchNormal.png */,
 				BA84422D212BF71300892E68 /* Launch Screen.storyboard */,
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
-				422787911E04F18600DB5CEC /* Info.plist */,
 				BA84422B212BF55300892E68 /* Images.xcassets */,
 				422787801E04F18600DB5CEC /* Supporting Files */,
 			);
@@ -670,7 +665,7 @@
 			);
 			name = ZYWChart;
 			productName = ZYWChart;
-			productReference = 4227877D1E04F18600DB5CEC /* ZYWChart.app */;
+			productReference = 4227877D1E04F18600DB5CEC /* 中大快赢.app */;
 			productType = "com.apple.product-type.application";
 		};
 		422787951E04F18600DB5CEC /* ZYWChartTests */ = {
@@ -760,24 +755,19 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BAE5985920C7CDE000524CB7 /* NpTrade.ice in Resources */,
-				BA6E0013214A3B480020834C /* SqlServer.ice in Resources */,
+				4CA5EEA42154929A008907AA /* config.client in Resources */,
+				4CA5EEA62154929A008907AA /* config2.client in Resources */,
+				4CA5EEA72154929A008907AA /* config1.client in Resources */,
+				4CA5EEA82154929A008907AA /* config3.client in Resources */,
 				4C5E070420E269100053F7CB /* searchNormal.png in Resources */,
 				BA78AC8220D9ECE800F07D40 /* searchSelected.png in Resources */,
 				BA6E000F2149E7B90020834C /* BaoBiaoItemHeader.xib in Resources */,
 				BAC242E321538DE000A06F27 /* quoteView.xib in Resources */,
 				BA844232212FB1A400892E68 /* buttonView.xib in Resources */,
-				BA3EB02520CE21A5008F11E9 /* config1.client in Resources */,
 				4227878D1E04F18600DB5CEC /* Assets.xcassets in Resources */,
 				BA84422C212BF55300892E68 /* Images.xcassets in Resources */,
-				BAE5985C20CA69B000524CB7 /* WpTrade.ice in Resources */,
 				BA6E000D2149E7B90020834C /* BaoBiaoItem.xib in Resources */,
-				4CC3E91A20FD71950073A7FB /* QuickOrder.ice in Resources */,
 				BA84422E212BF71300892E68 /* Launch Screen.storyboard in Resources */,
-				BA51D57920B6880E00B34DA7 /* config.client in Resources */,
-				BA78AC8E20DB745400F07D40 /* config2.client in Resources */,
-				4CC3E91B20FD71950073A7FB /* config3.client in Resources */,
-				BA51D57B20B6881F00B34DA7 /* WpQuote.ice in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -823,15 +813,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BA6E0014214A3CB80020834C /* SqlServer.ice in Sources */,
-				4CC3E91D20FD72060073A7FB /* QuickOrder.ice in Sources */,
+				4CA5EE9F21548ECC008907AA /* WpQuote.ice in Sources */,
+				4CA5EE9E21548EC4008907AA /* NpTrade.ice in Sources */,
+				4CA5EE9D21548EBB008907AA /* WpTrade.ice in Sources */,
+				4CA5EE9C21548EA6008907AA /* QuickOrder.ice in Sources */,
+				4CA5EE9B21548E91008907AA /* SqlServer.ice in Sources */,
 				BA3D61D820EDA08400665888 /* Y_KLineView.m in Sources */,
 				BA171E38213E5E590087C95F /* UIView+Extension.m in Sources */,
 				BA3D61CF20EDA08400665888 /* Y_KLineGroupModel.m in Sources */,
 				BA6E000C2149E7B90020834C /* BaoBiaoItem.m in Sources */,
-				BAE5985D20CA6EB200524CB7 /* WpTrade.ice in Sources */,
-				BAE5985A20C7CE2C00524CB7 /* NpTrade.ice in Sources */,
-				BA51D57D20B68A3F00B34DA7 /* WpQuote.ice in Sources */,
 				BA171E1E213E5A400087C95F /* ICEQuote.m in Sources */,
 				BA3D61CB20EDA08400665888 /* Y_KLineMAView.m in Sources */,
 				422787851E04F18600DB5CEC /* AppDelegate.m in Sources */,
@@ -1020,17 +1010,21 @@
 			baseConfigurationReference = 4F7C1CFF0292A45235298718 /* Pods-ZYWChart.debug.xcconfig */;
 			buildSettings = {
 				ADDITIONAL_SDKS = "/usr/local/opt/ice/sdk/$(PLATFORM_NAME).sdk";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = W9753JG9F5;
+				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/ZYWChart/ZYWChart-Prefix.pch";
+				GCC_VERSION = "";
 				INFOPLIST_FILE = ZYWChart/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1052,9 +1046,10 @@
 					"-lGlacier2Objc",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = lanwong;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "中大快赢";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Debug;
 		};
@@ -1063,17 +1058,21 @@
 			baseConfigurationReference = A8CBF1D36897BA6C3C8ABB35 /* Pods-ZYWChart.release.xcconfig */;
 			buildSettings = {
 				ADDITIONAL_SDKS = "/usr/local/opt/ice/sdk/$(PLATFORM_NAME).sdk";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = W9753JG9F5;
+				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/ZYWChart/ZYWChart-Prefix.pch";
+				GCC_VERSION = "";
 				INFOPLIST_FILE = ZYWChart/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1095,9 +1094,10 @@
 					"-lGlacier2Objc",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = lanwong;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "中大快赢";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Release;
 		};

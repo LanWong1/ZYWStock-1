@@ -46,30 +46,28 @@
         _MA30Label = [self private_createLabel];
         _dateDescLabel = [self private_createLabel];
         _openDescLabel = [self private_createLabel];
+        
         _openDescLabel.text = @" 开:";
-
         _closeDescLabel = [self private_createLabel];
         _closeDescLabel.text = @" 收:";
-
         _highDescLabel = [self private_createLabel];
         _highDescLabel.text = @" 高:";
-
         _lowDescLabel = [self private_createLabel];
         _lowDescLabel.text = @" 低:";
 
-        _openLabel = [self private_createLabel];
+        _openLabel  = [self private_createLabel];
         _closeLabel = [self private_createLabel];
-        _highLabel = [self private_createLabel];
-        _lowLabel = [self private_createLabel];
+        _highLabel  = [self private_createLabel];
+        _lowLabel   = [self private_createLabel];
         
         
-        _MA7Label.textColor = [UIColor ma7Color];
+        _MA7Label.textColor  = [UIColor ma7Color];
         _MA30Label.textColor = [UIColor ma30Color];
         
-        _openLabel.textColor = [UIColor whiteColor];
-        _highLabel.textColor = [UIColor whiteColor];
-        _lowLabel.textColor = [UIColor whiteColor];
-        _closeLabel.textColor = [UIColor whiteColor];
+        _openLabel.textColor  = [UIColor blackColor];
+        _highLabel.textColor  = [UIColor blackColor];
+        _lowLabel.textColor   = [UIColor  blackColor];
+        _closeLabel.textColor = [UIColor blackColor];
         NSNumber *labelWidth = [NSNumber numberWithInt:55];
         
         [_dateDescLabel mas_makeConstraints:^(MASConstraintMaker *make) {

@@ -34,7 +34,7 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
 
 - (instancetype)initWithItems:(NSArray *)items
 {
-    NSLog(@"sementview 入口");
+    
     self = [super initWithFrame:CGRectZero];
     if(self)
     {

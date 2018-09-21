@@ -90,8 +90,8 @@
 
 @property (strong,nonatomic) UIView *buttomBtnView;
 
-
-@end
+@property (strong,nonatomic) UIScrollView *scrollView;
+ @end
 
 @implementation Y_StockChartViewController
 
@@ -133,7 +133,7 @@
     [super viewWillAppear:animated];
     NSLog(@"will appear  出现啦");
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];//设置返回字体颜色
-    self.navigationController.navigationBar.barTintColor = [UIColor assistBackgroundColor];//导航栏背景色
+    self.navigationController.navigationBar.barTintColor = DropColor;//导航栏背景色
     self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor whiteColor]};//设置标题文字为白色
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;//设置状态时间文字为白色
     self.tabBarController.tabBar.hidden = YES;
@@ -156,6 +156,7 @@
     
     self.navigationItem.title = self.sCode;
     self.view.backgroundColor = [UIColor backgroundColor];
+    [self addScrollView];
     self.stockChartView.backgroundColor = [UIColor backgroundColor];//调用了getter方法
     self.currentIndex = -1;
     [self addBottomBtnView];
@@ -169,7 +170,7 @@
 //交易成功返回消息
 - (void)tradeResult:(NSNotification*)notify{
     
-    NSLog(@"交易结果========%@   type = %@",              notify.userInfo[@"message"],notify.userInfo[@"type"]);
+    NSLog(@"交易结果========%@   type = %@",notify.userInfo[@"message"],notify.userInfo[@"type"]);
     //float x = r
     UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(0, 100, 600, 30)];
     
@@ -197,11 +198,67 @@
 }
 
 #pragma --mark 添加views
-
+// scrollview
+- (void)addScrollView{
+    _scrollView = [[UIScrollView alloc]init];
+    [self.view addSubview:_scrollView];
+    [_scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.top.bottom.equalTo(self.view);
+    }];
+    _scrollView.scrollEnabled = YES;
+    _scrollView.userInteractionEnabled = YES;
+    
+}
+//底部交易和查询按钮
+- (void)addBottomBtnView{
+    
+    self.buttomBtnView = [[UIView alloc]init];
+    _buttomBtnView.backgroundColor = [UIColor clearColor];
+    [self.view addSubview:_buttomBtnView];
+    
+    
+    [_buttomBtnView mas_makeConstraints:^(MASConstraintMaker *make) {
+        //make.top.equalTo(_stockChartView.mas_bottom);
+        make.bottom.equalTo(self.view.mas_bottom);
+        make.left.right.equalTo(self.view);
+        make.height.equalTo(@60);
+    }];
+    UIButton *tradeBtn = [[UIButton alloc]init];
+    tradeBtn.backgroundColor = RoseColor;
+    tradeBtn.alpha = 0.9;
+    tradeBtn.tag = 200;
+    [tradeBtn setTitle:@"交易" forState:UIControlStateNormal];
+    [tradeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
+    [tradeBtn addTarget: self action:@selector(bottomBtnPressed:)  forControlEvents:UIControlEventTouchUpInside];
+    
+    [_buttomBtnView addSubview:tradeBtn];
+    [tradeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_buttomBtnView);
+        make.width.equalTo(@ (DEVICE_WIDTH/2));
+        make.bottom.equalTo(_buttomBtnView.mas_bottom);
+        make.top.equalTo(_buttomBtnView.mas_top);
+        
+    }];
+    
+    UIButton *checkBtn = [[UIButton alloc]init];
+    checkBtn.backgroundColor = DropColor;
+    checkBtn.alpha = 0.9;
+    checkBtn.tag = 201;
+    [checkBtn setTitle:@"查询" forState:UIControlStateNormal];
+    [checkBtn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
+    [checkBtn addTarget: self action:@selector(bottomBtnPressed:)  forControlEvents:UIControlEventTouchUpInside];
+    [_buttomBtnView addSubview:checkBtn];
+    [checkBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(_buttomBtnView);
+        make.width.equalTo(@ (DEVICE_WIDTH/2));
+        make.bottom.equalTo(_buttomBtnView.mas_bottom);
+        make.top.equalTo(_buttomBtnView.mas_top);
+    }];
+    
+}
+// 交易 筹码 止损止盈
 - (void)addXibViews{
 
-  
-    
     [_tradeView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.view.mas_left);
         make.width.equalTo(self.view);
@@ -209,7 +266,7 @@
         make.height.equalTo(@(DEVICE_HEIGHT/2));
         make.bottom.equalTo(self.view.mas_bottom);
     }];
-    
+
     
     [[NSBundle mainBundle]loadNibNamed:@"buttonView" owner:self options:nil];
     [self.tradeView addSubview:_lableView];
@@ -222,7 +279,7 @@
     }];
     
     [self.tradeView addSubview:_tradeSetView];
-    _tradeSetView.backgroundColor = [UIColor backgroundColor];
+    _tradeSetView.backgroundColor = [UIColor clearColor];
     [_tradeSetView mas_makeConstraints:^(MASConstraintMaker *make) {
         //make.top.equalTo(self.stockChartView.mas_bottom).offset(100);
         make.left.equalTo(self.view.mas_left);
@@ -240,7 +297,7 @@
     [self addLimitPicker];
 }
 
-//止损止盈picker
+//止损止盈picker 滚盘
 - (void)addLimitPicker{
     _lossLimitPicker = [[UIPickerView alloc]init];
     //止损
@@ -271,11 +328,12 @@
     _winLimitPicker.delegate = self;
     _winLimitPicker.tag = 1001;
 }
-// 交易三键
+// 交易按钮 看涨 看跌 清仓 分批清仓
 -(void)addTradeButtons{
     UIView *tradeButtonView = [[UIView alloc]init];
     [tradeButtonView setUserInteractionEnabled:YES];
     [self.tradeView addSubview:tradeButtonView];
+    
     [tradeButtonView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.view.mas_left);
         make.height.equalTo(@70);
@@ -403,7 +461,7 @@
 
     
 }
-
+//保证金 总权益 可用资金
 -(void)addCountView{
     
     _totalEquityLable = [[UILabel alloc]init];
@@ -447,6 +505,42 @@
     
 }
 #pragma --mark 按键相关
+
+-(void)bottomBtnPressed:(UIButton *)btn{
+    //交易
+    if(btn.tag == 200){
+        
+        if(!_tradeView){
+            
+            _tradeView = [[UIView alloc]init];
+            _tradeView.backgroundColor = [UIColor whiteColor];
+            UISwipeGestureRecognizer *swipe = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(tradeViewDown)];
+            swipe.direction = UISwipeGestureRecognizerDirectionDown;
+            
+            [_tradeView addGestureRecognizer:swipe];
+            _tradeView.alpha = 0.9;
+            [self.view addSubview:_tradeView];
+            [self addTradeButtons];
+            [self addXibViews];
+        }
+        _tradeView.hidden = NO;
+        self.buttomBtnView.hidden = YES;
+    }
+    else{
+        checkVC *vc = [checkVC new];
+        vc.hidesBottomBarWhenPushed = YES;
+        // [self presentViewController:vc animated:YES completion:nil];
+        //UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:self];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+    
+}
+- (void)tradeViewDown{
+    if(_buttomBtnView.hidden == YES && _tradeView.hidden == NO){
+        _tradeView.hidden = YES;
+        _buttomBtnView.hidden = NO;
+    }
+}
 //长按手势
 - (IBAction)longPress1:(UILongPressGestureRecognizer *)gustureRecogonizeer {
     NSLog(@"长恩触发");
@@ -482,8 +576,14 @@
 //下单键按下
 -(void)tradeBtnPressed:(UIButton*)sender{
     ICEQuickOrder *quickOrder = [ICEQuickOrder shareInstance];
+    
+//    _tradeView.hidden = YES;
+//    _buttomBtnView.hidden = NO;
+//
+    
+    
     if (sender.tag == 500 || sender.tag  == 501) {
-        _tradeView.hidden = YES;
+   
 //        if([_winLimitedTextField.text  isEqual: @""]||[_loseLimtedTextField.text  isEqual: @""]){
 //            
 //            
@@ -884,7 +984,7 @@
 
 
 
-
+//订阅
 
 
 - (void)subscibe{
@@ -1006,88 +1106,24 @@
                                    [Y_StockChartViewItemModel itemModelWithTitle:@"周线" type:Y_StockChartcenterViewTypeKline],
                                    ];
 }
-- (void)addBottomBtnView{
-    self.buttomBtnView = [[UIView alloc]init];
-    _buttomBtnView.backgroundColor = [UIColor clearColor];
-    [self.view addSubview:_buttomBtnView];
-    [_buttomBtnView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_stockChartView.mas_bottom);
-        make.bottom.equalTo(self.view.mas_bottom);
-        make.left.right.equalTo(self.view);
-    }];
-    UIButton *tradeBtn = [[UIButton alloc]init];
-    tradeBtn.backgroundColor = RoseColor;
-    tradeBtn.tag = 200;
-    [tradeBtn setTitle:@"交易" forState:UIControlStateNormal];
-    [tradeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
-    [tradeBtn addTarget: self action:@selector(bottomBtnPressed:)  forControlEvents:UIControlEventTouchUpInside];
-    
-    [_buttomBtnView addSubview:tradeBtn];
-    [tradeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(_buttomBtnView);
-        make.width.equalTo(@ (DEVICE_WIDTH/2));
-        make.bottom.equalTo(_buttomBtnView.mas_bottom);
-        make.top.equalTo(_buttomBtnView.mas_top);
-        
-    }];
-    
-    
-    
-    UIButton *checkBtn = [[UIButton alloc]init];
-    checkBtn.backgroundColor = DropColor;
-    checkBtn.tag = 201;
-    [checkBtn setTitle:@"查询" forState:UIControlStateNormal];
-    [checkBtn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
-    [checkBtn addTarget: self action:@selector(bottomBtnPressed:)  forControlEvents:UIControlEventTouchUpInside];
-    [_buttomBtnView addSubview:checkBtn];
-    [checkBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(_buttomBtnView);
-        make.width.equalTo(@ (DEVICE_WIDTH/2));
-        make.bottom.equalTo(_buttomBtnView.mas_bottom);
-        make.top.equalTo(_buttomBtnView.mas_top);
-        
-    }];
- 
-}
--(void)bottomBtnPressed:(UIButton *)btn{
-    
-    if(btn.tag == 200){
-        _tradeView = [[UIView alloc]init];
-        _tradeView.backgroundColor = [UIColor backgroundColor];
-        [self.view addSubview:_tradeView];
-        [self addTradeButtons];
-        [self addXibViews];
-    }
-    else{
-        checkVC *vc = [checkVC new];
-        vc.hidesBottomBarWhenPushed = YES;
-       // [self presentViewController:vc animated:YES completion:nil];
-        //UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:self];
-        
-        [self.navigationController pushViewController:vc animated:YES];
-    }
-    
-}
+
+
 - (Y_StockChartView *)stockChartView
 {
     if(!_stockChartView) {
         _stockChartView = [Y_StockChartView new];
+        _stockChartView = [[Y_StockChartView alloc]initWithFrame:CGRectMake(0, 0, DEVICE_WIDTH, DEVICE_HEIGHT+200)];
         _stockChartView.dataSource = self;
-        [self.view addSubview:_stockChartView];
-        [_stockChartView mas_makeConstraints:^(MASConstraintMaker *make) {
-            if (IS_IPHONE_X) {
-                make.edges.equalTo(self.view).insets(UIEdgeInsetsMake(200, 0, 0, 0));//竖屏的时顶部增加30 底部往上缩24
-                make.top.equalTo(self.view).offset(0);
-                make.left.right.equalTo(self.view);
-               
-                make.bottom.equalTo(self.view).offset(-60);
-            }
-            else {
-                make.top.equalTo(self.view);
-                make.left.right.equalTo(self.view);
-                make.bottom.equalTo(self.view).offset(-350);
-            }
-        }];
+        
+        [self.scrollView addSubview:_stockChartView];
+        
+//        [_stockChartView mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.top.equalTo(self.view);
+//            make.left.right.equalTo(self.view);
+//            //make.bottom.equalTo(self.view).offset(-30);
+//            make.height.equalTo(@900);
+//        }];
+        self.scrollView.contentSize = _stockChartView.size;
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(dismiss)];
         tap.numberOfTapsRequired = 2;
         [_stockChartView addGestureRecognizer:tap];
@@ -1117,6 +1153,8 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [_loseLimtedTextField resignFirstResponder];
     [_winLimitedTextField resignFirstResponder];
+
+
 }
 
 
