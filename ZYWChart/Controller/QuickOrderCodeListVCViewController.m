@@ -43,6 +43,7 @@
 
 @implementation QuickOrderCodeListVCViewController
 
+
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear: animated];
     self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor blackColor]};
@@ -51,6 +52,9 @@
     //[UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
 }
+
+
+
 -(void)viewDidAppear:(BOOL)animated{
     self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];//导航栏背景色
     self.navigationController.navigationBar.tintColor = [UIColor blackColor];//设置返回字体颜色
@@ -64,7 +68,11 @@
      _contractInfoArray = [NSMutableArray array];
     [self addSearchButton];
     [self getCodeList];//获取数据
+    //注册通知
+
 }
+
+
 
 
 //获取列表
@@ -205,6 +213,9 @@
     UIBarButtonItem *searchBtn = [[UIBarButtonItem alloc]initWithCustomView:self.searchBtn];
     self.navigationItem.rightBarButtonItem = searchBtn;
 }
+
+
+
 //添加searchbar
 - (void)addSearch{
     [UIView animateWithDuration:0.25f animations:^{
@@ -317,6 +328,9 @@
     Y_StockChartViewController* vc = [[Y_StockChartViewController alloc]initWithScode:sCode];
     vc.futu_price_step = _contractInfoArray[indexPath.row].futu_price_step;
     vc.hidesBottomBarWhenPushed = YES;
+    
+   
+    
     [self.navigationController pushViewController:vc animated:YES];
     
 }

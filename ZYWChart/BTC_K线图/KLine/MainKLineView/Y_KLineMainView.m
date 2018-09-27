@@ -416,14 +416,14 @@
     minAssert *= 0.9991;
     CGFloat minY = Y_StockChartKLineMainViewMinY;
     CGFloat maxY ; 
-//    AppDelegate *app  = [UIApplication sharedApplication].delegate;
-//    if (app.isEable == YES){
-//        maxY = self.parentScrollView.frame.size.height * [Y_StockChartGlobalVariable kLineMainViewRadio] - 25;
-//    }
-//    else{
-//        maxY = self.parentScrollView.frame.size.height  - 25;
-//    }
-    maxY = self.parentScrollView.frame.size.height * [Y_StockChartGlobalVariable kLineMainViewRadio] - 25;
+    AppDelegate *app  = [UIApplication sharedApplication].delegate;
+    if (app.isEable == YES){
+        maxY = self.parentScrollView.frame.size.height * [Y_StockChartGlobalVariable kLineMainViewRadio] - 25;
+    }
+    else{
+        maxY = self.parentScrollView.frame.size.height*0.3 - 25;
+    }
+    //maxY = self.parentScrollView.frame.size.height * [Y_StockChartGlobalVariable kLineMainViewRadio] - 25;
     CGFloat unitValue = (maxAssert - minAssert)/(maxY - minY);
     //    CGFloat ma7UnitValue = (maxMA7 - minMA7) / (maxY - minY);
     //    CGFloat ma30UnitValue = (maxMA30 - minMA30) / (maxY - minY);

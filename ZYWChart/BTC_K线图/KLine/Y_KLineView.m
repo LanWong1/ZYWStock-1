@@ -103,7 +103,18 @@
 {
     self = [super initWithFrame:frame];
     if(self) {
-        self.mainViewRatio = [Y_StockChartGlobalVariable kLineMainViewRadio];
+        AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+        //横屏的时候加载
+        if( appdelegate.isEable == NO){
+
+            self.mainViewRatio = 0.3;
+        }
+        else{
+            self.mainViewRatio = [Y_StockChartGlobalVariable kLineMainViewRadio];
+        }
+   
+
+        //self.mainViewRatio = [Y_StockChartGlobalVariable kLineMainViewRadio];
         self.volumeViewRatio = [Y_StockChartGlobalVariable kLineVolumeViewRadio];
     }
     return self;

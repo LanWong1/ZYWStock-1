@@ -31,7 +31,6 @@
  */
 @property(nonatomic,assign,readwrite) NSInteger currentIndex;
 
-@property (weak, nonatomic) IBOutlet UIView *quoteView;
 
 
 
@@ -97,7 +96,7 @@
     [_quoteView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self);
         make.left.right.equalTo(self);
-        make.height.equalTo(@100);
+        make.height.equalTo(@80);
     }];
 }
 #pragma --mark itemModels的setter方法
@@ -106,7 +105,7 @@
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
     if(appdelegate.isEable == NO){
         [self addQuoteView];
-        _quoteView.backgroundColor = DropColor;
+        _quoteView.backgroundColor = [UIColor whiteColor];
     }
     
     _itemModels = itemModels;

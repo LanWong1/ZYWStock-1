@@ -48,6 +48,36 @@ typedef NS_ENUM(NSInteger, Y_KLineType) {
 
 
 @interface Y_StockChartView : UIView
+//最新价
+@property (weak, nonatomic) IBOutlet UILabel *lastPrice;
+//涨跌价格
+@property (weak, nonatomic) IBOutlet UILabel *priceChange;
+//涨跌百分比
+@property (weak, nonatomic) IBOutlet UILabel *priceChangePercentage;
+
+
+//申 卖价格
+@property (weak, nonatomic) IBOutlet UILabel * AskPrice;
+
+//申卖量
+@property (weak, nonatomic) IBOutlet UILabel *AskVolume;
+
+//申买量
+@property (weak, nonatomic) IBOutlet UILabel *BidVolume;
+//申买价
+@property (weak, nonatomic) IBOutlet UILabel * BidPrice;
+
+//持仓量
+@property (weak, nonatomic) IBOutlet UILabel *OpenInterest;
+
+
+//日增仓 (持仓 - 昨持仓)
+@property (weak, nonatomic) IBOutlet UILabel *dayGrowHold;
+
+@property (weak, nonatomic) IBOutlet UIView *quoteView;
+
+
+
 
 @property (nonatomic, strong) NSArray *itemModels;
 

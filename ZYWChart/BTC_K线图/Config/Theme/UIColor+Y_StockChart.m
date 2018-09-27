@@ -31,7 +31,9 @@
 #pragma mark 辅助背景色
 +(UIColor *)assistBackgroundColor
 {
-    return [UIColor lightTextColor];
+    
+    //return [UIColor colorWithRGBHex:0xccffff];
+    return [UIColor whiteColor];
     //return [UIColor colorWithRGBHex:0x010101];
 }
 

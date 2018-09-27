@@ -91,7 +91,13 @@
 @property (strong,nonatomic) UIView *buttomBtnView;
 
 @property (strong,nonatomic) UIScrollView *scrollView;
- @end
+
+
+
+
+
+
+@end
 
 @implementation Y_StockChartViewController
 
@@ -132,8 +138,10 @@
     
     [super viewWillAppear:animated];
     NSLog(@"will appear  出现啦");
+    [self subscibe];
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];//设置返回字体颜色
     self.navigationController.navigationBar.barTintColor = DropColor;//导航栏背景色
+    self.navigationController.navigationBar.translucent =YES;
     self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor whiteColor]};//设置标题文字为白色
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;//设置状态时间文字为白色
     self.tabBarController.tabBar.hidden = YES;
@@ -142,6 +150,7 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+    [self unSubscibe];
     self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor blackColor]};
    
 }
@@ -149,11 +158,9 @@
 - (void)viewDidLoad {
  
     [super viewDidLoad];
- 
 //    _tradeView = [[UIView alloc]init];
 //    _tradeView.backgroundColor = [UIColor backgroundColor];
 //    [self.view addSubview:_tradeView];
-    
     self.navigationItem.title = self.sCode;
     self.view.backgroundColor = [UIColor backgroundColor];
     [self addScrollView];
@@ -162,46 +169,91 @@
     [self addBottomBtnView];
     [self itemModels];//加载数据
     _buyCountArray = [NSMutableArray array];
-    [self subscibe];
+    //[self subscibe];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];//键盘将要隐藏通知
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];//键盘将要显示
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(tradeResult:) name:@"tradeNotify" object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(quoteData:) name:@"quoteNotity" object:nil];
 }
 //交易成功返回消息
 - (void)tradeResult:(NSNotification*)notify{
     
     NSLog(@"交易结果========%@   type = %@",notify.userInfo[@"message"],notify.userInfo[@"type"]);
-    //float x = r
-    UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(0, 100, 600, 30)];
+    UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(0, 150, 650, 30)];
     
     if([notify.userInfo[@"type"] isEqualToString:@"2"]){
+        
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);  // 震动
         AudioServicesPlaySystemSound(1007);
         lable.text = notify.userInfo[@"message"];
-        lable.textColor = [UIColor whiteColor];
+        lable.textColor = [UIColor redColor];
         lable.font = [UIFont systemFontOfSize:15];
         lable.textAlignment = NSTextAlignmentLeft;
         lable.backgroundColor = [UIColor clearColor];
         [_stockChartView addSubview:lable];
-        [UIView animateWithDuration:5 animations:^{
-            [lable setFrame:CGRectMake(lable.frame.origin.x - 600, 100, 600, 30)];
+        [UIView animateWithDuration:10 animations:^{
+            [lable setFrame:CGRectMake(lable.frame.origin.x - 650, 150, 650, 30)];
         }];
     }
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSLog(@"lable disappear");
         [lable removeFromSuperview];
     });
-    
-    
-
-
 }
+//行情通知
+- (void)quoteData:(NSNotification*)notif{
+    
+    
+    NSArray *arry = [NSArray arrayWithArray:notif.userInfo[@"message"]];
+    NSLog(@"交易结果========%@   type = %@",notif.userInfo[@"message"],notif.userInfo[@"type"]);
+    
+        
+    //价格变化
+    _stockChartView.lastPrice.text = arry[4];
+    float priceChange = [arry[4] floatValue] - [ arry[5] floatValue];
 
+   
+    
+    //价格变化百分比
+    float chagepercentage = 100*priceChange/[arry[5] floatValue];
+    NSLog(@"chagepercentage ===  %f",chagepercentage);
+ 
+    
+    if(priceChange<0){
+        self.stockChartView.priceChangePercentage.textColor = DropColor;//导航栏背景色
+        _stockChartView.priceChange.textColor = DropColor;
+        _stockChartView.lastPrice.textColor = DropColor;
+        _stockChartView.priceChangePercentage.text = [NSString stringWithFormat:@"%.2f%@",chagepercentage ,@"\%"];
+         _stockChartView.priceChange.text =  [NSString stringWithFormat:@"%.1f",priceChange];
+    }
+    else{
+        
+        _stockChartView.priceChangePercentage.text = [NSString stringWithFormat:@"%@%.2f%@",@"+",chagepercentage ,@"\%"];
+        _stockChartView.priceChange.text =  [NSString stringWithFormat:@"%@%.1f",@"+",priceChange];
+        self.stockChartView.priceChangePercentage.textColor = RoseColor;//导航栏背景色
+        _stockChartView.priceChange.textColor = RoseColor;
+          _stockChartView.lastPrice.textColor = RoseColor;
+        
+    }
+    
+    _stockChartView.AskPrice.text = arry[24];
+    _stockChartView.AskVolume.text = arry[25];
+    
+    _stockChartView.BidPrice.text = arry[22];
+    _stockChartView.BidVolume.text = arry[23];
+    
+    _stockChartView.OpenInterest.text = arry[13];
+    NSInteger InterestAdd = [arry[13] integerValue] - [arry[7] integerValue];
+    _stockChartView.dayGrowHold.text = [NSString stringWithFormat:@"%ld",InterestAdd];
+    
+}
 #pragma --mark 添加views
 // scrollview
 - (void)addScrollView{
     _scrollView = [[UIScrollView alloc]init];
     [self.view addSubview:_scrollView];
+    _scrollView.showsHorizontalScrollIndicator = NO;
+    _scrollView.showsVerticalScrollIndicator = NO;
     [_scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.top.bottom.equalTo(self.view);
     }];
@@ -225,24 +277,21 @@
     }];
     UIButton *tradeBtn = [[UIButton alloc]init];
     tradeBtn.backgroundColor = RoseColor;
-    tradeBtn.alpha = 0.9;
+
     tradeBtn.tag = 200;
     [tradeBtn setTitle:@"交易" forState:UIControlStateNormal];
     [tradeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
     [tradeBtn addTarget: self action:@selector(bottomBtnPressed:)  forControlEvents:UIControlEventTouchUpInside];
-    
     [_buttomBtnView addSubview:tradeBtn];
     [tradeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(_buttomBtnView);
         make.width.equalTo(@ (DEVICE_WIDTH/2));
         make.bottom.equalTo(_buttomBtnView.mas_bottom);
         make.top.equalTo(_buttomBtnView.mas_top);
-        
     }];
     
     UIButton *checkBtn = [[UIButton alloc]init];
     checkBtn.backgroundColor = DropColor;
-    checkBtn.alpha = 0.9;
     checkBtn.tag = 201;
     [checkBtn setTitle:@"查询" forState:UIControlStateNormal];
     [checkBtn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
@@ -518,7 +567,7 @@
             swipe.direction = UISwipeGestureRecognizerDirectionDown;
             
             [_tradeView addGestureRecognizer:swipe];
-            _tradeView.alpha = 0.9;
+            
             [self.view addSubview:_tradeView];
             [self addTradeButtons];
             [self addXibViews];
@@ -636,8 +685,10 @@
                 NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
                 NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
                 @try{
+                    NSLog(@"_buycountvalue = %ld",_buyCountValue);
                     ret = [quickOrder.quickOrder SendOrder:@"RollBackOrder" strCmd:[NSString stringWithFormat:@"%@%@%@%@%ld",quickOrder.strFunAcc,@"=",self.sCode,@"=",_buyCountValue] strOut:&strOut strErrInfo:&strErroInfo];
-                    NSLog(@"看涨反向开仓结果======%@   erro ==== %@",strOut,strErroInfo);
+                    NSLog(@"strcmd == %@",[NSString stringWithFormat:@"%@%@%@%@%ld",quickOrder.strFunAcc,@"=",self.sCode,@"=",_buyCountValue]);
+                    NSLog(@"看涨反向开仓结果======%@  erro ==== %@",strOut,strErroInfo);
                  
                 }
                 @catch(NSException *s){
@@ -690,6 +741,8 @@
                 }
             }
         }
+        
+        
         //看跌
         else{
             //看跌开仓
@@ -731,7 +784,7 @@
                 @try{
                     ret = [quickOrder.quickOrder SendOrder:@"RollBackOrder" strCmd:[NSString stringWithFormat:@"%@%@%@%@%ld",quickOrder.strFunAcc,@"=",self.sCode,@"=",_buyCountValue] strOut:&strOut strErrInfo:&strErroInfo];
                     NSLog(@"看跌反向开仓 ===== %@,  erro========%@",strOut,strErroInfo);
-                    //[quickOrder sendOrder:@"RollBackOrder" strCmd:[NSString stringWithFormat:@"%@%@%@%@%@",quickOrder.strFunAcc,@"=",self.sCode,@"=",@"-1"]];
+                   // [quickOrder sendOrder:@"RollBackOrder" strCmd:[NSString stringWithFormat:@"%@%@%@%@%@",quickOrder.strFunAcc,@"=",self.sCode,@"=",@"-1"]];
                 }
                 @catch(NSException *s){
                     ret = -1;
@@ -743,7 +796,6 @@
                     [self presentViewController:alert animated:YES completion:nil];
                 }
                 else{
-                    //反向开仓 重新计数 清空现在的数据
                     //反向开仓 重新计数 清空现在的数据
                     _buyCountValue = 0;
                     _OrderCount = 0;
@@ -763,7 +815,7 @@
                 int ret = 0;
                 @try{
                     
-                    NSString *strCmd = [NSString stringWithFormat:@"%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@",quickOrder.strFunAcc,@"=",self.sCode,@"=",quickOrder.strPassword,@"=",_buyCount,@"=",@"1",@"=",_loseLimtedTextField.text,@"=",_winLimitedTextField.text,@"=",@"1",@"=",@"0",@"=",@"0"];
+                    NSString *strCmd = [NSString stringWithFormat:@"%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@",quickOrder.strFunAcc,@"=",self.sCode,@"=",quickOrder.strPassword,@"=",_buyCount,@"=",@"2",@"=",_loseLimtedTextField.text,@"=",_winLimitedTextField.text,@"=",@"1",@"=",@"0",@"=",@"0"];
                     ret = [quickOrder.quickOrder SendOrder:@"InsertOrder" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
                      NSLog(@"看跌追单结果=====%@  erro ==== %@",strOut,strErroInfo);
                 }
@@ -984,21 +1036,27 @@
 
 
 
-//订阅
-
 
 - (void)subscibe{
-    NSLog(@"subsctibe ........=============");
     ICEQuote* iceQuote = [ICEQuote shareInstance];
-    ICEQuickOrder *quickOrder = [ICEQuickOrder shareInstance];
+    //ICEQuickOrder *quickOrder = [ICEQuickOrder shareInstance];
     NSString* cmdType = @"CTP,";
     //NSString *strAcc = [NSString stringWithFormat:@"%@%@%@",quickOrder.strFunAcc,@"=",quickOrder.strUserId ];
-    NSString *strAcc = [NSString stringWithFormat:@"%@%@%@",quickOrder.strFunAcc,@"=",iceQuote.userID ];
+    NSString *strAcc = [NSString stringWithFormat:@"%@%@%@",iceQuote.strFunAcc,@"=",iceQuote.userID];
     cmdType =  [cmdType stringByAppendingString:strAcc];
     NSLog(@"cmdtype = %@   scode = %@",cmdType,self.sCode);
     [iceQuote SubscribeQuote:cmdType strCmd:self.sCode];
 }
 
+- (void)unSubscibe{
+    NSLog(@"unsubscibe ////////");
+    ICEQuote *iceQuote = [ICEQuote shareInstance];
+    NSString* cmdType = @"CTP,";
+    //NSString *strAcc = [NSString stringWithFormat:@"%@%@%@",quickOrder.strFunAcc,@"=",quickOrder.strUserId ];
+    NSString *strAcc = [NSString stringWithFormat:@"%@%@%@",iceQuote.strFunAcc,@"=",iceQuote.userID];
+    cmdType =  [cmdType stringByAppendingString:strAcc];
+    [iceQuote UnSubscribeQuote:cmdType strCmd:self.sCode];
+}
 
 - (void)reloadData
 {
@@ -1116,7 +1174,6 @@
         _stockChartView.dataSource = self;
         
         [self.scrollView addSubview:_stockChartView];
-        
 //        [_stockChartView mas_makeConstraints:^(MASConstraintMaker *make) {
 //            make.top.equalTo(self.view);
 //            make.left.right.equalTo(self.view);
@@ -1190,6 +1247,7 @@
     NSLog(@"dealloc");
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"quoteNotity" object:nil];
 }
 
 #pragma --mark Pickerview delegate

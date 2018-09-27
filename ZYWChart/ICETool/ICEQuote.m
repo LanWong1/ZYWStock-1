@@ -18,7 +18,11 @@
 @implementation WpQuoteServerCallbackReceiverI
 - (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current
 {
-    NSLog(@"hahahah:%d%@",itype,strMessage);
+    //NSLog(@"hahahah:%d  strmessage = %@",itype,strMessage);
+    NSArray* arr =  [strMessage componentsSeparatedByString:@","];
+   
+    NSString *type = [NSString stringWithFormat:@"%d",itype];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"quoteNotity" object:nil userInfo:@{@"message":arr,@"type":type}];
 }
 @end
 
@@ -98,30 +102,9 @@ static ICEQuote* iceQuote = nil;
    // [self setHeartbeat];//设置心跳
 }
 
-//每三秒发送通知
-- (void)setHeartbeat{
-    // 创建GCD定时器
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
-    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行
-    dispatch_source_set_event_handler(_timer, ^{
-        [self sendmsg];
-    });
-    // 开启定时器
-    dispatch_resume(_timer);
-}
-//传递数据的
-- (void)sendmsg{
-    //传递通知
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"changedata" object:self userInfo:@"KVO通知测试"];
-    if(self.delegate && [self.delegate respondsToSelector:@selector(refreshTimeline:)]){
-        [self.delegate refreshTimeline:@"refresh timeline"];
-    }
-}
-- (void)dealloc{
-    NSLog(@"dealloc");
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"changedata" object:nil];
-}
+
+
+
 - (int)HeartBeat:(NSString*)strCmd{
     NSLog(@"quote heart beat");
     int iRet = -2;
@@ -154,22 +137,32 @@ static ICEQuote* iceQuote = nil;
     }
 }
 
+
+
 - (void)UnSubscribeQuote:(NSString *)strCmdType strCmd:(NSString *)strcmd{
 //    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
 //    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-    @try{
-        //[self.WpQuoteServerclientApiPrx SubscribeQuote:strCmdType strCmd:strcmd strOut:&strOut strErrInfo:&strErroInfo];
-        
-        [self.WpQuoteServerclientApiPrx begin_UnSubscribeQuote:strCmdType strCmd:strcmd response:^(ICEInt i, NSMutableString *string, NSMutableString *string2) {
-            NSLog(@"%d %@ %@",i, string, string2);
-        } exception:^(ICEException *s) {
-            NSLog(@"%@",s);
-        }];
-    }
-    @catch(ICEException* s)
-    {
-        NSLog(@"%@",s);
-    }
+    
+        NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+        NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+        NSLog(@" strcmd == %@",strcmd);
+        int ret = [self.WpQuoteServerclientApiPrx UnSubscribeQuote:strCmdType strCmd:strcmd strOut:&strOut strErrInfo:&strErroInfo];
+        NSLog(@"ret ======= %d erro ====== %@  strout======= %@",ret,strErroInfo,strOut);
+   
+    
+//    @try{
+//        //[self.WpQuoteServerclientApiPrx SubscribeQuote:strCmdType strCmd:strcmd strOut:&strOut strErrInfo:&strErroInfo];
+//        NSLog(@"unsubscribe++++++++++");
+//        [self.WpQuoteServerclientApiPrx begin_UnSubscribeQuote:strCmdType strCmd:strcmd response:^(ICEInt i, NSMutableString *string, NSMutableString *string2) {
+//            NSLog(@"i===== %d s=====%@ s2=======%@",i, string, string2);
+//        } exception:^(ICEException *s) {
+//            NSLog(@"%@",s);
+//        }];
+//    }
+//    @catch(ICEException* s)
+//    {
+//        NSLog(@"%@",s);
+//    }
 }
 
 

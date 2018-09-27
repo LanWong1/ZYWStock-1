@@ -51,6 +51,7 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
     {
         self.clipsToBounds = YES;
         self.backgroundColor = [UIColor assistBackgroundColor];
+        self.tintColor = RoseColor;
     }
     return self;
 }
@@ -137,7 +138,8 @@ static NSInteger const Y_StockChartSegmentStartTag = 2000;
        // [self addSubview:view];
         [btn mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(self.mas_top);
-            make.height.equalTo(@50);
+            //make.height.equalTo(@50);
+            make.bottom.equalTo(self.mas_bottom);
             make.width.equalTo(self).multipliedBy(1.0f/count);;
             if(preBtn)
             {
