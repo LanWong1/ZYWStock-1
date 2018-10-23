@@ -12,6 +12,8 @@
 		4227878D1E04F18600DB5CEC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4227878C1E04F18600DB5CEC /* Assets.xcassets */; };
 		4227879B1E04F18600DB5CEC /* ZYWChartTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4227879A1E04F18600DB5CEC /* ZYWChartTests.m */; };
 		422787A61E04F18600DB5CEC /* ZYWChartUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 422787A51E04F18600DB5CEC /* ZYWChartUITests.m */; };
+		4C2C30A0216D9C9F00E443D8 /* NSDictionary+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2C309D216D9C9F00E443D8 /* NSDictionary+Extension.m */; };
+		4C2C30A1216D9C9F00E443D8 /* NSArray+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2C309E216D9C9F00E443D8 /* NSArray+Extension.m */; };
 		4C5E070420E269100053F7CB /* searchNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5E070320E2690F0053F7CB /* searchNormal.png */; };
 		4CA5EE9B21548E91008907AA /* SqlServer.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA6E0012214A3B480020834C /* SqlServer.ice */; };
 		4CA5EE9C21548EA6008907AA /* QuickOrder.ice in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3E91820FD71930073A7FB /* QuickOrder.ice */; };
@@ -122,6 +124,10 @@
 		422787A51E04F18600DB5CEC /* ZYWChartUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZYWChartUITests.m; sourceTree = "<group>"; };
 		422787A71E04F18600DB5CEC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		422787C31E04FD3700DB5CEC /* ZYWChart-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZYWChart-Prefix.pch"; sourceTree = "<group>"; };
+		4C2C309C216D9C9E00E443D8 /* NSArray+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+Extension.h"; sourceTree = "<group>"; };
+		4C2C309D216D9C9F00E443D8 /* NSDictionary+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Extension.m"; sourceTree = "<group>"; };
+		4C2C309E216D9C9F00E443D8 /* NSArray+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+Extension.m"; sourceTree = "<group>"; };
+		4C2C309F216D9C9F00E443D8 /* NSDictionary+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Extension.h"; sourceTree = "<group>"; };
 		4C5E070320E2690F0053F7CB /* searchNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchNormal.png; sourceTree = "<group>"; };
 		4CA5EE9821548A4B008907AA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4CC3E91820FD71930073A7FB /* QuickOrder.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = QuickOrder.ice; sourceTree = "<group>"; };
@@ -313,6 +319,10 @@
 		422787801E04F18600DB5CEC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4C2C309C216D9C9E00E443D8 /* NSArray+Extension.h */,
+				4C2C309E216D9C9F00E443D8 /* NSArray+Extension.m */,
+				4C2C309F216D9C9F00E443D8 /* NSDictionary+Extension.h */,
+				4C2C309D216D9C9F00E443D8 /* NSDictionary+Extension.m */,
 				BA51D57820B6880E00B34DA7 /* config.client */,
 				BA6E0012214A3B480020834C /* SqlServer.ice */,
 				BA78AC8D20DB745300F07D40 /* config2.client */,
@@ -853,8 +863,10 @@
 				BA3D61C820EDA08400665888 /* Y_AccessoryMAView.m in Sources */,
 				BA3D61D920EDA08400665888 /* Y_StockChartView.m in Sources */,
 				BA3D61D220EDA08400665888 /* Y_KLineVolumePositionModel.m in Sources */,
+				4C2C30A1216D9C9F00E443D8 /* NSArray+Extension.m in Sources */,
 				BA6E00102149E7B90020834C /* BaoBiaoLayout.m in Sources */,
 				BA3D61D120EDA08400665888 /* Y_KLinePositionModel.m in Sources */,
+				4C2C30A0216D9C9F00E443D8 /* NSDictionary+Extension.m in Sources */,
 				BA5994C920E20CFC00AB2E76 /* checkVC.m in Sources */,
 				BA3D61D420EDA08400665888 /* Y_StockChartSegmentView.m in Sources */,
 				BA78AC9120DB74E800F07D40 /* LoginVC1.m in Sources */,

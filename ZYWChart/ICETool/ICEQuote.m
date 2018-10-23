@@ -34,6 +34,8 @@
 //@property (nonatomic) WpQuoteServerDayKLineList* DLL;
 //@property (nonatomic) NSTimer *timer;
 @property (nonatomic, strong) dispatch_source_t timer;
+
+@property (nonatomic) id<ICEConnection> connection;
 @end
 
 @implementation ICEQuote
@@ -53,6 +55,40 @@ static ICEQuote* iceQuote = nil;
 }
 
 - (WpQuoteServerCallbackReceiverI*)Connect2Quote{
+    
+    
+    if(self.router){
+        
+        @try{
+            [self.router destroySession];
+        }
+        @catch(ICEException *s){
+            
+        }
+        self.router = nil;
+    }
+    if(self.communicator){
+        
+        @try{
+            [self.communicator destroy];
+        }
+        @catch(ICEException *s){
+            NSLog(@"erro = %@",s);
+        }
+        self.communicator = nil;
+    }
+    if(self.connection){
+        
+        @try{
+            [self.connection close:ICEConnectionCloseForcefully];
+        }
+        @catch(ICEException *s){
+            NSLog(@"erro = %@",s);
+        }
+    }
+    
+    
+    
     ICEInitializationData* initData = [ICEInitializationData initializationData];
     initData.properties = [ICEUtil createProperties];
     [initData.properties load:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"config1.client"]];
@@ -65,6 +101,7 @@ static ICEQuote* iceQuote = nil;
     //连接
     self.router = [GLACIER2RouterPrx checkedCast:[self.communicator getDefaultRouter]];//路由
     [self.router createSession:@"" password:@""];//创建session
+    self.connection =  [self.router ice_getConnection];
     self.WpQuoteServerclientApiPrx = [WpQuoteServerClientApiPrx uncheckedCast:[self.communicator stringToProxy:@"ClientApiId"]];//返回具有所请求类型代理
     //启用主推回报
     ICEIdentity* callbackReceiverIdent= [ICEIdentity identity:@"callbackReceiver" category:[self.router getCategoryForClient]];
@@ -106,11 +143,13 @@ static ICEQuote* iceQuote = nil;
 
 
 - (int)HeartBeat:(NSString*)strCmd{
-    NSLog(@"quote heart beat");
+    
     int iRet = -2;
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     iRet = [self.WpQuoteServerclientApiPrx HeartBeat:@"" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+    NSLog(@"quote heart beat iRet ==== %d",iRet);
+    
     return iRet;
 }
 
@@ -143,26 +182,26 @@ static ICEQuote* iceQuote = nil;
 //    NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
 //    NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     
-        NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-        NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-        NSLog(@" strcmd == %@",strcmd);
-        int ret = [self.WpQuoteServerclientApiPrx UnSubscribeQuote:strCmdType strCmd:strcmd strOut:&strOut strErrInfo:&strErroInfo];
-        NSLog(@"ret ======= %d erro ====== %@  strout======= %@",ret,strErroInfo,strOut);
+//        NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
+//        NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+//        NSLog(@" strcmd == %@",strcmd);
+//        int ret = [self.WpQuoteServerclientApiPrx UnSubscribeQuote:strCmdType strCmd:strcmd strOut:&strOut strErrInfo:&strErroInfo];
+//        NSLog(@"ret ======= %d erro ====== %@  strout======= %@",ret,strErroInfo,strOut);
    
     
-//    @try{
-//        //[self.WpQuoteServerclientApiPrx SubscribeQuote:strCmdType strCmd:strcmd strOut:&strOut strErrInfo:&strErroInfo];
-//        NSLog(@"unsubscribe++++++++++");
-//        [self.WpQuoteServerclientApiPrx begin_UnSubscribeQuote:strCmdType strCmd:strcmd response:^(ICEInt i, NSMutableString *string, NSMutableString *string2) {
-//            NSLog(@"i===== %d s=====%@ s2=======%@",i, string, string2);
-//        } exception:^(ICEException *s) {
-//            NSLog(@"%@",s);
-//        }];
-//    }
-//    @catch(ICEException* s)
-//    {
-//        NSLog(@"%@",s);
-//    }
+    @try{
+        
+        NSLog(@"unsubscribe++++++++++");
+        [self.WpQuoteServerclientApiPrx begin_UnSubscribeQuote:strCmdType strCmd:strcmd response:^(ICEInt i, NSMutableString *string, NSMutableString *string2) {
+            NSLog(@"i===== %d s=====%@ s2=======%@",i, string, string2);
+        } exception:^(ICEException *s) {
+            NSLog(@"取消订阅失败 %@",s);
+        }];
+    }
+    @catch(ICEException* s)
+    {
+        NSLog(@"%@",s);
+    }
 }
 
 
@@ -194,9 +233,12 @@ static ICEQuote* iceQuote = nil;
     @try{
         NSMutableString* strOut = [[NSMutableString alloc]init];
         NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+        
         [self.WpQuoteServerclientApiPrx GetKLine:type strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+        
         NSMutableArray* array = [NSMutableArray array];
         if([strOut length]> 0){
+            
             array = [NSMutableArray array];
             array = [[strOut componentsSeparatedByString:@"|"] mutableCopy];
             [array removeLastObject];

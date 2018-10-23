@@ -20,11 +20,16 @@
 @implementation autoTradeCallbackReceiver
 
 - (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current{
-   // NSLog(@"返回消息类型===%d  消息=== %@",itype,strMessage);
-    NSString *type = [NSString stringWithFormat:@"%d",itype];
+   NSLog(@"返回消息类型===%d  消息=== %@",itype,strMessage);
+    //NSString *type = [NSString stringWithFormat:@"%d",itype];
 //    NSDictionary *note = [NSDictionary dictionaryWithObject:strMessage forKey:@"message"];
 //    [note setValue:type forKey:@"type"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"tradeNotify" object:nil userInfo:@{@"message":strMessage,@"type":type}];
+    if(itype == 2){
+          // [[NSNotificationCenter defaultCenter] postNotificationName:@"tradeNotify" object:nil userInfo:@{@"message":strMessage,@"type":type}];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"tradeNotify" object:nil userInfo:@{@"message":strMessage}];
+    }
+ 
 }
 @end
 
@@ -131,10 +136,10 @@ static ICEQuickOrder* QuickOrder = nil;
 }
 - (int)HeartBeat:(NSString*)strCmd{
     int iRet = -2;
-    NSLog(@"quickOrder hearbeat");
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     iRet = [self.quickOrder HeartBeat:@"" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+    NSLog(@"quickorder heart beat iRet ==== %d",iRet);
     //iRet = [self.quickOrder begin_HeartBeat:@"" strCmd:strCmd];
     return iRet;
 }

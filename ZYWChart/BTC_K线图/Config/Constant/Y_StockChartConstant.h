@@ -165,8 +165,8 @@
 
 //Kline种类
 typedef NS_ENUM(NSInteger, Y_StockChartCenterViewType) {
-    Y_StockChartcenterViewTypeKline= 1, //K线
-    Y_StockChartcenterViewTypeTimeLine,  //分时图
+    Y_StockChartcenterViewTypeKline = 1, //K线
+    Y_StockChartcenterViewTypeTimeLine, //分时图
     Y_StockChartcenterViewTypeOther
 };
 

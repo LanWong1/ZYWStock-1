@@ -14,7 +14,7 @@
 @interface Y_StockChartViewController : UIViewController
 
 
-@property (nonatomic,copy) NSString *futu_price_step;
+@property (nonatomic,copy) NSString *futu_price_step; //价格变动单位
 
 - (instancetype)initWithScode:(NSString *)sCodeSelect;
 @end

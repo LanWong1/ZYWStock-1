@@ -155,6 +155,7 @@
 - (void)y_StockChartSegmentView:(Y_StockChartSegmentView *)segmentView clickSegmentButtonIndex:(NSInteger)index
 {
 
+    NSLog(@"index ======= %d",index);
     self.currentIndex = index;
     if (index == 105) {
         
@@ -212,8 +213,9 @@
             {
                 
             }
-            //type = Y_StockChartcenterViewTypeTimeLine时间线或者K线图
+            //type = Y_StockChartcenterViewTypeTimeLine or   Y_StockChartcenterViewTypeKLine时间线或者K线图
             else {
+                NSLog(@"type ==== %d",type);
                 self.kLineView.kLineModels = (NSArray *)stockData;//更改数据
                 self.kLineView.MainViewType = type;
                 [self.kLineView reDraw];//重绘图像

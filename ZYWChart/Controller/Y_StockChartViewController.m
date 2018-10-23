@@ -16,8 +16,24 @@
 #import "Y_StockChartLandScapeViewController.h"
 #import "ICEQuote.h"
 #import "ICEQuickOrder.h"
- #import <AudioToolbox/AudioToolbox.h>
+#import <AudioToolbox/AudioToolbox.h>
 #import "checkVC.h"
+#import "NSArray+Extension.h"
+#import "NSDictionary+Extension.h"
+
+
+typedef NS_ENUM(NSInteger,TradeKind){
+    TradeKindeBuyIn       = 0,//看涨
+    TradeKindeSellOut     = 1,  //看跌
+    TradeKindClearAll     = 2,
+    TradeKindClearFenPi   = 3,
+    TradeKindRollBackRise = 4,//看涨反向开仓
+    TradeKindRollBackDown = 5,  //看跌反向开仓
+    TradeKindChasingRise  = 6,//看涨追单
+    TradeKindChasingDown  = 7,//看跌
+};
+
+
 
 #define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
@@ -26,6 +42,7 @@
 #define IS_IPHONE_X (IS_IPHONE && SCREEN_MAX_LENGTH == 812.0)
 
 @interface Y_StockChartViewController ()<Y_StockChartViewDataSource,ICEQuoteDelegate,UIGestureRecognizerDelegate,UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
+
 @property (nonatomic, strong) Y_StockChartView *stockChartView;
 @property (nonatomic, strong) Y_KLineGroupModel *groupModel;
 @property (nonatomic, copy) NSMutableDictionary <NSString*, Y_KLineGroupModel*> *modelsDict;
@@ -39,6 +56,17 @@
 @property (nonatomic,copy) NSString *winLimit;//止盈单价变动
 @property (nonatomic, strong) dispatch_source_t timer;
 @property (nonatomic,strong) UIView *tradeView ;
+@property (nonatomic,assign)NSInteger tradeButtonOldFlagChangeFlag;
+
+//线的数据
+@property (nonatomic, strong) NSMutableArray *MinData;
+@property (nonatomic, strong) NSMutableArray *fiveMinsData;
+@property (nonatomic, strong) NSMutableArray *fifteenMinsData;
+@property (nonatomic, strong) NSMutableArray *weekData;
+@property (nonatomic, strong) NSMutableArray *dayData;
+@property (nonatomic, strong) NSMutableArray *monthData;
+
+
 //交易按钮 看涨 清仓 分批清仓 看跌
 @property (strong,nonatomic) UIButton *riseButton;
 @property (strong,nonatomic) UIButton *dropButton;
@@ -48,6 +76,8 @@
 //止盈止损picker
 @property (strong,nonatomic) UIPickerView *lossLimitPicker;
 @property (strong,nonatomic) UIPickerView *winLimitPicker;
+
+
 //总权益
 @property (strong,nonatomic) UILabel *totalEquityLable;
 //保证金
@@ -64,7 +94,11 @@
 @property (assign,nonatomic) NSInteger OrderCount;
 //持仓数量
 @property (assign,nonatomic)  NSInteger buyCountValue;
+//持仓手数的 array
 @property (nonatomic, strong) NSMutableArray *buyCountArray;
+//交易记录 (手数 均价) 记录每笔交易的手数和均价
+@property (nonatomic, strong) NSMutableArray *tradeRecordArray;
+
 @property (nonatomic, strong) NSTimer *refreshTimer;
 
 //持仓方向
@@ -92,7 +126,7 @@
 
 @property (strong,nonatomic) UIScrollView *scrollView;
 
-
+@property (nonatomic, assign) NSInteger tradeKind;
 
 
 
@@ -137,8 +171,8 @@
 {
     
     [super viewWillAppear:animated];
-    NSLog(@"will appear  出现啦");
     [self subscibe];
+  
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];//设置返回字体颜色
     self.navigationController.navigationBar.barTintColor = DropColor;//导航栏背景色
     self.navigationController.navigationBar.translucent =YES;
@@ -161,6 +195,19 @@
 //    _tradeView = [[UIView alloc]init];
 //    _tradeView.backgroundColor = [UIColor backgroundColor];
 //    [self.view addSubview:_tradeView];
+    
+    _buyCountArray = [NSMutableArray array];
+    _tradeRecordArray = [NSMutableArray array];
+    
+    _MinData = [NSMutableArray array];
+    _fiveMinsData = [NSMutableArray array];
+    _fifteenMinsData = [NSMutableArray array];
+    _monthData = [NSMutableArray array];
+    _weekData = [NSMutableArray array];
+    _dayData = [NSMutableArray array];
+    
+    
+    
     self.navigationItem.title = self.sCode;
     self.view.backgroundColor = [UIColor backgroundColor];
     [self addScrollView];
@@ -168,44 +215,182 @@
     self.currentIndex = -1;
     [self addBottomBtnView];
     [self itemModels];//加载数据
-    _buyCountArray = [NSMutableArray array];
+  
+    
+    
+    
     //[self subscibe];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];//键盘将要隐藏通知
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];//键盘将要显示
+    //交易成功通知
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(tradeResult:) name:@"tradeNotify" object:nil];
+    //行情推送通知
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(quoteData:) name:@"quoteNotity" object:nil];
 }
+#pragma mark  交易返回
 //交易成功返回消息
 - (void)tradeResult:(NSNotification*)notify{
     
-    NSLog(@"交易结果========%@   type = %@",notify.userInfo[@"message"],notify.userInfo[@"type"]);
+    NSLog(@"交易结果========%@",notify.userInfo[@"message"]);
     UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(0, 150, 650, 30)];
-    
-    if([notify.userInfo[@"type"] isEqualToString:@"2"]){
+    //NSLog(@"message array =  %@",[notify.userInfo[@"message"] componentsSeparatedByString:@" "]);
+    NSArray *messageArray = [[NSArray alloc]initWithArray:[notify.userInfo[@"message"] componentsSeparatedByString:@" "]];
+    //交易成功
+    if([messageArray[2] isEqualToString:@"成交完毕"]){
+        NSLog(@"交易类型 = ==== %ld",(long)_tradeKind);
+        switch (_tradeKind) {
+            case TradeKindeBuyIn:
+                //下单成功
+                _holdDirectLable.text = @"多";     //看涨按钮按下 持仓就为多
+                [_holdDirectLable setTextColor:RoseColor];
+                
+                [_riseButton setTitle:@"追单" forState:UIControlStateNormal];
+                [_dropButton setTitle:@"反向开仓" forState:UIControlStateNormal];
+                //NSLog(@"看涨下单:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
+                [_buyCountArray addObject:@([_buyCount integerValue])];
+                _buyCountValue += [_buyCount integerValue];//手数
+                _OrderCount += 1;//交易次数
+                break;
+            case TradeKindRollBackRise:
+                [_tradeRecordArray removeAllObjects];
+                _holdDirectLable.text = @"多";     //看涨按钮按下 持仓就为多
+                [_holdDirectLable setTextColor:RoseColor];
+                //反向开仓 重新计数 清空现在的数据
+                _buyCountValue = 0;
+                _OrderCount = 0;
+                [_buyCountArray removeAllObjects];//清空 array
+                [_riseButton setTitle:@"追单" forState:UIControlStateNormal];
+                [_dropButton setTitle:@"反向开仓" forState:UIControlStateNormal];
+                //NSLog(@"看涨反向开仓:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
+                [_buyCountArray addObject:@([_buyCount integerValue])];
+                _buyCountValue += [_buyCount integerValue];
+                _OrderCount += 1;
+                break;
+            case TradeKindChasingRise:
+                _holdDirectLable.text = @"多";     //看涨按钮按下 持仓就为多
+                [_holdDirectLable setTextColor:RoseColor];
+                [_buyCountArray addObject:@([_buyCount integerValue])];
+                _buyCountValue += [_buyCount integerValue];
+                _OrderCount += 1;
+                break;
+            case TradeKindeSellOut:
+                _holdDirectLable.text = @"空";//看跌按钮按下 持仓就为多
+                [_holdDirectLable setTextColor:DropColor];
+                [_dropButton setTitle:@"追单" forState:UIControlStateNormal];
+                [_riseButton setTitle:@"反向开仓" forState:UIControlStateNormal];
+                // NSLog(@"看跌下单:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
+                _buyCountValue += [_buyCount integerValue];
+                [_buyCountArray addObject:@([_buyCount integerValue])];
+                _OrderCount += 1;
+                break;
+            case TradeKindRollBackDown:
+                [_tradeRecordArray removeAllObjects];
+                _holdDirectLable.text = @"空";//看跌按钮按下 持仓就为多
+                [_holdDirectLable setTextColor:DropColor];
+                //反向开仓 重新计数 清空现在的数据
+                _buyCountValue = 0;
+                _OrderCount = 0;
+                [_buyCountArray removeAllObjects];
+                [_dropButton setTitle:@"追单" forState:UIControlStateNormal];
+                [_riseButton setTitle:@"反向开仓" forState:UIControlStateNormal];
+                //NSLog(@"看跌反向开仓:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
+                [_buyCountArray addObject:@([_buyCount integerValue])];
+                _buyCountValue += [_buyCount integerValue];
+                _OrderCount += 1;
+                break;
+            case TradeKindChasingDown:
+                _holdDirectLable.text = @"空";//看跌按钮按下 持仓就为多
+                [_holdDirectLable setTextColor:DropColor];
+                [_buyCountArray addObject:@([_buyCount integerValue])];
+                _buyCountValue += [_buyCount integerValue];
+                _OrderCount += 1;
+                break;
+            case TradeKindClearAll:
+                //清仓成功 在返回消息处更改
+                _OrderCount     = 0;
+                _buyCountValue  = 0;
+                [_buyCountArray removeAllObjects];
+                _holdDirectLable.text = @"--";
+                [_holdDirectLable setTextColor:[UIColor yellowColor]];
+                [_dropButton setTitle:@"看跌" forState:UIControlStateNormal];
+                [_riseButton setTitle:@"看涨" forState:UIControlStateNormal];
+                break;
+            case TradeKindClearFenPi:
+                if(_OrderCount>0){
+                    _buyCountValue -= [[_buyCountArray lastObject] integerValue];
+                    [_buyCountArray removeLastObject];
+                    _OrderCount -= 1;
+                    if(_OrderCount == 0){
+                        _holdDirectLable.text = @"--";
+                        [_dropButton setTitle:@"看跌" forState:UIControlStateNormal];
+                        [_riseButton setTitle:@"看涨" forState:UIControlStateNormal];
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+        _holdCountLable.text = [NSString stringWithFormat:@"%ld%@",(long)_buyCountValue,@"手"];
         
-        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);  // 震动
-        AudioServicesPlaySystemSound(1007);
-        lable.text = notify.userInfo[@"message"];
-        lable.textColor = [UIColor redColor];
-        lable.font = [UIFont systemFontOfSize:15];
-        lable.textAlignment = NSTextAlignmentLeft;
-        lable.backgroundColor = [UIColor clearColor];
-        [_stockChartView addSubview:lable];
-        [UIView animateWithDuration:10 animations:^{
-            [lable setFrame:CGRectMake(lable.frame.origin.x - 650, 150, 650, 30)];
-        }];
+        
+        if([messageArray[1] containsString:@"开仓"]){
+            NSLog(@"求均价==================");
+            //每笔交易的手数和价格
+            
+            NSString *avergePrice = [messageArray[3] componentsSeparatedByString:@"="][1];
+            NSArray *objectArr = [NSArray arrayWithObjects:_buyCount,avergePrice,nil ];
+            NSArray *keytArr = [NSArray arrayWithObjects:@"count",@"avgPrice",nil ];
+            NSDictionary *eachTradeInfo = [[NSDictionary alloc]initWithObjects:objectArr forKeys:keytArr];
+//            [eachTradeInfo setValue:_buyCount  forKey:@"count"];
+//            [eachTradeInfo setValue:avergePrice forKey:@"avgPrice"];
+            
+            
+            
+            NSLog(@"eachtradeInfo == %@",eachTradeInfo);
+            
+            
+            
+            [_tradeRecordArray addObject:eachTradeInfo];
+
+            __block NSInteger count;
+            __block float allHold;
+            [_tradeRecordArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                count += [obj[@"count"] integerValue];
+                allHold += [obj[@"count"] integerValue] * [obj[@"avgPrice"] floatValue];
+            }];
+            NSString *avgPrice = [NSString stringWithFormat:@"%.1f",allHold/count];
+            NSLog(@"均价 === %@", avgPrice);
+            _holdAverageLable.text = avgPrice; //均价
+        }
     }
+
+
+    
+    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);  // 震动
+    AudioServicesPlaySystemSound(1007);//声音提示
+    lable.text = notify.userInfo[@"message"];
+    lable.textColor = [UIColor redColor];
+    lable.font = [UIFont systemFontOfSize:15];
+    lable.textAlignment = NSTextAlignmentLeft;
+    lable.backgroundColor = [UIColor clearColor];
+    [_stockChartView addSubview:lable];
+    [UIView animateWithDuration:10 animations:^{
+        [lable setFrame:CGRectMake(lable.frame.origin.x - 650, 150, 650, 30)];
+    }];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSLog(@"lable disappear");
         [lable removeFromSuperview];
     });
 }
+
+
+
 //行情通知
 - (void)quoteData:(NSNotification*)notif{
     
     
     NSArray *arry = [NSArray arrayWithArray:notif.userInfo[@"message"]];
-    NSLog(@"交易结果========%@   type = %@",notif.userInfo[@"message"],notif.userInfo[@"type"]);
+    //NSLog(@"行情========%@   type = %@",notif.userInfo[@"message"],notif.userInfo[@"type"]);
     
         
     //价格变化
@@ -216,7 +401,7 @@
     
     //价格变化百分比
     float chagepercentage = 100*priceChange/[arry[5] floatValue];
-    NSLog(@"chagepercentage ===  %f",chagepercentage);
+    //NSLog(@"chagepercentage ===  %f",chagepercentage);
  
     
     if(priceChange<0){
@@ -244,8 +429,25 @@
     
     _stockChartView.OpenInterest.text = arry[13];
     NSInteger InterestAdd = [arry[13] integerValue] - [arry[7] integerValue];
-    _stockChartView.dayGrowHold.text = [NSString stringWithFormat:@"%ld",InterestAdd];
-    
+    _stockChartView.dayGrowHold.text = [NSString stringWithFormat:@"%ld",(long)InterestAdd];
+    //有持仓
+    if(_buyCountValue>0){
+        //持仓盈亏
+        __block float win;
+        [_tradeRecordArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            win += [obj[@"count"] integerValue] * ([arry[4] floatValue]- [obj[@"avgPrice"] floatValue]);
+            
+        }];
+        if (win<0) {
+            _holdWinLossLable.text = [NSString stringWithFormat:@"%@%.1f",@"-",win];
+            [_holdWinLossLable setTextColor:DropColor];
+        }
+        else{
+            _holdWinLossLable.text = [NSString stringWithFormat:@"%.1f",win];
+            [_holdWinLossLable setTextColor:RoseColor];
+        }
+    }
+ 
 }
 #pragma --mark 添加views
 // scrollview
@@ -586,6 +788,8 @@
 }
 - (void)tradeViewDown{
     if(_buttomBtnView.hidden == YES && _tradeView.hidden == NO){
+        NSLog(@"tradeView t隐藏了");
+        _tradeButtonOldFlagChangeFlag = 1;
         _tradeView.hidden = YES;
         _buttomBtnView.hidden = NO;
     }
@@ -624,13 +828,13 @@
 
 //下单键按下
 -(void)tradeBtnPressed:(UIButton*)sender{
+    
+    
     ICEQuickOrder *quickOrder = [ICEQuickOrder shareInstance];
     
 //    _tradeView.hidden = YES;
 //    _buttomBtnView.hidden = NO;
 //
-    
-    
     if (sender.tag == 500 || sender.tag  == 501) {
    
 //        if([_winLimitedTextField.text  isEqual: @""]||[_loseLimtedTextField.text  isEqual: @""]){
@@ -641,6 +845,7 @@
 ////            [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
 ////            [self presentViewController:alert animated:YES completion:nil];
 //        }
+        //委托手数判断
         if([_buyCount integerValue] == 0){
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:@"委托手数不能为零" preferredStyle:UIAlertControllerStyleAlert];
             [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
@@ -649,16 +854,16 @@
         //看涨
         else if(sender.tag == 500){
            //看涨
-            _holdDirectLable.text = @"多";//看涨按钮按下 持仓就为多
-            [_holdDirectLable setTextColor:RoseColor];
             if([sender.titleLabel.text isEqualToString:@"看涨"]){
-                 int ret = 0;
+                int ret = 0;
                 NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
                 NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
                 NSString *strCmd = [NSString stringWithFormat:@"%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@",quickOrder.strFunAcc,@"=",self.sCode,@"=",quickOrder.strPassword,@"=",_buyCount,@"=",@"1",@"=",_loseLimtedTextField.text,@"=",_winLimitedTextField.text,@"=",@"1",@"=",@"0",@"=",@"0"];
                 @try{
+                    //看涨
+                    self.tradeKind = TradeKindeBuyIn;
                     ret = [quickOrder.quickOrder SendOrder:@"InsertOrder" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
-                    NSLog(@"看涨下单结果 = %@   erro=======%@",strOut,strErroInfo);
+                    
                 }
                 @catch(NSException *s){
                     ret = -1;
@@ -669,49 +874,64 @@
                     [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
                     [self presentViewController:alert animated:YES completion:nil];
                 }
-                else{
-
-                    [_riseButton setTitle:@"追单" forState:UIControlStateNormal];
-                    [_dropButton setTitle:@"反向开仓" forState:UIControlStateNormal];
-                    //NSLog(@"看涨下单:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
-                    [_buyCountArray addObject:@([_buyCount integerValue])];
-                    _buyCountValue += [_buyCount integerValue];
-                    _OrderCount += 1;
-                }
+//                else{
+//                    //下单成功
+////                    _holdDirectLable.text = @"多";     //看涨按钮按下 持仓就为多
+////                    [_holdDirectLable setTextColor:RoseColor];
+////
+////                    [_riseButton setTitle:@"追单" forState:UIControlStateNormal];
+////                    [_dropButton setTitle:@"反向开仓" forState:UIControlStateNormal];
+////                    //NSLog(@"看涨下单:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
+////                    [_buyCountArray addObject:@([_buyCount integerValue])];
+////                    _buyCountValue += [_buyCount integerValue];//手数
+////                    _OrderCount += 1;//交易次数
+//                }
             }
             //反向开仓
             else if ([sender.titleLabel.text isEqualToString:@"反向开仓"]){
                 int ret = 0;
                 NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
                 NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+                //NSString *strCmd = [NSString stringWithFormat:@"%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@",quickOrder.strFunAcc,@"=",self.sCode,@"=",quickOrder.strPassword,@"=",@"-1",@"=",@"1",@"=",_loseLimtedTextField.text,@"=",_winLimitedTextField.text,@"=",@"99",@"=",@"0",@"=",@"0"];
+               
                 @try{
+                    _tradeKind = TradeKindRollBackRise;//看涨反向开仓
+                    
+                   // ret = [quickOrder.quickOrder SendOrder:@"InsertOrder" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
                     NSLog(@"_buycountvalue = %ld",_buyCountValue);
-                    ret = [quickOrder.quickOrder SendOrder:@"RollBackOrder" strCmd:[NSString stringWithFormat:@"%@%@%@%@%ld",quickOrder.strFunAcc,@"=",self.sCode,@"=",_buyCountValue] strOut:&strOut strErrInfo:&strErroInfo];
-                    NSLog(@"strcmd == %@",[NSString stringWithFormat:@"%@%@%@%@%ld",quickOrder.strFunAcc,@"=",self.sCode,@"=",_buyCountValue]);
-                    NSLog(@"看涨反向开仓结果======%@  erro ==== %@",strOut,strErroInfo);
+                    //ret = [quickOrder.quickOrder SendOrder:@"RollBackOrder" strCmd:[NSString stringWithFormat:@"%@%@%@%@%@",quickOrder.strFunAcc,@"=",self.sCode,@"=",@"-1"] strOut:&strOut strErrInfo:&strErroInfo];
+                    
+                     ret = [quickOrder.quickOrder SendOrder:@"RollBackOrder" strCmd:[NSString stringWithFormat:@"%@%@%@%@%ld",quickOrder.strFunAcc,@"=",self.sCode,@"=",_buyCountValue] strOut:&strOut strErrInfo:&strErroInfo];
+                    
+                    NSLog(@"看涨反向开仓 strcmd == %@ strout = %@ erro = %@",[NSString stringWithFormat:@"%@%@%@%@%ld",quickOrder.strFunAcc,@"=",self.sCode,@"=",(long)_buyCountValue],strOut,strErroInfo);
+                    
                  
                 }
                 @catch(NSException *s){
                     ret = -1;
                     [strErroInfo appendString: @"下单失败,请检查网络连接"];
                 }
+                
+                
                 if(ret < 0 ){
                     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:strErroInfo preferredStyle:UIAlertControllerStyleAlert];
                     [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
                     [self presentViewController:alert animated:YES completion:nil];
                 }
-                else{
-                    //反向开仓 重新计数 清空现在的数据
-                    _buyCountValue = 0;
-                    _OrderCount = 0;
-                    [_buyCountArray removeAllObjects];
-                    [_riseButton setTitle:@"追单" forState:UIControlStateNormal];
-                    [_dropButton setTitle:@"反向开仓" forState:UIControlStateNormal];
-                    //NSLog(@"看涨反向开仓:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
-                    [_buyCountArray addObject:@([_buyCount integerValue])];
-                    _buyCountValue += [_buyCount integerValue];
-                    _OrderCount += 1;
-                }
+//                else{
+////                    _holdDirectLable.text = @"多";     //看涨按钮按下 持仓就为多
+////                    [_holdDirectLable setTextColor:RoseColor];
+////                    //反向开仓 重新计数 清空现在的数据
+////                    _buyCountValue = 0;
+////                    _OrderCount = 0;
+////                    [_buyCountArray removeAllObjects];//清空 array
+////                    [_riseButton setTitle:@"追单" forState:UIControlStateNormal];
+////                    [_dropButton setTitle:@"反向开仓" forState:UIControlStateNormal];
+////                    //NSLog(@"看涨反向开仓:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
+////                    [_buyCountArray addObject:@([_buyCount integerValue])];
+////                    _buyCountValue += [_buyCount integerValue];
+////                    _OrderCount += 1;
+//                }
             }
             //追单
             else{
@@ -721,7 +941,9 @@
                 @try{
                     
                     NSString *strCmd = [NSString stringWithFormat:@"%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@",quickOrder.strFunAcc,@"=",self.sCode,@"=",quickOrder.strPassword,@"=",_buyCount,@"=",@"1",@"=",_loseLimtedTextField.text,@"=",_winLimitedTextField.text,@"=",@"1",@"=",@"0",@"=",@"0"];
+                    
                     ret = [quickOrder.quickOrder SendOrder:@"InsertOrder" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+                    
                     NSLog(@"看涨追单结果=====%@  erro ==== %@",strOut,strErroInfo);
                 }
                 @catch(NSException *s){
@@ -733,12 +955,14 @@
                     [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
                     [self presentViewController:alert animated:YES completion:nil];
                 }
-                else{
-                    [_buyCountArray addObject:@([_buyCount integerValue])];
-                    _buyCountValue += [_buyCount integerValue];
-                    _OrderCount += 1;
-                    //NSLog(@"看涨追单:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
-                }
+//                else{
+////                    _holdDirectLable.text = @"多";     //看涨按钮按下 持仓就为多
+////                    [_holdDirectLable setTextColor:RoseColor];
+////                    [_buyCountArray addObject:@([_buyCount integerValue])];
+////                    _buyCountValue += [_buyCount integerValue];
+////                    _OrderCount += 1;
+//                    //NSLog(@"看涨追单:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
+//                }
             }
         }
         
@@ -746,15 +970,17 @@
         //看跌
         else{
             //看跌开仓
-            _holdDirectLable.text = @"空";//看跌按钮按下 持仓就为多
-            [_holdDirectLable setTextColor:DropColor];
+            
             if([sender.titleLabel.text isEqualToString:@"看跌"]){
                 int ret = 0;
                 NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
                 NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
                 NSString *strCmd = [NSString stringWithFormat:@"%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@",quickOrder.strFunAcc,@"=",self.sCode,@"=",quickOrder.strPassword,@"=",_buyCount,@"=",@"2",@"=",_loseLimtedTextField.text,@"=",_winLimitedTextField.text,@"=",@"1",@"=",@"0",@"=",@"0"];
+                
                 @try{
+                    _tradeKind = TradeKindeSellOut;
                     ret = [quickOrder.quickOrder SendOrder:@"InsertOrder" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
+                    NSLog(@"看跌开仓 strcmd == %@",[NSString stringWithFormat:@"%@%@%@%@%ld",quickOrder.strFunAcc,@"=",self.sCode,@"=",_buyCountValue]);
                     NSLog(@"看跌开仓========%@ erro===========%@",strOut,strErroInfo);
                 }
                 @catch(NSException *s){
@@ -766,25 +992,33 @@
                     [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
                     [self presentViewController:alert animated:YES completion:nil];
                 }
-                else{
-     
-                    [_dropButton setTitle:@"追单" forState:UIControlStateNormal];
-                    [_riseButton setTitle:@"反向开仓" forState:UIControlStateNormal];
-                   // NSLog(@"看跌下单:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
-                    _buyCountValue += [_buyCount integerValue];
-                    [_buyCountArray addObject:@([_buyCount integerValue])];
-                    _OrderCount += 1;
-                }
+//                else{
+//                    //卖出交易成功
+//                    _holdDirectLable.text = @"空";//看跌按钮按下 持仓就为多
+//                    [_holdDirectLable setTextColor:DropColor];
+//                    [_dropButton setTitle:@"追单" forState:UIControlStateNormal];
+//                    [_riseButton setTitle:@"反向开仓" forState:UIControlStateNormal];
+//                   // NSLog(@"看跌下单:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
+//                    _buyCountValue += [_buyCount integerValue];
+//                    [_buyCountArray addObject:@([_buyCount integerValue])];
+//                    _OrderCount += 1;
+//                }
             }
             //反向开仓
             else if ([sender.titleLabel.text isEqualToString:@"反向开仓"]){
                 int ret = 0;
                 NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
                 NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
+         
                 @try{
+                    _tradeKind = TradeKindRollBackDown;//看跌反向开仓
+                    //ret = [quickOrder.quickOrder SendOrder:@"InsertOrder" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
                     ret = [quickOrder.quickOrder SendOrder:@"RollBackOrder" strCmd:[NSString stringWithFormat:@"%@%@%@%@%ld",quickOrder.strFunAcc,@"=",self.sCode,@"=",_buyCountValue] strOut:&strOut strErrInfo:&strErroInfo];
+                  // [quickOrder sendOrder:@"RollBackOrder" strCmd:[NSString stringWithFormat:@"%@%@%@%@%@",quickOrder.strFunAcc,@"=",self.sCode,@"=",@"-1"]];
+
+                    NSLog(@"看跌反向开仓 strcmd == %@",[NSString stringWithFormat:@"%@%@%@%@%ld",quickOrder.strFunAcc,@"=",self.sCode,@"=",_buyCountValue]);
                     NSLog(@"看跌反向开仓 ===== %@,  erro========%@",strOut,strErroInfo);
-                   // [quickOrder sendOrder:@"RollBackOrder" strCmd:[NSString stringWithFormat:@"%@%@%@%@%@",quickOrder.strFunAcc,@"=",self.sCode,@"=",@"-1"]];
+
                 }
                 @catch(NSException *s){
                     ret = -1;
@@ -795,18 +1029,20 @@
                     [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
                     [self presentViewController:alert animated:YES completion:nil];
                 }
-                else{
-                    //反向开仓 重新计数 清空现在的数据
-                    _buyCountValue = 0;
-                    _OrderCount = 0;
-                    [_buyCountArray removeAllObjects];
-                    [_dropButton setTitle:@"追单" forState:UIControlStateNormal];
-                    [_riseButton setTitle:@"反向开仓" forState:UIControlStateNormal];
-                    //NSLog(@"看跌反向开仓:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
-                    [_buyCountArray addObject:@([_buyCount integerValue])];
-                    _buyCountValue += [_buyCount integerValue];
-                    _OrderCount += 1;
-                }
+//                else{
+//                    _holdDirectLable.text = @"空";//看跌按钮按下 持仓就为多
+//                    [_holdDirectLable setTextColor:DropColor];
+//                    //反向开仓 重新计数 清空现在的数据
+//                    _buyCountValue = 0;
+//                    _OrderCount = 0;
+//                    [_buyCountArray removeAllObjects];
+//                    [_dropButton setTitle:@"追单" forState:UIControlStateNormal];
+//                    [_riseButton setTitle:@"反向开仓" forState:UIControlStateNormal];
+//                    //NSLog(@"看跌反向开仓:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
+//                    [_buyCountArray addObject:@([_buyCount integerValue])];
+//                    _buyCountValue += [_buyCount integerValue];
+//                    _OrderCount += 1;
+//                }
             }
             //追单
             else{
@@ -814,7 +1050,7 @@
                 NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
                 int ret = 0;
                 @try{
-                    
+                    _tradeKind = TradeKindChasingDown;//看跌追单
                     NSString *strCmd = [NSString stringWithFormat:@"%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@",quickOrder.strFunAcc,@"=",self.sCode,@"=",quickOrder.strPassword,@"=",_buyCount,@"=",@"2",@"=",_loseLimtedTextField.text,@"=",_winLimitedTextField.text,@"=",@"1",@"=",@"0",@"=",@"0"];
                     ret = [quickOrder.quickOrder SendOrder:@"InsertOrder" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
                      NSLog(@"看跌追单结果=====%@  erro ==== %@",strOut,strErroInfo);
@@ -828,12 +1064,14 @@
                     [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
                     [self presentViewController:alert animated:YES completion:nil];
                 }
-                else{
-                    [_buyCountArray addObject:@([_buyCount integerValue])];
-                    _buyCountValue += [_buyCount integerValue];
-                    _OrderCount += 1;
-                    //NSLog(@"看跌追单:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
-                }
+//                else{
+//                    _holdDirectLable.text = @"空";//看跌按钮按下 持仓就为多
+//                    [_holdDirectLable setTextColor:DropColor];
+//                    [_buyCountArray addObject:@([_buyCount integerValue])];
+//                    _buyCountValue += [_buyCount integerValue];
+//                    _OrderCount += 1;
+//                    //NSLog(@"看跌追单:%@%@%@",_buyCount, _winLimitedTextField.text,_loseLimtedTextField.text);
+//                }
             }
         }
     }
@@ -841,11 +1079,13 @@
     else{
         //全清
         if(sender.tag == 502){
+            //全清
+           
             NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
             NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
             int ret = 0;
             @try{
-                
+                 _tradeKind = TradeKindClearAll;
                 NSLog(@"qingcang");
                 NSString *strCmd =[ NSString stringWithFormat:@"%@%@%@%@%@",quickOrder.strFunAcc,@"=",self.sCode,@"=",@"0" ];
                 ret = [quickOrder.quickOrder ClearOrder:@"" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
@@ -859,26 +1099,30 @@
                 [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
                 [self presentViewController:alert animated:YES completion:nil];
             }
-            else{
-                _OrderCount = 0;
-                _buyCountValue  = 0;
-                [_buyCountArray removeAllObjects];
-                _holdDirectLable.text = @"--";
-                [_holdDirectLable setTextColor:[UIColor yellowColor]];
-                [_dropButton setTitle:@"看跌" forState:UIControlStateNormal];
-                [_riseButton setTitle:@"看涨" forState:UIControlStateNormal];
-            }
+            //清仓成功
+//            else{
+////                //清仓成功 在返回消息处更改
+////                _OrderCount = 0;
+////                _buyCountValue  = 0;
+////                [_buyCountArray removeAllObjects];
+////                _holdDirectLable.text = @"--";
+////                [_holdDirectLable setTextColor:[UIColor yellowColor]];
+////                [_dropButton setTitle:@"看跌" forState:UIControlStateNormal];
+////                [_riseButton setTitle:@"看涨" forState:UIControlStateNormal];
+//            }
   
         }
         //分批清仓
         else{
-
+            //分批清仓
+           
+            
             NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
             NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
             int ret = 0;
             @try{
-                
-                NSLog(@"qingcang");
+                 _tradeKind = TradeKindClearFenPi;
+                NSLog(@"分批清仓");
                 NSString *strCmd =[ NSString stringWithFormat:@"%@%@%@%@%@",quickOrder.strFunAcc,@"=",self.sCode,@"=",@"1" ];//分批清仓 怎么操作的
                 ret = [quickOrder.quickOrder ClearOrder:@"" strCmd:strCmd strOut:&strOut strErrInfo:&strErroInfo];
             }
@@ -891,22 +1135,24 @@
                 [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
                 [self presentViewController:alert animated:YES completion:nil];
             }
-            else{
-                NSLog(@"分批清仓");
-                if(_OrderCount>0){
-                    _buyCountValue -= [[_buyCountArray lastObject] integerValue];
-                    [_buyCountArray removeLastObject];
-                    _OrderCount -= 1;
-                    if(_OrderCount == 0){
-                        _holdDirectLable.text = @"--";
-                        [_dropButton setTitle:@"看跌" forState:UIControlStateNormal];
-                        [_riseButton setTitle:@"看涨" forState:UIControlStateNormal];
-                    }
-                }
-            }
+            //清仓成功
+//            else{
+//
+//               // NSLog(@"分批清仓成功");
+////                if(_OrderCount>0){
+////                    _buyCountValue -= [[_buyCountArray lastObject] integerValue];
+////                    [_buyCountArray removeLastObject];
+////                    _OrderCount -= 1;
+////                    if(_OrderCount == 0){
+////                        _holdDirectLable.text = @"--";
+////                        [_dropButton setTitle:@"看跌" forState:UIControlStateNormal];
+////                        [_riseButton setTitle:@"看涨" forState:UIControlStateNormal];
+////                    }
+////                }
+//            }
         }
     }
-    _holdCountLable.text = [NSString stringWithFormat:@"%ld%@",(long)_buyCountValue,@"手"];
+   // _holdCountLable.text = [NSString stringWithFormat:@"%ld%@",(long)_buyCountValue,@"手"];
 }
 
 
@@ -914,23 +1160,29 @@
 - (IBAction)setCountOfChips:(UIButton *)sender{
     
     static NSInteger oldTag;
-    static UIButton *oldBtn ;
+    static UIButton *oldBtn;
+    // +键按下
     if([sender.titleLabel.text integerValue] == 0){
         [self editChip:sender];
-    }
-    else{
-        [sender  setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        if(sender.tag != oldTag){
-            oldTag = sender.tag;
-            _buyCount = sender.titleLabel.text;
-            oldBtn.enabled = YES;
-            sender.enabled = NO;
-            [oldBtn  setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            oldBtn = sender;
-            NSLog(@"下单手数 = ===== %@",_buyCount);
-        }
+        [sender setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        _buyCount = sender.titleLabel.text;
+        [oldBtn  setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        oldBtn = sender;
+        //[sender setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     }
     
+    else{
+        //选中颜色变黑
+//        NSLog(@"按键按下=============");
+//        NSLog(@"oldbtn.tag = %d  send.tag = %d",oldTag,sender.tag);
+        _buyCount = sender.titleLabel.text;
+        [sender  setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [oldBtn  setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        //手数更换
+         oldTag = sender.tag;
+         oldBtn = sender;
+    }
+    NSLog(@"下单手数 = ===== %@",_buyCount);
 }
 
 
@@ -961,6 +1213,7 @@
             AppDelegate * app = [UIApplication sharedApplication].delegate;
             app.iceQuote.delegate = self; //设置代理在stockChartView中实现
             type = @"1min";
+            
         }
             break;
         case 1:
@@ -968,11 +1221,6 @@
             type = @"1min";
         }
             break;
-//        case 2:
-//        {
-//            type = @"1min";
-//        }
-//            break;
         case 2:
         {
             type = @"5min";
@@ -980,12 +1228,12 @@
             break;
         case 3:
         {
-            type = @"30min";
+            type = @"15min";
         }
             break;
         case 4:
         {
-            type = @"1hour";
+            type = @"1week";
         }
             break;
         case 5:
@@ -995,7 +1243,7 @@
             break;
         case 6:
         {
-            type = @"1week";
+            type = @"1month";
         }
             break;
             
@@ -1004,7 +1252,6 @@
     }
     self.currentIndex = index;
     self.type = type;
-    
     //定时刷新数据
     if(index == 0){
         if(!_refreshTimer){
@@ -1028,8 +1275,6 @@
     } else {
         return [self.modelsDict objectForKey:type].models;
     }
-    
-
     return nil;
 }
 
@@ -1039,17 +1284,14 @@
 
 - (void)subscibe{
     ICEQuote* iceQuote = [ICEQuote shareInstance];
-    //ICEQuickOrder *quickOrder = [ICEQuickOrder shareInstance];
     NSString* cmdType = @"CTP,";
-    //NSString *strAcc = [NSString stringWithFormat:@"%@%@%@",quickOrder.strFunAcc,@"=",quickOrder.strUserId ];
     NSString *strAcc = [NSString stringWithFormat:@"%@%@%@",iceQuote.strFunAcc,@"=",iceQuote.userID];
     cmdType =  [cmdType stringByAppendingString:strAcc];
-    NSLog(@"cmdtype = %@   scode = %@",cmdType,self.sCode);
     [iceQuote SubscribeQuote:cmdType strCmd:self.sCode];
 }
 
 - (void)unSubscibe{
-    NSLog(@"unsubscibe ////////");
+   
     ICEQuote *iceQuote = [ICEQuote shareInstance];
     NSString* cmdType = @"CTP,";
     //NSString *strAcc = [NSString stringWithFormat:@"%@%@%@",quickOrder.strFunAcc,@"=",quickOrder.strUserId ];
@@ -1058,94 +1300,286 @@
     [iceQuote UnSubscribeQuote:cmdType strCmd:self.sCode];
 }
 
-- (void)reloadData
-{
-    NSLog(@"reload data");
-    NSMutableArray *dataArray = [NSMutableArray array];
-    NSMutableArray *data = [NSMutableArray array];
-    NSEnumerator *enumerator = [[NSEnumerator alloc]init];
+
+
+- (NSMutableArray *)downLoadData{
+    
     ICEQuote* iceQuote = [ICEQuote shareInstance];
     NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,self.sCode,@"=",iceQuote.userID];
-    if([self.type isEqualToString: @"1min"]){
+    NSMutableArray *arrayTemp = [NSMutableArray array];
+    if([self.type containsString:@"min"]){
         @try{
             NSLog(@"分钟线 ++++++++++++");
-           // NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,self.sCode,@"=",iceQuote.userID];
-            NSMutableArray *arrayTemp = [iceQuote getKlineData:strCmd type:@"minute"];
-            //NSMutableArray *arrayTemp = [iceQuote getKlineData:self.sCode type:@"minute"];
+            arrayTemp  = [iceQuote getKlineData:strCmd type:@"minute"];
             if(arrayTemp.count == 0){
                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:@"无数据" preferredStyle:UIAlertControllerStyleAlert];
                 [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
                 [self presentViewController:alert animated:YES completion:nil];
-            }
-            else{
-                enumerator =[arrayTemp objectEnumerator];
             }
         }
         @catch(ICEException *s){
             NSLog(@"get min erro is %@",s);
         }
     }
-   if([self.type isEqualToString: @"1day"]){
-       @try{
-           NSLog(@"日线 ++++++++++++");
-           NSMutableArray *arrayTemp = [iceQuote getKlineData:strCmd type:@"day"];
-           if(arrayTemp.count == 0){
-               UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:@"无数据" preferredStyle:UIAlertControllerStyleAlert];
-               [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
-               [self presentViewController:alert animated:YES completion:nil];
-           }
-           else{
-                enumerator =[arrayTemp objectEnumerator];
-           }
-       }
-       @catch(ICEException *s){
-           NSLog(@"getday kline erro is %@",s);
-       }
+    //日K线数据
+    else{
+        @try{
+            NSLog(@"日线 ++++++++++++");
+            NSMutableArray *array = [iceQuote getKlineData:strCmd type:@"day"];
+            [arrayTemp addObjectsFromArray:[[array reverseObjectEnumerator] allObjects]];
+            
+            if(arrayTemp.count == 0){
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:@"无数据" preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
+        }
+        @catch(ICEException *s){
+            NSLog(@"getday kline erro is %@",s);
+        }
     }
-    //数据处理应该在model中 移动处理
-    id obj = nil;
-    while (obj = [enumerator nextObject]){
+    return arrayTemp;
+}
+
+- (NSMutableArray *)dataProcess{
+    
+   __block NSMutableArray *dataArray = [NSMutableArray array];
+   __block NSString *time = [[NSString alloc]init];
+    //NSEnumerator *enumerator = [[NSEnumerator alloc]init];
+    __block float highPrice ;
+    __block float lowPrice ;
+    __block float closePrice ;
+    __block float openPrice ;
+    __block float colum ;
+  
+    [[self downLoadData] enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         NSString *string = obj;
         NSArray* array1 = [string componentsSeparatedByString:@","];
-        NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
-        if([self.type isEqualToString: @"1min"]){
-            NSMutableString *date = [[NSMutableString alloc]initWithString:array1[0]];
-            [date appendString:array1[1]];
-            NSMutableString *timeString = [[NSMutableString alloc]initWithString:array1[1]];
-            [timeString deleteCharactersInRange:NSMakeRange(4,2)];
-            [timeString insertString:@":" atIndex:2];
-            array[0] = timeString;
-            array[1] = @([array1[2] floatValue]);
-            array[2] = @([array1[4] floatValue]);
-            array[3] = @([array1[5] floatValue]);
-            array[4] = @([array1[4] floatValue]);
-            array[5] = @([array1[7] floatValue]);
-            [dataArray addObject:array];
+        NSInteger min = 0;
+        if([self.type containsString:@"min"]){
+
+            if([self.type isEqualToString:@"1min"]){
+                NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];//包括时间 开盘价  最高价 最低价 收盘价 持仓数
+                NSMutableString *date = [[NSMutableString alloc]initWithString:array1[0]];
+                [date appendString:array1[1]];
+                NSMutableString *timeString = [[NSMutableString alloc]initWithString:array1[1]];
+                [timeString deleteCharactersInRange:NSMakeRange(4,2)];
+                [timeString insertString:@":" atIndex:2];
+                
+                array[0] = timeString;
+                array[1] = @([array1[2] floatValue]);//open
+                array[2] = @([array1[4] floatValue]);//hig
+                array[3] = @([array1[5] floatValue]);//low
+                array[4] = @([array1[3] floatValue]);//close
+                array[5] = @([array1[7] floatValue]);//colum
+                [dataArray addObject:array];
+                [_MinData addObject:array];
+              
+            }
+            else{
+                if([self.type isEqualToString:@"5min"]){
+                    min = 5;
+                }
+                else if([self.type isEqualToString:@"15min"])
+                {
+                    min = 15;
+                }
+                if((idx+1)%min == 1){
+                    NSMutableString *date = [[NSMutableString alloc]initWithString:array1[0]];
+                    [date appendString:array1[1]];
+                    //NSMutableString *timeString = [[NSMutableString alloc]initWithString:array1[1]];
+                    NSMutableString *timeString = [[NSMutableString alloc]initWithString:array1[1]];
+                    [timeString deleteCharactersInRange:NSMakeRange(4,2)];
+                    [timeString insertString:@":" atIndex:2];
+                    // [timeString1 appendString:timeString];
+                    //_array[0] = timeString;//0分钟 5分钟 10分钟作为时间
+                    time  = timeString;
+                    openPrice =[array1[2] floatValue]; //5分钟的 开盘价是第一天的开盘价
+                    highPrice = [array1[4] floatValue];
+                    lowPrice = [array1[5] floatValue];
+                    colum    = [array1[7] floatValue];
+                }
+                else{
+                    if(highPrice < [array1[4] floatValue]){
+                        highPrice = [array1[4] floatValue];//最高价 为五分钟内最高价
+                    }
+                    if(lowPrice > [array1[5] floatValue]){
+                        lowPrice = [array1[5] floatValue];//最低价为五分钟内最低价
+                    }
+                    colum += [array1[7] floatValue];//成交量是五分钟成交量之和
+                    
+                    if((idx+1)%min == 0){
+                        
+                        NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
+                        closePrice = [array1[3] floatValue];//closePrice 第五分钟的收盘价
+                        array[0] = time;
+                        array[1] = @(openPrice);
+                        array[2] = @(highPrice);
+                        array[3] = @(lowPrice);
+                        array[4] = @(closePrice);
+                        array[5] = @(colum);
+                        
+                        [dataArray addObject:array];
+                        switch (min) {
+                            case 5:
+                                [_fiveMinsData addObject:array];
+                                break;
+                            case 15:
+                                [_fifteenMinsData addObject:array];
+                                break;
+                            default:
+                                break;
+                        }
+                        openPrice = 0;
+                        highPrice = 0;
+                        lowPrice = 0;
+                        closePrice = 0;
+                        colum = 0;
+                    }
+                }
+            }
         }
-        
-        else if ([self.type isEqualToString:@"1day"]){
-            NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
-            [dateString insertString:@"-" atIndex:4];
-            [dateString insertString:@"-" atIndex:7];
-            array[0] = dateString;
-            array[1] = @([array1[1] floatValue]);
-            array[2] = @([array1[3] floatValue]);
-            array[3] = @([array1[4] floatValue]);
-            array[4] = @([array1[2] floatValue]);
-            array[5] = @([array1[6] floatValue]);
-            [data addObject:array];
+        else{
+            //日K线
+            if ([self.type isEqualToString:@"1day"]){
+                NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
+                NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
+                [dateString insertString:@"-" atIndex:4];
+                [dateString insertString:@"-" atIndex:7];
+                array[0] = dateString;
+                array[1] = @([array1[1] floatValue]);//open
+                array[2] = @([array1[3] floatValue]);//high
+                array[3] = @([array1[4] floatValue]);//low
+                array[4] = @([array1[2] floatValue]);//close
+                array[5] = @([array1[6] floatValue]);//colum
+                [dataArray addObject:array];
+                [_dayData addObject:array];
+                }
+            else if([self.type isEqualToString:@"1week"]){
+
+                static NSInteger lastWeek;
+                NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
+                [dateString insertString:@"-" atIndex:4];
+                [dateString insertString:@"-" atIndex:7];
+                // [NSString stringWithString:dateString];
+               // NSString *dayTime = [[NSString alloc]init];
+                NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+                [formatter setDateFormat:@"yy-MM-dd"];
+                NSDate *date = [formatter dateFromString:dateString];
+                //NSLog(@"date = %@",date);
+                NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+                //NSDate *date = [gregorianCalendar dateFromComponents:dateComponents];
+                NSInteger week = [gregorianCalendar component:NSCalendarUnitWeekOfYear fromDate:date];
+
+                if (week != lastWeek){
+                    
+                    lastWeek = week;
+                    //除了第一天
+                    if(idx > 0){
+                        NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
+                        //每周最后一个交易日的时间
+                        array[0] = time;
+                        array[1] = @(openPrice);//每周第一天的开盘价
+                        array[2] = @(highPrice);
+                        array[3] = @(lowPrice);
+                        array[4] = @(closePrice);
+                        array[5] = @(colum);
+                        [dataArray addObject:array];
+                        [_weekData addObject:array];
+                        //highPrice = 0;
+                        colum = 0;
+                    }
+                    //第一次
+                    lowPrice = [array1[4] floatValue];
+                    highPrice = [array1[3] floatValue];
+                    colum  += [array1[6] floatValue];
+                    openPrice = [array1[1] floatValue];
+                }
+                else{
+                    if(highPrice < [array1[3] floatValue]){
+                        highPrice = [array1[3] floatValue];//最高价 为五分钟内最高价
+                    }
+                    //始终为0
+                    if(lowPrice > [array1[4] floatValue]){
+                        lowPrice = [array1[4] floatValue];
+                    }
+                    colum  += [array1[6] floatValue];//成交量
+                }
+                time = dateString;//保留每天的时间 这样在变成下一周后可以取得本周最后一天的日期
+                closePrice = [array1[2] floatValue];//保留每天的时间 这样在变成下一周后可以取得本周最后一天的日期
+            }
+            
+            else{
+                static NSInteger lastMonth;
+                NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
+                [dateString insertString:@"-" atIndex:4];
+                [dateString insertString:@"-" atIndex:7];
+                
+               
+                
+                NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+                [formatter setDateFormat:@"yy-MM-dd"];
+                NSDate *date = [formatter dateFromString:dateString];
+           
+                NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+                ;
+                NSInteger month = [gregorianCalendar component:NSCalendarUnitMonth fromDate:date];
+           
+             
+                
+                
+                if (month != lastMonth){
+                   
+                    lastMonth = month;
+                    
+                    //除了第一tian
+                    if(idx > 0){
+                        NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
+                        //每周最后一个交易日的时间
+                        array[0] = time;
+                        
+                        array[1] = @(openPrice);//每周第一天的开盘价
+                        array[2] = @(highPrice);
+                        array[3] = @(lowPrice);
+                        array[4] = @(closePrice);
+                        array[5] = @(colum);
+                        [dataArray addObject:array];
+                        [_monthData addObject:array];
+                        //highPrice = 0;
+                        colum = 0;
+                    }
+                    lowPrice = [array1[4] floatValue];
+                    colum    += [array1[6] floatValue];
+                    highPrice = [array1[3] floatValue];
+                    openPrice = [array1[1] floatValue];
+                }
+                else{
+                    if(highPrice < [array1[3] floatValue]){
+                        highPrice = [array1[3] floatValue];
+                    }
+                    if(lowPrice > [array1[4] floatValue]){
+                        lowPrice = [array1[4] floatValue];
+                    }
+                    colum    += [array1[6] floatValue];//成交量
+                }
+                //同一周的
+                time = dateString;//保留每天的时间 这样在变成下一yue后可以取得本周最后一天的日期
+                closePrice = [array1[2] floatValue];//保留每天的时间 这样在变成下一yue后可以取得本周最后一天的日期
+            }
         }
-       // NSMutableArray * newMarray = [NSMutableArray array];
-    }
-   if ([self.type isEqualToString:@"1day"]){
-       NSEnumerator * enumerator1 = [data reverseObjectEnumerator];//倒序排列
-       id object;
-       while (object = [enumerator1 nextObject])
-       {
-           [dataArray addObject:object];
-       }
-   }
-    self.groupModel  = [Y_KLineGroupModel objectWithArray:dataArray];
+    }];
+    
+    NSLog(@"dataarray ===== %@",dataArray);
+    return dataArray;
+}
+
+
+
+- (void)reloadData
+{
+    NSLog(@"reload data");
+    //NSLog(@"dataArray ======= %@",dataArray);
+    self.groupModel  = [Y_KLineGroupModel objectWithArray:[self dataProcess]];
     [self.modelsDict setObject:_groupModel forKey:self.type];//model 字典 键值编程 更新M_groupModel
     [self.stockChartView reloadData];
     [self.stockChartView.kLineView reDraw];//重绘kline
@@ -1154,14 +1588,14 @@
 #pragma --mark Getter方法 of Y_StockChartView
 - (void)itemModels{
     _stockChartView.itemModels = @[
-                                   //[Y_StockChartViewItemModel itemModelWithTitle:@"指标" type:Y_StockChartcenterViewTypeOther],
+                                   
                                    [Y_StockChartViewItemModel itemModelWithTitle:@"分时" type:Y_StockChartcenterViewTypeTimeLine],
                                    [Y_StockChartViewItemModel itemModelWithTitle:@"1分"  type:Y_StockChartcenterViewTypeKline],
                                    [Y_StockChartViewItemModel itemModelWithTitle:@"5分"  type:Y_StockChartcenterViewTypeKline],
-                                   [Y_StockChartViewItemModel itemModelWithTitle:@"30分" type:Y_StockChartcenterViewTypeKline],
-                                   [Y_StockChartViewItemModel itemModelWithTitle:@"60分" type:Y_StockChartcenterViewTypeKline],
-                                   [Y_StockChartViewItemModel itemModelWithTitle:@"日线" type:Y_StockChartcenterViewTypeKline],
+                                   [Y_StockChartViewItemModel itemModelWithTitle:@"15分"  type:Y_StockChartcenterViewTypeKline],
                                    [Y_StockChartViewItemModel itemModelWithTitle:@"周线" type:Y_StockChartcenterViewTypeKline],
+                                   [Y_StockChartViewItemModel itemModelWithTitle:@"日线" type:Y_StockChartcenterViewTypeKline],
+                                   [Y_StockChartViewItemModel itemModelWithTitle:@"月线" type:Y_StockChartcenterViewTypeKline],
                                    ];
 }
 
@@ -1199,12 +1633,18 @@
 
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
     appdelegate.isEable = YES;//横屏
+    [self unSubscibe];
     Y_StockChartLandScapeViewController *stockChartLangVC = [[Y_StockChartLandScapeViewController alloc]init];
     stockChartLangVC.sCode = _sCode;
+    stockChartLangVC.dayData = [NSArray arrayWithArray:_dayData];
+    stockChartLangVC.MinData = [NSArray arrayWithArray:_MinData];
+    stockChartLangVC.weekData = [NSArray arrayWithArray:_weekData];
+    stockChartLangVC.monthData = [NSArray arrayWithArray:_monthData];
+    stockChartLangVC.fiveMinsData = [NSArray arrayWithArray:_fiveMinsData];
+    stockChartLangVC.fifteenMinsData = [NSArray arrayWithArray:_fifteenMinsData];
+    
     stockChartLangVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     [self presentViewController:stockChartLangVC animated:YES completion:nil];
-
-
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
@@ -1215,15 +1655,6 @@
 }
 
 
-//- (UIInterfaceOrientationMask)supportedInterfaceOrientations
-//{
-//    return UIInterfaceOrientationMaskLandscape;
-//}
-
-//- (BOOL)shouldAutorotate
-//{
-//    return NO;
-//}
 
 #pragma --mark  keyboard delegate
 - (void)keyboardWillHide:(NSNotification*)aNSNotification{
@@ -1279,7 +1710,7 @@
         _winLimitedTextField.text = [NSString stringWithFormat:@"%.1f",(row+1) * [self.futu_price_step floatValue]];
     }
 }
-////设置uipicker 的每个选项的view 这里设为uitextfield
+//设置UIPicker 的每个选项的view 这里设为uitextfield
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view{
 
     UITextField *lossField = [[UITextField alloc]initWithFrame:CGRectMake(0, 0, 80, 40)];
