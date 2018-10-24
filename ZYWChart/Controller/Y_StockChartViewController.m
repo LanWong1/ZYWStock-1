@@ -43,6 +43,7 @@ typedef NS_ENUM(NSInteger,TradeKind){
 
 @interface Y_StockChartViewController ()<Y_StockChartViewDataSource,ICEQuoteDelegate,UIGestureRecognizerDelegate,UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
 
+@property (nonatomic, strong) Y_StockChartLandScapeViewController *stockChartLangVC;
 @property (nonatomic, strong) Y_StockChartView *stockChartView;
 @property (nonatomic, strong) Y_KLineGroupModel *groupModel;
 @property (nonatomic, copy) NSMutableDictionary <NSString*, Y_KLineGroupModel*> *modelsDict;
@@ -120,8 +121,6 @@ typedef NS_ENUM(NSInteger,TradeKind){
 @property (weak, nonatomic) IBOutlet UITextField *loseLimtedTextField;
 @property (weak, nonatomic) IBOutlet UITextField *winLimitedTextField;
 
-@property (strong,nonatomic) Y_StockChartLandScapeViewController *stockChartVC;
-
 @property (strong,nonatomic) UIView *buttomBtnView;
 
 @property (strong,nonatomic) UIScrollView *scrollView;
@@ -140,30 +139,32 @@ typedef NS_ENUM(NSInteger,TradeKind){
 
 #pragma --mark icetool delegate 用于传值 更新数据
 //从icequote中获取数据 更新图像
-- (void)refreshTimeline:(NSString *)s{
-    NSLog(@"delegate.........%@",s);
-    /*
-     Y_StockChartViewItemModel *itemModel = self.itemModels[index];
-     Y_StockChartCenterViewType type = itemModel.centerViewType;
-     self.kLineView.kLineModels = (NSArray *)stockData;//新的数据
-     self.kLineView.MainViewType = type;
-     [self.kLineView reDraw];//重绘图像
-     */
-    //可从这里传入新的数据 然后重绘数据
-}
-
-
--(void)refrenshTest:(NSString *)s{
-    NSLog(@"aaaa     %@",s);
-}
+//- (void)refreshTimeline:(NSString *)s{
+//    NSLog(@"delegate.........%@",s);
+//    /*
+//     Y_StockChartViewItemModel *itemModel = self.itemModels[index];
+//     Y_StockChartCenterViewType type = itemModel.centerViewType;
+//     self.kLineView.kLineModels = (NSArray *)stockData;//新的数据
+//     self.kLineView.MainViewType = type;
+//     [self.kLineView reDraw];//重绘图像
+//     */
+//    //可从这里传入新的数据 然后重绘数据
+//}
+//
+//
+//-(void)refrenshTest:(NSString *)s{
+//    NSLog(@"aaaa     %@",s);
+//}
 
 
 #pragma --mark 系统初始化函数
 - (instancetype)initWithScode:(NSString *)sCodeSelect{
     self = [super init];
+    
     if(self){
         _sCode = sCodeSelect;
     }
+    
     return self;
 }
 
@@ -192,13 +193,10 @@ typedef NS_ENUM(NSInteger,TradeKind){
 - (void)viewDidLoad {
  
     [super viewDidLoad];
-//    _tradeView = [[UIView alloc]init];
-//    _tradeView.backgroundColor = [UIColor backgroundColor];
-//    [self.view addSubview:_tradeView];
-    
+
     _buyCountArray = [NSMutableArray array];
     _tradeRecordArray = [NSMutableArray array];
-    
+    //
     _MinData = [NSMutableArray array];
     _fiveMinsData = [NSMutableArray array];
     _fifteenMinsData = [NSMutableArray array];
@@ -206,11 +204,13 @@ typedef NS_ENUM(NSInteger,TradeKind){
     _weekData = [NSMutableArray array];
     _dayData = [NSMutableArray array];
     
-    
+    [self downLoadData];//下载数据
     
     self.navigationItem.title = self.sCode;
     self.view.backgroundColor = [UIColor backgroundColor];
-    [self addScrollView];
+    [self addScrollView];//上下滑动
+    
+    
     self.stockChartView.backgroundColor = [UIColor backgroundColor];//调用了getter方法
     self.currentIndex = -1;
     [self addBottomBtnView];
@@ -227,7 +227,10 @@ typedef NS_ENUM(NSInteger,TradeKind){
     //行情推送通知
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(quoteData:) name:@"quoteNotity" object:nil];
 }
-#pragma mark  交易返回
+
+
+
+#pragma mark  通知中心
 //交易成功返回消息
 - (void)tradeResult:(NSNotification*)notify{
     
@@ -463,6 +466,8 @@ typedef NS_ENUM(NSInteger,TradeKind){
     _scrollView.userInteractionEnabled = YES;
     
 }
+
+
 //底部交易和查询按钮
 - (void)addBottomBtnView{
     
@@ -1188,6 +1193,10 @@ typedef NS_ENUM(NSInteger,TradeKind){
 
 
 #pragma --mark 业务逻辑
+
+
+
+
 //getter方法 of modelsDict
 - (NSMutableDictionary<NSString *,Y_KLineGroupModel *> *)modelsDict
 {
@@ -1197,10 +1206,7 @@ typedef NS_ENUM(NSInteger,TradeKind){
     return _modelsDict;
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of  nmthat can be recreated.
-}
+//dataSource of stockView
 
 -(id) stockDatasWithIndex:(NSInteger)index
 {
@@ -1210,8 +1216,8 @@ typedef NS_ENUM(NSInteger,TradeKind){
         case 0:
         {
             //分时图时 打开代理 实时更新数据
-            AppDelegate * app = [UIApplication sharedApplication].delegate;
-            app.iceQuote.delegate = self; //设置代理在stockChartView中实现
+            //AppDelegate * app = [UIApplication sharedApplication].delegate;
+           // app.iceQuote.delegate = self; //设置代理在stockChartView中实现
             type = @"1min";
             
         }
@@ -1252,20 +1258,25 @@ typedef NS_ENUM(NSInteger,TradeKind){
     }
     self.currentIndex = index;
     self.type = type;
+    
+    if(!_refreshTimer){
+        NSLog(@"开启定时器");
+        _refreshTimer = [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(reloadData) userInfo:nil repeats:YES];//每分钟刷新
+    }
     //定时刷新数据
-    if(index == 0){
-        if(!_refreshTimer){
-            NSLog(@"开启定时器");
-            _refreshTimer = [NSTimer scheduledTimerWithTimeInterval:60.0 target:self selector:@selector(reloadData) userInfo:nil repeats:YES];//每分钟刷新
-        }
-    }
-    else{
-        if(_refreshTimer != nil){
-            NSLog(@"关闭定时器");
-            [_refreshTimer invalidate];
-            _refreshTimer = nil;
-        }
-    }
+//    if(index == 0){
+//        if(!_refreshTimer){
+//            NSLog(@"开启定时器");
+//            _refreshTimer = [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(reloadData) userInfo:nil repeats:YES];//每分钟刷新
+//        }
+//    }
+//    else{
+//        if(_refreshTimer != nil){
+//            NSLog(@"关闭定时器");
+//            [_refreshTimer invalidate];
+//            _refreshTimer = nil;
+//        }
+//    }
     
     //无数据 重新下载数据
     if(![self.modelsDict objectForKey:type])
@@ -1281,6 +1292,7 @@ typedef NS_ENUM(NSInteger,TradeKind){
 
 
 
+#pragma mark   订阅和取消订阅
 
 - (void)subscibe{
     ICEQuote* iceQuote = [ICEQuote shareInstance];
@@ -1300,286 +1312,338 @@ typedef NS_ENUM(NSInteger,TradeKind){
     [iceQuote UnSubscribeQuote:cmdType strCmd:self.sCode];
 }
 
+#pragma mark 数据处理
 
-
-- (NSMutableArray *)downLoadData{
+//获取分钟线图
+- (NSMutableArray *)getMinData:(NSMutableArray *)array dataType:(NSString*)type{
     
-    ICEQuote* iceQuote = [ICEQuote shareInstance];
-    NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,self.sCode,@"=",iceQuote.userID];
-    NSMutableArray *arrayTemp = [NSMutableArray array];
-    if([self.type containsString:@"min"]){
-        @try{
-            NSLog(@"分钟线 ++++++++++++");
-            arrayTemp  = [iceQuote getKlineData:strCmd type:@"minute"];
-            if(arrayTemp.count == 0){
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:@"无数据" preferredStyle:UIAlertControllerStyleAlert];
-                [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
-                [self presentViewController:alert animated:YES completion:nil];
-            }
-        }
-        @catch(ICEException *s){
-            NSLog(@"get min erro is %@",s);
-        }
-    }
-    //日K线数据
-    else{
-        @try{
-            NSLog(@"日线 ++++++++++++");
-            NSMutableArray *array = [iceQuote getKlineData:strCmd type:@"day"];
-            [arrayTemp addObjectsFromArray:[[array reverseObjectEnumerator] allObjects]];
-            
-            if(arrayTemp.count == 0){
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:@"无数据" preferredStyle:UIAlertControllerStyleAlert];
-                [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
-                [self presentViewController:alert animated:YES completion:nil];
-            }
-        }
-        @catch(ICEException *s){
-            NSLog(@"getday kline erro is %@",s);
-        }
-    }
-    return arrayTemp;
-}
-
-- (NSMutableArray *)dataProcess{
-    
-   __block NSMutableArray *dataArray = [NSMutableArray array];
-   __block NSString *time = [[NSString alloc]init];
+    __block NSMutableArray *dataArray = [NSMutableArray array];
+    __block NSString *time = [[NSString alloc]init];
     //NSEnumerator *enumerator = [[NSEnumerator alloc]init];
     __block float highPrice ;
     __block float lowPrice ;
     __block float closePrice ;
     __block float openPrice ;
     __block float colum ;
-  
-    [[self downLoadData] enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+
+    [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         NSString *string = obj;
         NSArray* array1 = [string componentsSeparatedByString:@","];
         NSInteger min = 0;
-        if([self.type containsString:@"min"]){
-
-            if([self.type isEqualToString:@"1min"]){
-                NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];//包括时间 开盘价  最高价 最低价 收盘价 持仓数
+        
+        if([type isEqualToString:@"1min"]){
+            NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];//包括时间 开盘价  最高价 最低价 收盘价 持仓数
+            NSMutableString *date = [[NSMutableString alloc]initWithString:array1[0]];
+            [date appendString:array1[1]];
+            NSMutableString *timeString = [[NSMutableString alloc]initWithString:array1[1]];
+            [timeString deleteCharactersInRange:NSMakeRange(4,2)];
+            [timeString insertString:@":" atIndex:2];
+            
+            array[0] = timeString;
+            array[1] = @([array1[2] floatValue]);//open
+            array[2] = @([array1[4] floatValue]);//hig
+            array[3] = @([array1[5] floatValue]);//low
+            array[4] = @([array1[3] floatValue]);//close
+            array[5] = @([array1[7] floatValue]);//colum
+            [dataArray addObject:array];
+        }
+        
+        else{
+            
+            if([type isEqualToString:@"5min"]){
+                min = 5;
+            }
+            else if([type isEqualToString:@"15min"])
+            {
+                min = 15;
+            }
+            if((idx+1)%min == 1){
                 NSMutableString *date = [[NSMutableString alloc]initWithString:array1[0]];
                 [date appendString:array1[1]];
+                //NSMutableString *timeString = [[NSMutableString alloc]initWithString:array1[1]];
                 NSMutableString *timeString = [[NSMutableString alloc]initWithString:array1[1]];
                 [timeString deleteCharactersInRange:NSMakeRange(4,2)];
                 [timeString insertString:@":" atIndex:2];
-                
-                array[0] = timeString;
-                array[1] = @([array1[2] floatValue]);//open
-                array[2] = @([array1[4] floatValue]);//hig
-                array[3] = @([array1[5] floatValue]);//low
-                array[4] = @([array1[3] floatValue]);//close
-                array[5] = @([array1[7] floatValue]);//colum
-                [dataArray addObject:array];
-                [_MinData addObject:array];
-              
+                // [timeString1 appendString:timeString];
+                //_array[0] = timeString;//0分钟 5分钟 10分钟作为时间
+                time  = timeString;
+                openPrice =[array1[2] floatValue]; //5分钟的 开盘价是第一天的开盘价
+                highPrice = [array1[4] floatValue];
+                lowPrice = [array1[5] floatValue];
+                colum    = [array1[7] floatValue];
             }
             else{
-                if([self.type isEqualToString:@"5min"]){
-                    min = 5;
+                if(highPrice < [array1[4] floatValue]){
+                    highPrice = [array1[4] floatValue];//最高价 为五分钟内最高价
                 }
-                else if([self.type isEqualToString:@"15min"])
-                {
-                    min = 15;
+                if(lowPrice > [array1[5] floatValue]){
+                    lowPrice = [array1[5] floatValue];//最低价为五分钟内最低价
                 }
-                if((idx+1)%min == 1){
-                    NSMutableString *date = [[NSMutableString alloc]initWithString:array1[0]];
-                    [date appendString:array1[1]];
-                    //NSMutableString *timeString = [[NSMutableString alloc]initWithString:array1[1]];
-                    NSMutableString *timeString = [[NSMutableString alloc]initWithString:array1[1]];
-                    [timeString deleteCharactersInRange:NSMakeRange(4,2)];
-                    [timeString insertString:@":" atIndex:2];
-                    // [timeString1 appendString:timeString];
-                    //_array[0] = timeString;//0分钟 5分钟 10分钟作为时间
-                    time  = timeString;
-                    openPrice =[array1[2] floatValue]; //5分钟的 开盘价是第一天的开盘价
-                    highPrice = [array1[4] floatValue];
-                    lowPrice = [array1[5] floatValue];
-                    colum    = [array1[7] floatValue];
-                }
-                else{
-                    if(highPrice < [array1[4] floatValue]){
-                        highPrice = [array1[4] floatValue];//最高价 为五分钟内最高价
-                    }
-                    if(lowPrice > [array1[5] floatValue]){
-                        lowPrice = [array1[5] floatValue];//最低价为五分钟内最低价
-                    }
-                    colum += [array1[7] floatValue];//成交量是五分钟成交量之和
+                colum += [array1[7] floatValue];//成交量是五分钟成交量之和
+                
+                if((idx+1)%min == 0){
                     
-                    if((idx+1)%min == 0){
-                        
-                        NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
-                        closePrice = [array1[3] floatValue];//closePrice 第五分钟的收盘价
-                        array[0] = time;
-                        array[1] = @(openPrice);
-                        array[2] = @(highPrice);
-                        array[3] = @(lowPrice);
-                        array[4] = @(closePrice);
-                        array[5] = @(colum);
-                        
-                        [dataArray addObject:array];
-                        switch (min) {
-                            case 5:
-                                [_fiveMinsData addObject:array];
-                                break;
-                            case 15:
-                                [_fifteenMinsData addObject:array];
-                                break;
-                            default:
-                                break;
-                        }
-                        openPrice = 0;
-                        highPrice = 0;
-                        lowPrice = 0;
-                        closePrice = 0;
-                        colum = 0;
-                    }
-                }
-            }
-        }
-        else{
-            //日K线
-            if ([self.type isEqualToString:@"1day"]){
-                NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
-                NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
-                [dateString insertString:@"-" atIndex:4];
-                [dateString insertString:@"-" atIndex:7];
-                array[0] = dateString;
-                array[1] = @([array1[1] floatValue]);//open
-                array[2] = @([array1[3] floatValue]);//high
-                array[3] = @([array1[4] floatValue]);//low
-                array[4] = @([array1[2] floatValue]);//close
-                array[5] = @([array1[6] floatValue]);//colum
-                [dataArray addObject:array];
-                [_dayData addObject:array];
-                }
-            else if([self.type isEqualToString:@"1week"]){
-
-                static NSInteger lastWeek;
-                NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
-                [dateString insertString:@"-" atIndex:4];
-                [dateString insertString:@"-" atIndex:7];
-                // [NSString stringWithString:dateString];
-               // NSString *dayTime = [[NSString alloc]init];
-                NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-                [formatter setDateFormat:@"yy-MM-dd"];
-                NSDate *date = [formatter dateFromString:dateString];
-                //NSLog(@"date = %@",date);
-                NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-                //NSDate *date = [gregorianCalendar dateFromComponents:dateComponents];
-                NSInteger week = [gregorianCalendar component:NSCalendarUnitWeekOfYear fromDate:date];
-
-                if (week != lastWeek){
+                    NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
+                    closePrice = [array1[3] floatValue];//closePrice 第五分钟的收盘价
+                    array[0] = time;
+                    array[1] = @(openPrice);
+                    array[2] = @(highPrice);
+                    array[3] = @(lowPrice);
+                    array[4] = @(closePrice);
+                    array[5] = @(colum);
                     
-                    lastWeek = week;
-                    //除了第一天
-                    if(idx > 0){
-                        NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
-                        //每周最后一个交易日的时间
-                        array[0] = time;
-                        array[1] = @(openPrice);//每周第一天的开盘价
-                        array[2] = @(highPrice);
-                        array[3] = @(lowPrice);
-                        array[4] = @(closePrice);
-                        array[5] = @(colum);
-                        [dataArray addObject:array];
-                        [_weekData addObject:array];
-                        //highPrice = 0;
-                        colum = 0;
+                    [dataArray addObject:array];
+                    switch (min) {
+                        case 5:
+                            [_fiveMinsData addObject:array];
+                            break;
+                        case 15:
+                            [_fifteenMinsData addObject:array];
+                            break;
+                        default:
+                            break;
                     }
-                    //第一次
-                    lowPrice = [array1[4] floatValue];
-                    highPrice = [array1[3] floatValue];
-                    colum  += [array1[6] floatValue];
-                    openPrice = [array1[1] floatValue];
+                    openPrice = 0;
+                    highPrice = 0;
+                    lowPrice = 0;
+                    closePrice = 0;
+                    colum = 0;
                 }
-                else{
-                    if(highPrice < [array1[3] floatValue]){
-                        highPrice = [array1[3] floatValue];//最高价 为五分钟内最高价
-                    }
-                    //始终为0
-                    if(lowPrice > [array1[4] floatValue]){
-                        lowPrice = [array1[4] floatValue];
-                    }
-                    colum  += [array1[6] floatValue];//成交量
-                }
-                time = dateString;//保留每天的时间 这样在变成下一周后可以取得本周最后一天的日期
-                closePrice = [array1[2] floatValue];//保留每天的时间 这样在变成下一周后可以取得本周最后一天的日期
-            }
-            
-            else{
-                static NSInteger lastMonth;
-                NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
-                [dateString insertString:@"-" atIndex:4];
-                [dateString insertString:@"-" atIndex:7];
-                
-               
-                
-                NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-                [formatter setDateFormat:@"yy-MM-dd"];
-                NSDate *date = [formatter dateFromString:dateString];
-           
-                NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-                ;
-                NSInteger month = [gregorianCalendar component:NSCalendarUnitMonth fromDate:date];
-           
-             
-                
-                
-                if (month != lastMonth){
-                   
-                    lastMonth = month;
-                    
-                    //除了第一tian
-                    if(idx > 0){
-                        NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
-                        //每周最后一个交易日的时间
-                        array[0] = time;
-                        
-                        array[1] = @(openPrice);//每周第一天的开盘价
-                        array[2] = @(highPrice);
-                        array[3] = @(lowPrice);
-                        array[4] = @(closePrice);
-                        array[5] = @(colum);
-                        [dataArray addObject:array];
-                        [_monthData addObject:array];
-                        //highPrice = 0;
-                        colum = 0;
-                    }
-                    lowPrice = [array1[4] floatValue];
-                    colum    += [array1[6] floatValue];
-                    highPrice = [array1[3] floatValue];
-                    openPrice = [array1[1] floatValue];
-                }
-                else{
-                    if(highPrice < [array1[3] floatValue]){
-                        highPrice = [array1[3] floatValue];
-                    }
-                    if(lowPrice > [array1[4] floatValue]){
-                        lowPrice = [array1[4] floatValue];
-                    }
-                    colum    += [array1[6] floatValue];//成交量
-                }
-                //同一周的
-                time = dateString;//保留每天的时间 这样在变成下一yue后可以取得本周最后一天的日期
-                closePrice = [array1[2] floatValue];//保留每天的时间 这样在变成下一yue后可以取得本周最后一天的日期
             }
         }
     }];
+        
+    return dataArray;
+}
+//获取日线数据
+-(NSMutableArray *)getDayData:(NSMutableArray*)dayData type:(NSString*)type{
     
-    NSLog(@"dataarray ===== %@",dataArray);
+    __block NSMutableArray *dataArray = [NSMutableArray array];
+    __block NSString *time = [[NSString alloc]init];
+    //NSEnumerator *enumerator = [[NSEnumerator alloc]init];
+    __block float highPrice ;
+    __block float lowPrice ;
+    __block float closePrice ;
+    __block float openPrice ;
+    __block float colum ;
+    [dayData enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        NSString *string = obj;
+        NSArray* array1 = [string componentsSeparatedByString:@","];
+        
+        
+        if ([type isEqualToString:@"1day"]){
+            NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
+            NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
+            [dateString insertString:@"-" atIndex:4];
+            [dateString insertString:@"-" atIndex:7];
+            array[0] = dateString;
+            array[1] = @([array1[1] floatValue]);//open
+            array[2] = @([array1[3] floatValue]);//high
+            array[3] = @([array1[4] floatValue]);//low
+            array[4] = @([array1[2] floatValue]);//close
+            array[5] = @([array1[6] floatValue]);//colum
+            [dataArray addObject:array];
+            [_dayData addObject:array];
+        }
+        else if([type isEqualToString:@"1week"]){
+            
+            static NSInteger lastWeek;
+            NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
+            [dateString insertString:@"-" atIndex:4];
+            [dateString insertString:@"-" atIndex:7];
+            NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+            [formatter setDateFormat:@"yy-MM-dd"];
+            NSDate *date = [formatter dateFromString:dateString];
+            NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+            NSInteger week = [gregorianCalendar component:NSCalendarUnitWeekOfYear fromDate:date];
+            if (week != lastWeek){
+                lastWeek = week;
+                //除了第一天
+                if(idx > 0){
+                    NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
+                    //每周最后一个交易日的时间
+                    array[0] = time;
+                    array[1] = @(openPrice);//每周第一天的开盘价
+                    array[2] = @(highPrice);
+                    array[3] = @(lowPrice);
+                    array[4] = @(closePrice);
+                    array[5] = @(colum);
+                    [dataArray addObject:array];
+                    //[_weekData addObject:array];
+                    //highPrice = 0;
+                    colum = 0;
+                }
+                //第一次
+                lowPrice = [array1[4] floatValue];
+                highPrice = [array1[3] floatValue];
+                colum  += [array1[6] floatValue];
+                openPrice = [array1[1] floatValue];
+            }
+            else{
+                if(highPrice < [array1[3] floatValue]){
+                    highPrice = [array1[3] floatValue];//最高价 为五分钟内最高价
+                }
+                //始终为0
+                if(lowPrice > [array1[4] floatValue]){
+                    lowPrice = [array1[4] floatValue];
+                }
+                colum  += [array1[6] floatValue];//成交量
+            }
+            time = dateString;//保留每天的时间 这样在变成下一周后可以取得本周最后一天的日期
+            closePrice = [array1[2] floatValue];//保留每天的时间 这样在变成下一周后可以取得本周最后一天的日期
+        }
+        else{
+            static NSInteger lastMonth;
+            NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
+            [dateString insertString:@"-" atIndex:4];
+            [dateString insertString:@"-" atIndex:7];
+            NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+            [formatter setDateFormat:@"yy-MM-dd"];
+            NSDate *date = [formatter dateFromString:dateString];
+            NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+            NSInteger month = [gregorianCalendar component:NSCalendarUnitMonth fromDate:date];
+            if (month != lastMonth){
+                
+                lastMonth = month;
+                
+                //除了第一tian
+                if(idx > 0){
+                    NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
+                    //每周最后一个交易日的时间
+                    array[0] = time;
+                    array[1] = @(openPrice);//每周第一天的开盘价
+                    array[2] = @(highPrice);
+                    array[3] = @(lowPrice);
+                    array[4] = @(closePrice);
+                    array[5] = @(colum);
+                    [dataArray addObject:array];
+                   // [_monthData addObject:array];
+                    //highPrice = 0;
+                    colum = 0;
+                }
+                lowPrice = [array1[4] floatValue];
+                colum    += [array1[6] floatValue];
+                highPrice = [array1[3] floatValue];
+                openPrice = [array1[1] floatValue];
+            }
+            else{
+                if(highPrice < [array1[3] floatValue]){
+                    highPrice = [array1[3] floatValue];
+                }
+                if(lowPrice > [array1[4] floatValue]){
+                    lowPrice = [array1[4] floatValue];
+                }
+                colum    += [array1[6] floatValue];//成交量
+            }
+            //同一周的
+            time = dateString;//保留每天的时间 这样在变成下一yue后可以取得本周最后一天的日期
+            closePrice = [array1[2] floatValue];//保留每天的时间 这样在变成下一yue后可以取得本周最后一天的日期
+        }
+        
+    }];
     return dataArray;
 }
 
 
 
+
+
+//下载数据
+- (void)downLoadData{
+    [self downloadDayData];
+    [self downloadMinData];
+    
+}
+
+- (void)downloadMinData{
+    
+    ICEQuote* iceQuote = [ICEQuote shareInstance];
+    NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,self.sCode,@"=",iceQuote.userID];
+    NSMutableArray *minArray = [NSMutableArray array];
+    @try {
+        NSLog(@"分钟线 ++++++++++++");
+        minArray  = [iceQuote getKlineData:strCmd type:@"minute"];
+        if(minArray.count == 0){
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:@"无分钟数据" preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
+            [self presentViewController:alert animated:YES completion:nil];
+        }
+        else{
+            [_MinData addObjectsFromArray:[self getMinData:minArray dataType:@"1min"]];
+            [_fiveMinsData addObjectsFromArray:[self getMinData:minArray dataType:@"5min"]];
+            [_fifteenMinsData addObjectsFromArray:[self getMinData:minArray dataType:@"15min"]];
+            if(_stockChartLangVC){
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"changeMinDataNotity" object:nil userInfo:@{@"minData":_MinData,@"fifteenMinData":_fifteenMinsData,@"fiveMinData":_fiveMinsData}];
+            }
+        }
+
+    } @catch (NSException *s) {
+        NSLog(@"get data erro is %@",s);
+    }
+    
+}
+//下载日K线数据
+- (void)downloadDayData{
+    ICEQuote* iceQuote = [ICEQuote shareInstance];
+    NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,self.sCode,@"=",iceQuote.userID];
+    NSMutableArray *dayArray = [NSMutableArray array];
+    @try {
+        NSLog(@"日线 ++++++++++++");
+        NSMutableArray *array = [iceQuote getKlineData:strCmd type:@"day"];
+        if(array.count == 0){
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:@"无日数据" preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
+            [self presentViewController:alert animated:YES completion:nil];
+        }
+        else {
+            [dayArray addObjectsFromArray:[[array reverseObjectEnumerator] allObjects]];
+            _dayData = [self getDayData:dayArray type:@"1day"];
+            _monthData = [self getDayData:dayArray type:@"1month"];
+            _weekData = [self getDayData:dayArray type:@"1week"];
+            
+        }
+    } @catch (NSException *exception) {
+        NSLog(@"get data erro is %@",exception);
+    }
+}
+
+
 - (void)reloadData
 {
     NSLog(@"reload data");
-    //NSLog(@"dataArray ======= %@",dataArray);
-    self.groupModel  = [Y_KLineGroupModel objectWithArray:[self dataProcess]];
+    NSMutableArray *data = [NSMutableArray array];
+    
+    [self downloadMinData];//分钟线要及时加载 更新
+    
+    switch (self.currentIndex) {
+        case 0:
+            [data addObjectsFromArray:_MinData];
+            break;
+        case 1:
+            [data addObjectsFromArray:_MinData];
+            break;
+        case 2:
+            [data addObjectsFromArray:_fiveMinsData];
+            break;
+        case 3:
+            [data addObjectsFromArray:_fifteenMinsData];
+            break;
+        case 4:
+            [data addObjectsFromArray:_weekData];
+            break;
+        case 5:
+            [data addObjectsFromArray:_dayData];
+            break;
+        case 6:
+            [data addObjectsFromArray:_monthData];
+            break;
+        default:
+            break;
+    }
+    
+    
+    self.groupModel  = [Y_KLineGroupModel objectWithArray:data];
     [self.modelsDict setObject:_groupModel forKey:self.type];//model 字典 键值编程 更新M_groupModel
     [self.stockChartView reloadData];
     [self.stockChartView.kLineView reDraw];//重绘kline
@@ -1592,28 +1656,22 @@ typedef NS_ENUM(NSInteger,TradeKind){
                                    [Y_StockChartViewItemModel itemModelWithTitle:@"分时" type:Y_StockChartcenterViewTypeTimeLine],
                                    [Y_StockChartViewItemModel itemModelWithTitle:@"1分"  type:Y_StockChartcenterViewTypeKline],
                                    [Y_StockChartViewItemModel itemModelWithTitle:@"5分"  type:Y_StockChartcenterViewTypeKline],
-                                   [Y_StockChartViewItemModel itemModelWithTitle:@"15分"  type:Y_StockChartcenterViewTypeKline],
+                                   [Y_StockChartViewItemModel itemModelWithTitle:@"15分" type:Y_StockChartcenterViewTypeKline],
                                    [Y_StockChartViewItemModel itemModelWithTitle:@"周线" type:Y_StockChartcenterViewTypeKline],
                                    [Y_StockChartViewItemModel itemModelWithTitle:@"日线" type:Y_StockChartcenterViewTypeKline],
                                    [Y_StockChartViewItemModel itemModelWithTitle:@"月线" type:Y_StockChartcenterViewTypeKline],
                                    ];
 }
 
-
+//getter 方法
 - (Y_StockChartView *)stockChartView
 {
     if(!_stockChartView) {
         _stockChartView = [Y_StockChartView new];
         _stockChartView = [[Y_StockChartView alloc]initWithFrame:CGRectMake(0, 0, DEVICE_WIDTH, DEVICE_HEIGHT+200)];
         _stockChartView.dataSource = self;
-        
         [self.scrollView addSubview:_stockChartView];
-//        [_stockChartView mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.top.equalTo(self.view);
-//            make.left.right.equalTo(self.view);
-//            //make.bottom.equalTo(self.view).offset(-30);
-//            make.height.equalTo(@900);
-//        }];
+
         self.scrollView.contentSize = _stockChartView.size;
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(dismiss)];
         tap.numberOfTapsRequired = 2;
@@ -1627,24 +1685,24 @@ typedef NS_ENUM(NSInteger,TradeKind){
 {
     NSLog(@"竖屏变横屏 dismisss");
     //停止计时器
-    if(_refreshTimer){
-        [_refreshTimer invalidate];
-    }
+//    if(_refreshTimer){
+//        [_refreshTimer invalidate];
+//    }
 
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
     appdelegate.isEable = YES;//横屏
     [self unSubscibe];
-    Y_StockChartLandScapeViewController *stockChartLangVC = [[Y_StockChartLandScapeViewController alloc]init];
-    stockChartLangVC.sCode = _sCode;
-    stockChartLangVC.dayData = [NSArray arrayWithArray:_dayData];
-    stockChartLangVC.MinData = [NSArray arrayWithArray:_MinData];
-    stockChartLangVC.weekData = [NSArray arrayWithArray:_weekData];
-    stockChartLangVC.monthData = [NSArray arrayWithArray:_monthData];
-    stockChartLangVC.fiveMinsData = [NSArray arrayWithArray:_fiveMinsData];
-    stockChartLangVC.fifteenMinsData = [NSArray arrayWithArray:_fifteenMinsData];
+    _stockChartLangVC = [[Y_StockChartLandScapeViewController alloc]init];
+    _stockChartLangVC.sCode = _sCode;
+    _stockChartLangVC.dayData = [NSArray arrayWithArray:_dayData];
+    _stockChartLangVC.MinData = [NSArray arrayWithArray:_MinData];
+    _stockChartLangVC.weekData = [NSArray arrayWithArray:_weekData];
+    _stockChartLangVC.monthData = [NSArray arrayWithArray:_monthData];
+    _stockChartLangVC.fiveMinsData = [NSArray arrayWithArray:_fiveMinsData];
+    _stockChartLangVC.fifteenMinsData = [NSArray arrayWithArray:_fifteenMinsData];
     
-    stockChartLangVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [self presentViewController:stockChartLangVC animated:YES completion:nil];
+    _stockChartLangVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    [self presentViewController:_stockChartLangVC animated:YES completion:nil];
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
@@ -1673,13 +1731,7 @@ typedef NS_ENUM(NSInteger,TradeKind){
         [self.view setFrame:CGRectMake(self.view.frame.origin.x, -deltaY, self.view.frame.size.width, self.view.frame.size.height)];
     }];
 }
-//移除通知
-- (void)dealloc{
-    NSLog(@"dealloc");
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"quoteNotity" object:nil];
-}
+
 
 #pragma --mark Pickerview delegate
 
@@ -1724,5 +1776,20 @@ typedef NS_ENUM(NSInteger,TradeKind){
     lossField.text = [NSString stringWithFormat:@"%.1f",(row+1) * [self.futu_price_step floatValue]];//字符串转数字
     lossField.textColor = [UIColor whiteColor];
     return lossField;
+}
+
+#pragma mark 系统函数
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of  nmthat can be recreated.
+}
+//移除通知
+- (void)dealloc{
+    NSLog(@"dealloc");
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"quoteNotity" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"tradeNotify" object:nil];
+    
 }
 @end

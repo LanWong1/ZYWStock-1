@@ -137,7 +137,7 @@
     }
     //分时图
     else {
-        NSLog(@"画分时图啦   啊啊啊啊啊啊啊");
+        //NSLog(@"画分时图啦   啊啊啊啊啊啊啊");
         
         __block NSMutableArray *positions = @[].mutableCopy;
         [self.needDrawKLinePositionModels enumerateObjectsUsingBlock:^(Y_KLinePositionModel * _Nonnull positionModel, NSUInteger idx, BOOL * _Nonnull stop) {

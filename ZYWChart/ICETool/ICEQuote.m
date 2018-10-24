@@ -21,8 +21,8 @@
     //NSLog(@"hahahah:%d  strmessage = %@",itype,strMessage);
     NSArray* arr =  [strMessage componentsSeparatedByString:@","];
    
-    NSString *type = [NSString stringWithFormat:@"%d",itype];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"quoteNotity" object:nil userInfo:@{@"message":arr,@"type":type}];
+    //NSString *type = [NSString stringWithFormat:@"%d",itype];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"quoteNotity" object:nil userInfo:@{@"message":arr,@"type":@(itype)}];
 }
 @end
 
@@ -165,7 +165,7 @@ static ICEQuote* iceQuote = nil;
 
         NSLog(@"开始订阅!!strCmdType = %@ strcmd = %@ ",strCmdType,strcmd);
         [self.WpQuoteServerclientApiPrx begin_SubscribeQuote:strCmdType strCmd:strcmd response:^(ICEInt i, NSMutableString *string, NSMutableString *string2) {
-            NSLog(@"ret========%d string======%@ string======%@",i, string, string2);
+           // NSLog(@"ret========%d string======%@ string======%@",i, string, string2);
         } exception:^(ICEException *s) {
             NSLog(@"订阅失败 原因 %@",s);
         }];
@@ -193,7 +193,7 @@ static ICEQuote* iceQuote = nil;
         
         NSLog(@"unsubscribe++++++++++");
         [self.WpQuoteServerclientApiPrx begin_UnSubscribeQuote:strCmdType strCmd:strcmd response:^(ICEInt i, NSMutableString *string, NSMutableString *string2) {
-            NSLog(@"i===== %d s=====%@ s2=======%@",i, string, string2);
+            //NSLog(@"i===== %d s=====%@ s2=======%@",i, string, string2);
         } exception:^(ICEException *s) {
             NSLog(@"取消订阅失败 %@",s);
         }];
@@ -228,7 +228,7 @@ static ICEQuote* iceQuote = nil;
 //        NSLog(@"Fail %@",s);
 //    }
 //}
-//获取timedata
+//获取data
 - (NSMutableArray*)getKlineData:(NSString*)strCmd type:(NSString*)type{
     @try{
         NSMutableString* strOut = [[NSMutableString alloc]init];
@@ -253,14 +253,6 @@ static ICEQuote* iceQuote = nil;
         NSLog(@"Fail %@",s);
     }
 }
-////获取当前时间
-//- (NSString*)getCurrentTime{
-//    NSDate * date = [NSDate date];
-//    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-//    formatter.dateFormat = @"HHmmss";
-//    NSString *string = [formatter stringFromDate:date];
-//    NSLog(@"uiser id ==== %@",string);
-//    return string;
-//}
+
 
 @end

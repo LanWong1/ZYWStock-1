@@ -157,6 +157,7 @@
 
     NSLog(@"index ======= %d",index);
     self.currentIndex = index;
+    //技术线
     if (index == 105) {
         
         [Y_StockChartGlobalVariable setisBOLLLine:Y_StockChartTargetLineStatusBOLL];
@@ -181,7 +182,7 @@
     }
     //主图
     else {
-        //获取数据 数据源代理  也可以从订阅当中获取
+        //获取数据 数据源代理  也可以从订阅当中获取。     s
         if(self.dataSource && [self.dataSource respondsToSelector:@selector(stockDatasWithIndex:)])
         {
             //获得数据
