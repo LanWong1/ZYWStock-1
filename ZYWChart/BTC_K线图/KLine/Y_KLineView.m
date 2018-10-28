@@ -716,6 +716,7 @@
     self.kLineVolumeView.needDrawKLineModels = needDrawKLineModels;
     self.kLineAccessoryView.needDrawKLineModels = needDrawKLineModels;
 }
+
 - (void)kLineMainViewCurrentNeedDrawKLinePositionModels:(NSArray *)needDrawKLinePositionModels
 {
     self.kLineVolumeView.needDrawKLinePositionModels = needDrawKLinePositionModels;

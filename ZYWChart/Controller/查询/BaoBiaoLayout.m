@@ -87,7 +87,7 @@
     if ([self.collectionView numberOfSections] == 0) {
         return;
     }
-    NSLog(@"我是你爸爸");
+    
     NSUInteger column = 0;//列
     CGFloat xOffset = 0.0;//X方向的偏移量
     CGFloat yOffset = 0.0;//Y方向的偏移量

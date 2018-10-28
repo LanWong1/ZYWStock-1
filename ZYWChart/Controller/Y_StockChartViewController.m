@@ -206,8 +206,14 @@ typedef NS_ENUM(NSInteger,TradeKind){
     
     [self downLoadData];//下载数据
     
+    
+    
     self.navigationItem.title = self.sCode;
     self.view.backgroundColor = [UIColor backgroundColor];
+    
+    
+    
+    
     [self addScrollView];//上下滑动
     
     
@@ -464,7 +470,6 @@ typedef NS_ENUM(NSInteger,TradeKind){
     }];
     _scrollView.scrollEnabled = YES;
     _scrollView.userInteractionEnabled = YES;
-    
 }
 
 
@@ -1667,7 +1672,7 @@ typedef NS_ENUM(NSInteger,TradeKind){
 - (Y_StockChartView *)stockChartView
 {
     if(!_stockChartView) {
-        _stockChartView = [Y_StockChartView new];
+        //_stockChartView = [Y_StockChartView new];
         _stockChartView = [[Y_StockChartView alloc]initWithFrame:CGRectMake(0, 0, DEVICE_WIDTH, DEVICE_HEIGHT+200)];
         _stockChartView.dataSource = self;
         [self.scrollView addSubview:_stockChartView];

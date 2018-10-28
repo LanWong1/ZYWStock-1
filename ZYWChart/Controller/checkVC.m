@@ -188,6 +188,7 @@
 
 
 - (void)addOrderView{
+    
     if(self.checkItems){
         [self.checkItems removeAllObjects];
     }
@@ -267,12 +268,6 @@
    // [self updateMyList:@[@4,@8,@8,@8,@8]];
     self.segmentIndex = 1;
 }
-
-
-
-
-
-
 
 
 - (void)addFundView{

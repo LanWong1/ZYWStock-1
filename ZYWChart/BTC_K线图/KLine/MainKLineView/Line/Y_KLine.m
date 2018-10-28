@@ -47,13 +47,12 @@
     }
     
     CGContextRef context = self.context;
-    //设置画笔颜色
+    //设置画笔颜色。开盘价<收盘价 红色。
     UIColor *strokeColor = self.kLinePositionModel.OpenPoint.y < self.kLinePositionModel.ClosePoint.y ? [UIColor increaseColor] : [UIColor decreaseColor];
-    
+    //设置颜色
     CGContextSetStrokeColorWithColor(context, strokeColor.CGColor);
-    
     //画中间较宽的开收盘线段-实体线
-    CGContextSetLineWidth(context, [Y_StockChartGlobalVariable kLineWidth]);
+    CGContextSetLineWidth(context, [Y_StockChartGlobalVariable kLineWidth]);//有颜色 较粗的那一段
     const CGPoint solidPoints[] = {self.kLinePositionModel.OpenPoint, self.kLinePositionModel.ClosePoint};
     //画线
     CGContextStrokeLineSegments(context, solidPoints, 2);
@@ -64,13 +63,8 @@
     //画线
     CGContextStrokeLineSegments(context, shadowPoints, 2);
     
-//    NSDate *date = [NSDate dateWithTimeIntervalSince1970:self.kLineModel.Date.doubleValue/1000];
-//    NSDateFormatter *formatter = [NSDateFormatter new];
-//    formatter.dateFormat = @"HH:mm";
-//    NSString *dateStr = [formatter stringFromDate:date];
-    
-    
     CGPoint drawDatePoint;
+    
     if(CGPointEqualToPoint(self.lastDrawDatePoint, CGPointZero)){
          drawDatePoint = CGPointMake(self.kLinePositionModel.LowPoint.x-3, self.maxY + 1.5);
     }
