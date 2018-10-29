@@ -103,7 +103,18 @@
 {
     self = [super initWithFrame:frame];
     if(self) {
-        self.mainViewRatio = [Y_StockChartGlobalVariable kLineMainViewRadio];
+        AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+        //横屏的时候加载
+        if( appdelegate.isEable == NO){
+
+            self.mainViewRatio = 0.3;
+        }
+        else{
+            self.mainViewRatio = [Y_StockChartGlobalVariable kLineMainViewRadio];
+        }
+   
+
+        //self.mainViewRatio = [Y_StockChartGlobalVariable kLineMainViewRadio];
         self.volumeViewRatio = [Y_StockChartGlobalVariable kLineVolumeViewRadio];
     }
     return self;
@@ -142,7 +153,7 @@
 //标签
 - (Y_KLineMAView *)kLineMAView
 {
-    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+ //   AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
     //横屏的时候加载
 //    if( appdelegate.isEable == YES){
 //        if (!_kLineMAView) {
@@ -472,10 +483,9 @@
     }
     
     Y_KLineModel *model = [kLineModels lastObject];
-    [self.kLineMAView maProfileWithModel:model];
-    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+   // [self.kLineMAView maProfileWithModel:model];
+  //  AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
 
-    
 //    if( appdelegate.isEable == YES){
 //
 //        [self.volumeMAView maProfileWithModel:model];
@@ -587,7 +597,7 @@
             //[self.kLineMALabelView addLabels];
             [self addSubview:self.kLineMALabelView];
             [self.kLineMALabelView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(self).offset(30);
+                make.top.equalTo(self).offset(5);
                 make.height.equalTo(@80);
                 make.left.equalTo(self).offset(offset);
             }];
@@ -632,9 +642,9 @@
         //恢复scrollView的滑动
         self.scrollView.scrollEnabled = YES;
         Y_KLineModel *lastModel = self.kLineModels.lastObject;
-        [self.kLineMAView maProfileWithModel:lastModel];
+//       [self.kLineMAView maProfileWithModel:lastModel];
          //横屏时显示其它技术数据
-        AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+//       AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
 //        if( appdelegate.isEable == YES){
 //            [self.kLineMALabelView maProfileWithModel:lastModel];
 //            [self.volumeMAView  maProfileWithModel:lastModel];
@@ -706,6 +716,7 @@
     self.kLineVolumeView.needDrawKLineModels = needDrawKLineModels;
     self.kLineAccessoryView.needDrawKLineModels = needDrawKLineModels;
 }
+
 - (void)kLineMainViewCurrentNeedDrawKLinePositionModels:(NSArray *)needDrawKLinePositionModels
 {
     self.kLineVolumeView.needDrawKLinePositionModels = needDrawKLinePositionModels;
@@ -734,7 +745,7 @@
 {
 
     [self.kLineMALabelView maProfileWithModel:kLineModel];
-    [self.kLineMAView maProfileWithModel:kLineModel];
+ //   [self.kLineMAView maProfileWithModel:kLineModel];
 //    AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
 //    if( appdelegate.isEable == YES){
 //        [self.volumeMAView maProfileWithModel:kLineModel];

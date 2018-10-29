@@ -43,6 +43,7 @@
 
 @implementation QuickOrderCodeListVCViewController
 
+
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear: animated];
     self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor blackColor]};
@@ -51,6 +52,7 @@
     //[UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
 }
+
 -(void)viewDidAppear:(BOOL)animated{
     self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];//导航栏背景色
     self.navigationController.navigationBar.tintColor = [UIColor blackColor];//设置返回字体颜色
@@ -64,8 +66,12 @@
      _contractInfoArray = [NSMutableArray array];
     [self addSearchButton];
     [self getCodeList];//获取数据
+    //注册通知
+
 }
 
+
+#pragma mark    获取数据
 
 //获取列表
 - (void) getCodeList{
@@ -77,7 +83,7 @@
         [self.activeId startAnimating];
     }
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
-        [self getCode];
+        [self getCode];//获取合约信息
         [_contractInfoArray enumerateObjectsUsingBlock:^(__kindof ContracInfoModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             [_codeArray addObject:obj.contract_name];
         }];
@@ -102,7 +108,7 @@
     NSLog(@"%@",sql.paremetersSeq);
     @try{
         ret =  [sql.SQL ExecProc:@"pd_get_contractcode" SQLPQS:sql.paremetersSeq strErrInfo:&erroInfo XMLSqlData:&outPutString];
-        NSLog(@"account = %@  info = %@  ret = %d",outPutString,erroInfo ,ret);
+        //NSLog(@"account = %@  info = %@  ret = %d",outPutString,erroInfo ,ret);
         GDataXMLDocument * doc = [[GDataXMLDocument alloc]initWithXMLString:outPutString error:nil];
         GDataXMLElement *rootElement = [doc rootElement];
         NSArray *division=[rootElement children];
@@ -205,6 +211,9 @@
     UIBarButtonItem *searchBtn = [[UIBarButtonItem alloc]initWithCustomView:self.searchBtn];
     self.navigationItem.rightBarButtonItem = searchBtn;
 }
+
+
+
 //添加searchbar
 - (void)addSearch{
     [UIView animateWithDuration:0.25f animations:^{
@@ -245,7 +254,7 @@
     [self.view addSubview:self.searchView];
 
 }
-
+//转圈圈
 - (void)addActiveId{
     self.activeId = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.activeId.center = CGPointMake(self.view.centerX ,self.view.centerY+200);
@@ -305,21 +314,24 @@
 }
 
 #pragma mark  tableview delegate
-
+//tableview 的行数
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return [_searchResult count];
 }
-
+// 选中 cell
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *sCode = _contractInfoArray[indexPath.row].contract_code;
     Y_StockChartViewController* vc = [[Y_StockChartViewController alloc]initWithScode:sCode];
     vc.futu_price_step = _contractInfoArray[indexPath.row].futu_price_step;
+    
+    
+    
     vc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];
-    
 }
+//每个 cell
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *identifier = @"identifier";

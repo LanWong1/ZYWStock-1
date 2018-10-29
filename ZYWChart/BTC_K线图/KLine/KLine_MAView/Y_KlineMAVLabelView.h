@@ -10,8 +10,8 @@
 
 @class Y_KLineModel;
 @interface Y_KlineMAVLabelView : UIView
-+(instancetype)view;
 
+//+(instancetype)view;
 -(void)maProfileWithModel:(Y_KLineModel *)model;
 //-(void)addLabels;
 @end

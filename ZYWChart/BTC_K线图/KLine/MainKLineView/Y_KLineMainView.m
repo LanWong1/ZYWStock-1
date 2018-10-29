@@ -122,11 +122,13 @@
     //设置显示日期的区域背景颜色
     CGContextSetFillColorWithColor(context, [UIColor assistBackgroundColor].CGColor);
     CGContextFillRect(context, CGRectMake(0, Y_StockChartKLineMainViewMaxY, self.frame.size.width, self.frame.size.height - Y_StockChartKLineMainViewMaxY));
+    
     Y_MALine *MALine = [[Y_MALine alloc]initWithContext:context];
     //K线图
     if(self.MainViewType == Y_StockChartcenterViewTypeKline)
     {
         Y_KLine *kLine = [[Y_KLine alloc]initWithContext:context];
+        
         kLine.maxY = Y_StockChartKLineMainViewMaxY;
         [self.needDrawKLinePositionModels enumerateObjectsUsingBlock:^(Y_KLinePositionModel * _Nonnull kLinePositionModel, NSUInteger idx, BOOL * _Nonnull stop) {
             kLine.kLinePositionModel = kLinePositionModel;
@@ -137,6 +139,8 @@
     }
     //分时图
     else {
+        //NSLog(@"画分时图啦   啊啊啊啊啊啊啊");
+        
         __block NSMutableArray *positions = @[].mutableCopy;
         [self.needDrawKLinePositionModels enumerateObjectsUsingBlock:^(Y_KLinePositionModel * _Nonnull positionModel, NSUInteger idx, BOOL * _Nonnull stop) {
             UIColor *strokeColor = positionModel.OpenPoint.y < positionModel.ClosePoint.y ? [UIColor increaseColor] : [UIColor decreaseColor];
@@ -349,6 +353,7 @@
     //    __block CGFloat maxMA30 = CGFLOAT_MIN;
     
     [kLineModels enumerateObjectsUsingBlock:^(Y_KLineModel * _Nonnull kLineModel, NSUInteger idx, BOOL * _Nonnull stop) {
+        //获取最高价和最低价 纵坐标
         
         if(kLineModel.High.floatValue > maxAssert)
         {
@@ -416,14 +421,16 @@
     minAssert *= 0.9991;
     CGFloat minY = Y_StockChartKLineMainViewMinY;
     CGFloat maxY ; 
-//    AppDelegate *app  = [UIApplication sharedApplication].delegate;
-//    if (app.isEable == YES){
-//        maxY = self.parentScrollView.frame.size.height * [Y_StockChartGlobalVariable kLineMainViewRadio] - 25;
-//    }
-//    else{
-//        maxY = self.parentScrollView.frame.size.height  - 25;
-//    }
-    maxY = self.parentScrollView.frame.size.height * [Y_StockChartGlobalVariable kLineMainViewRadio] - 25;
+    AppDelegate *app  = [UIApplication sharedApplication].delegate;
+    if (app.isEable == YES){
+        maxY = self.parentScrollView.frame.size.height * [Y_StockChartGlobalVariable kLineMainViewRadio] - 25;
+    }
+    else{
+        maxY = self.parentScrollView.frame.size.height*0.3 - 25;
+    }
+    //maxY = self.parentScrollView.frame.size.height * [Y_StockChartGlobalVariable kLineMainViewRadio] - 25;
+    
+    //d纵坐标单位  （最大值 - 最小值） / 高度数值
     CGFloat unitValue = (maxAssert - minAssert)/(maxY - minY);
     //    CGFloat ma7UnitValue = (maxMA7 - minMA7) / (maxY - minY);
     //    CGFloat ma30UnitValue = (maxMA30 - minMA30) / (maxY - minY);
@@ -574,7 +581,6 @@
         }
         
     }
-    
     //响应代理方法
     if(self.delegate)
     {
@@ -625,6 +631,7 @@ static char *observerContext = NULL;
 
 #pragma mark KVO监听实现
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context{
+    
     if([keyPath isEqualToString:Y_StockChartContentOffsetKey])
     {
         CGFloat difValue = ABS(self.parentScrollView.contentOffset.x - self.oldContentOffsetX);

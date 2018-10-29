@@ -187,8 +187,8 @@
         int iRet = -2;
         @try{
             ICEQuote *iceQuote = [ICEQuote shareInstance];
-            AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-            iRet = [iceQuote HeartBeat:app.strCmd];
+            NSString *strCmd =[[NSString alloc]initWithFormat:@"%@%@%@%@%@",iceQuote.strFunAcc,@"=",iceQuote.userID,@"=",iceQuote.strPassword];
+            iRet = [iceQuote HeartBeat:strCmd];
             //iRet = [app.iceTool HeartBeat:app.strCmd];
         }
         @catch(ICEException* s){
@@ -211,7 +211,7 @@
     //[self addTableView];
     if(self.refreshFlag!= 1)
     {
-        NSLog(@"jjjjjjjj");
+        
         [self addActiveId];
         [self addLabel];
         [self.activeId startAnimating];

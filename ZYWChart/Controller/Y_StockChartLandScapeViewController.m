@@ -32,6 +32,15 @@
 @property (nonatomic, assign) NSInteger currentIndex;
 @property (nonatomic, copy)   NSString *type;
 @property (nonatomic, strong) NSTimer *refreshTimer;
+
+@property (nonatomic, assign) NSInteger currentTypeIndex;
+
+
+
+
+
+
+
 @end
 
 @implementation Y_StockChartLandScapeViewController
@@ -55,8 +64,19 @@
     self.view.backgroundColor = [UIColor backgroundColor];
     self.currentIndex = -1;
     self.stockChartView.backgroundColor = [UIColor backgroundColor];
+    //注册通知
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeMinData:) name:@"changeMinDataNotity" object:nil];
+    
 }
 
+-(void)changeMinData:(NSNotification*)notiy{
+    
+    NSLog(@"change MinData get notify+++++++++++++++");
+    _MinData = notiy.userInfo[@"minData"];
+    _fifteenMinsData = notiy.userInfo[@"fifteenMinData"];
+    _fiveMinsData = notiy.userInfo[@"fiveMinData"];
+    
+}
 - (NSMutableDictionary<NSString *,Y_KLineGroupModel *> *)modelsDict
 {
     if (!_modelsDict) {
@@ -78,41 +98,49 @@
         case 0:
         {
             type = @"1min";
+            _currentTypeIndex = 0;
         }
             break;
         case 1:
         {
             type = @"1min";
+            _currentTypeIndex = 0;
         }
             break;
         case 2:
         {
             type = @"1min";
+            _currentTypeIndex = 0;
         }
             break;
         case 3:
         {
             type = @"5min";
+            _currentTypeIndex = 1;
         }
             break;
         case 4:
         {
-            type = @"30min";
+            type = @"15min";
+            _currentTypeIndex = 2;
         }
             break;
         case 5:
         {
-            type = @"1hour";
+            type = @"1month";
+            _currentTypeIndex = 3;
         }
             break;
         case 6:
         {
             type = @"1day";
+            _currentTypeIndex = 4;
         }
             break;
         case 7:
         {
             type = @"1week";
+            _currentTypeIndex = 5;
         }
             break;
             
@@ -144,86 +172,40 @@
     return nil;
 }
 
+
+
+
+
+
+
 - (void)reloadData
 {
-    
-    NSMutableArray *dataArray = [NSMutableArray array];
+
     NSMutableArray *data = [NSMutableArray array];
-    NSEnumerator *enumerator = [[NSEnumerator alloc]init];
-    ICEQuote* iceQuote = [ICEQuote shareInstance];
-    if([self.type isEqualToString: @"1min"]){
-        @try{
-            NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,self.sCode,@"=",iceQuote.userID];
-            NSMutableArray *arrayTemp = [iceQuote getKlineData:strCmd type:@"minute"];
-            //NSMutableArray *arrayTemp = [iceQuote getKlineData:self.sCode type:@"minute"];
-            if(arrayTemp.count == 0){
-                NSLog(@"分钟线 ++++++++++++");
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:@"无数据" preferredStyle:UIAlertControllerStyleAlert];
-                [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
-                [self presentViewController:alert animated:YES completion:nil];
-            }
-            else{
-                enumerator =[arrayTemp objectEnumerator];
-            }
-        }
-        @catch(ICEException *s){
-            NSLog(@"get min erro is %@",s);
-        }
+
+    switch (_currentTypeIndex) {
+        case 0:
+            [data addObjectsFromArray:_MinData];
+            break;
+        case 1:
+            [data addObjectsFromArray:_fiveMinsData];
+            break;
+        case 2:
+            [data addObjectsFromArray:_fifteenMinsData];
+            break;
+        case 3:
+            [data addObjectsFromArray:_monthData];
+            break;
+        case 4:
+            [data addObjectsFromArray:_dayData];
+            break;
+        case 5:
+            [data addObjectsFromArray:_weekData];
+            break;
+        default:
+            break;
     }
-    if([self.type isEqualToString: @"1day"]){
-        @try{
-            NSString* strCmd = [[NSString alloc]initWithFormat:@"%@%@%@" ,self.sCode,@"=",iceQuote.userID];
-            NSMutableArray *arrayTemp = [iceQuote getKlineData:strCmd type:@"day"];
-            enumerator =[arrayTemp objectEnumerator];
-        }
-        @catch(ICEException *s){
-            NSLog(@"getday kline erro is %@",s);
-        }
-    }
-    //数据处理应该在model中 移动处理
-    id obj = nil;
-    while (obj = [enumerator nextObject]){
-        NSString *string = obj;
-        NSArray* array1 = [string componentsSeparatedByString:@","];
-        NSMutableArray *array = [NSMutableArray arrayWithCapacity:6];
-        if([self.type isEqualToString: @"1min"]){
-            NSMutableString *date = [[NSMutableString alloc]initWithString:array1[0]];
-            [date appendString:array1[1]];
-            NSMutableString *timeString = [[NSMutableString alloc]initWithString:array1[1]];
-            [timeString deleteCharactersInRange:NSMakeRange(4,2)];
-            [timeString insertString:@":" atIndex:2];
-            array[0] = timeString;
-            array[1] = @([array1[2] floatValue]);
-            array[2] = @([array1[4] floatValue]);
-            array[3] = @([array1[5] floatValue]);
-            array[4] = @([array1[4] floatValue]);
-            array[5] = @([array1[7] floatValue]);
-            [dataArray addObject:array];
-        }
-        
-        else if ([self.type isEqualToString:@"1day"]){
-            NSMutableString *dateString = [[NSMutableString alloc]initWithString:array1[0]];
-            [dateString insertString:@"-" atIndex:4];
-            [dateString insertString:@"-" atIndex:7];
-            array[0] = dateString;
-            array[1] = @([array1[1] floatValue]);
-            array[2] = @([array1[3] floatValue]);
-            array[3] = @([array1[4] floatValue]);
-            array[4] = @([array1[2] floatValue]);
-            array[5] = @([array1[6] floatValue]);
-            [data addObject:array];
-        }
-        // NSMutableArray * newMarray = [NSMutableArray array];
-    }
-    if ([self.type isEqualToString:@"1day"]){
-        NSEnumerator * enumerator1 = [data reverseObjectEnumerator];//倒序排列
-        id object;
-        while (object = [enumerator1 nextObject])
-        {
-            [dataArray addObject:object];
-        }
-    }
-    self.groupModel  = [Y_KLineGroupModel objectWithArray:dataArray];
+    self.groupModel  = [Y_KLineGroupModel objectWithArray:data];
     [self.modelsDict setObject:_groupModel forKey:self.type];//model 字典 键值编程 更新M_groupModel
     [self.stockChartView reloadData];
     [self.stockChartView.kLineView reDraw];//重绘kline
@@ -241,8 +223,8 @@
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"分时" type:Y_StockChartcenterViewTypeTimeLine],
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"1分" type:Y_StockChartcenterViewTypeKline],
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"5分" type:Y_StockChartcenterViewTypeKline],
-                                       [Y_StockChartViewItemModel itemModelWithTitle:@"30分" type:Y_StockChartcenterViewTypeKline],
-                                       [Y_StockChartViewItemModel itemModelWithTitle:@"60分" type:Y_StockChartcenterViewTypeKline],
+                                       [Y_StockChartViewItemModel itemModelWithTitle:@"15分" type:Y_StockChartcenterViewTypeKline],
+                                       [Y_StockChartViewItemModel itemModelWithTitle:@"月线" type:Y_StockChartcenterViewTypeKline],
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"日线" type:Y_StockChartcenterViewTypeKline],
                                        [Y_StockChartViewItemModel itemModelWithTitle:@"周线" type:Y_StockChartcenterViewTypeKline],
                                        ];
@@ -253,8 +235,6 @@
         [self.view addSubview:_stockChartView];
         [_stockChartView mas_makeConstraints:^(MASConstraintMaker *make) {
             if (IS_IPHONE_X) {
-//               make.top.equalTo(self.view);
-//               make.bottom.right.left.equalTo(self.view);
                 make.top.left.right.equalTo(self.view);
                 make.bottom.equalTo(self.view.mas_bottom).offset(-20);
             } else {
@@ -279,9 +259,13 @@
     if(_stockChartView){
         [_stockChartView removeFromSuperview];
     }
-  
     [self dismissViewControllerAnimated:YES completion:nil ];
    
+}
+- (void)dealloc{
+    NSLog(@"dealloc ++++++++++++++++");
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"changeMinDataNotity" object:nil];
+    
 }
 //- (UIInterfaceOrientationMask)supportedInterfaceOrientations
 //{

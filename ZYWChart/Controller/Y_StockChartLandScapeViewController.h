@@ -12,4 +12,11 @@
 
 @property (nonatomic, copy) NSString* sCode;
 
+@property (nonatomic, strong) NSArray *MinData;
+@property (nonatomic, strong) NSArray *fiveMinsData;
+@property (nonatomic, strong) NSArray *fifteenMinsData;
+@property (nonatomic, strong) NSArray *weekData;
+@property (nonatomic, strong) NSArray *dayData;
+@property (nonatomic, strong) NSArray *monthData;
+
 @end

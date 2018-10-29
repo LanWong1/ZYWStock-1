@@ -12,7 +12,6 @@
 #import "CheckOrderVC.h"
 #import "checkHoldVC.h"
 #import "CheckFundVC.h"
-//#import "BaseNavigationController.h"
 #import "ICENpTrade.h"
 #import "HoldDataModel.h"
 #import "FundDataModel.h"
@@ -79,10 +78,14 @@
     self.checkItems = [NSMutableArray array];
     [self addSementView];
     [self addActiveId];
+    
+    
     AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
 #if NpTradeTest
     [app.iceNpTrade queryHold:app.strCmd];
 #else
+    
+    
     [app.iceTool queryHold:app.strCmd];
 #endif
     [self.activeId startAnimating];
@@ -185,6 +188,7 @@
 
 
 - (void)addOrderView{
+    
     if(self.checkItems){
         [self.checkItems removeAllObjects];
     }
@@ -264,12 +268,6 @@
    // [self updateMyList:@[@4,@8,@8,@8,@8]];
     self.segmentIndex = 1;
 }
-
-
-
-
-
-
 
 
 - (void)addFundView{
@@ -444,7 +442,7 @@
 #pragma --mark  collectionView controller 代理
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
     
-    NSLog(@"hahahahahah");
+   
     return self.checkItems.count;//返回 报表 共有多少行
     
 }

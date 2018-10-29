@@ -14,24 +14,22 @@
 #import "AppDelegate.h"
 #import "ICEQuote.h"
 #import "UIColor+Y_StockChart.h"
-@interface Y_StockChartView() <Y_StockChartSegmentViewDelegate>
 
+
+@interface Y_StockChartView() <Y_StockChartSegmentViewDelegate>
 /**
- *  底部选择View
+ *  顶部部选择View
  */
 @property (nonatomic, strong) Y_StockChartSegmentView *segmentView;
-
 /**
  *  图表类型
  */
 @property(nonatomic,assign) Y_StockChartCenterViewType currentCenterViewType;
-
 /**
  *  当前索引
  */
 @property(nonatomic,assign,readwrite) NSInteger currentIndex;
 
-@property (weak, nonatomic) IBOutlet UIView *quoteView;
 
 
 
@@ -41,7 +39,7 @@
 @implementation Y_StockChartView
 
 @synthesize kLineView = _kLineView;
-
+//图形 三个图
 - (Y_KLineView *)kLineView
 {
    
@@ -50,14 +48,6 @@
         _kLineView = [Y_KLineView new];
         [self addSubview:_kLineView];
         [_kLineView mas_makeConstraints:^(MASConstraintMaker *make) {
-           // AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
-//            if(appdelegate.isEable == NO){
-//                //make.bottom.equalTo(self).offset(-100);
-//                make.bottom.equalTo(self);
-//            }
-//            else{
-//                make.bottom.equalTo(self);
-//            }
             make.bottom.equalTo(self);
             make.right.equalTo(self);
             make.left.equalTo(self).offset(5);
@@ -66,6 +56,9 @@
     }
     return _kLineView;
 }
+
+
+
 #pragma --mark sementView Getter 方法 懒加载
 - (Y_StockChartSegmentView *)segmentView
 {
@@ -90,26 +83,26 @@
     }
     return _segmentView;
 }
+//实时行情信息 头部
 - (void)addQuoteView{
-     [[NSBundle mainBundle]loadNibNamed:@"quoteView" owner:self options:nil];
+    [[NSBundle mainBundle]loadNibNamed:@"quoteView" owner:self options:nil];
     [self addSubview:_quoteView];
     [_quoteView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self).offset(60);
+        make.top.equalTo(self);
         make.left.right.equalTo(self);
-        make.height.equalTo(@100);
+        make.height.equalTo(@80);
     }];
-    
 }
+
 #pragma --mark itemModels的setter方法
 - (void)setItemModels:(NSArray *)itemModels
 {
     AppDelegate *appdelegate = [UIApplication sharedApplication].delegate;
+    //竖屏的时候添加顶部行情图
     if(appdelegate.isEable == NO){
         [self addQuoteView];
-        _quoteView.backgroundColor = [UIColor backgroundColor];
-        
+        _quoteView.backgroundColor = [UIColor whiteColor];
     }
-    
     _itemModels = itemModels;
     if(itemModels)
     {
@@ -157,7 +150,10 @@
 - (void)y_StockChartSegmentView:(Y_StockChartSegmentView *)segmentView clickSegmentButtonIndex:(NSInteger)index
 {
 
+
+    
     self.currentIndex = index;
+    //技术线 指标按钮
     if (index == 105) {
         
         [Y_StockChartGlobalVariable setisBOLLLine:Y_StockChartTargetLineStatusBOLL];
@@ -180,13 +176,15 @@
         [self bringSubviewToFront:self.segmentView];
     
     }
-    //主图
+    //主图 分时图 1min 5min 15min day week
+    
     else {
         //获取数据 数据源代理  也可以从订阅当中获取
         if(self.dataSource && [self.dataSource respondsToSelector:@selector(stockDatasWithIndex:)])
         {
             //获得数据
             id stockData = [self.dataSource stockDatasWithIndex:index];
+            
             if(!stockData)
             {
                 return;
@@ -214,7 +212,7 @@
             {
                 
             }
-            //type = Y_StockChartcenterViewTypeTimeLine时间线或者K线图
+            //type = Y_StockChartcenterViewTypeTimeLine or   Y_StockChartcenterViewTypeKLine。分时图或者K线图
             else {
                 self.kLineView.kLineModels = (NSArray *)stockData;//更改数据
                 self.kLineView.MainViewType = type;

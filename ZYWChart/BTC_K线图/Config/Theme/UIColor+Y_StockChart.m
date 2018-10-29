@@ -24,15 +24,17 @@
 #pragma mark 所有图表的背景颜色
 +(UIColor *)backgroundColor
 {
-    //return [UIColor whiteColor];
-    return [UIColor colorWithRGBHex:0x181c20];
+    return [UIColor whiteColor];
+    //return [UIColor colorWithRGBHex:0x181c20];
 }
 
 #pragma mark 辅助背景色
 +(UIColor *)assistBackgroundColor
 {
-    //return [UIColor whiteColor];
-    return [UIColor colorWithRGBHex:0x1d2227];
+    
+    //return [UIColor colorWithRGBHex:0xccffff];
+    return [UIColor whiteColor];
+    //return [UIColor colorWithRGBHex:0x010101];
 }
 
 #pragma mark 涨的颜色
@@ -51,8 +53,8 @@
 #pragma mark 主文字颜色
 +(UIColor *)mainTextColor
 {
-     //return [UIColor blackColor];
-    return [UIColor colorWithRGBHex:0xe1e2e6];
+     return [UIColor blackColor];
+    //return [UIColor colorWithRGBHex:0xe1e2e6];
 }
 
 #pragma mark 辅助文字颜色
@@ -78,8 +80,8 @@
 #pragma mark 长按时线的颜色
 +(UIColor *)longPressLineColor
 {
-    //return [UIColor blackColor];
-    return [UIColor colorWithRGBHex:0xe1e2e6];
+    return [UIColor grayColor];
+    //return [UIColor colorWithRGBHex:0xe1e2e6];
 }
 
 #pragma mark ma5的颜色

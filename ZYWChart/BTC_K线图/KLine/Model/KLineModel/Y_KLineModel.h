@@ -130,7 +130,7 @@ typedef NS_ENUM(NSInteger, YCoinType) {
 @property (nonatomic, copy) NSNumber *BOLL_SUBMD;
 
 
-#pragma 第一个EMA等于MA；即EMA(n) = MA(n)
+#pragma 第一个EMA等于MA 即EMA(n) = MA(n)
 
 // EMA（N）=2/（N+1）*（C-昨日EMA）+昨日EMA；
 //@property (nonatomic, assign) CGFloat EMA7;

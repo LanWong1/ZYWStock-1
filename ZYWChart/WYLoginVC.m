@@ -60,10 +60,11 @@
     
     [super viewDidLoad];
     NSLog(@"wyloginVC");
-    NSInteger timer_ = (NSInteger) [NSProcessInfo processInfo].systemUptime*100;
-    NSString* userId = [NSString stringWithFormat:@"%ld",(long)timer_];
-    self.strUserId = [[NSMutableString alloc]initWithString:userId];
-  
+//    NSInteger timer_ = (NSInteger) [NSProcessInfo processInfo].systemUptime*100;
+//    NSString* userId = [NSString stringWithFormat:@"%ld",(long)timer_];
+//    self.strUserId = [[NSMutableString alloc]initWithString:userId];
+    
+    self.strUserId = [[NSMutableString alloc]initWithString: [self getCurrentTime]];
     self.LoginButton = [self addLoginButton];
     self.UserNameTextField = [self addTextField:@"UserName" PositionX:100 PositionY:70];
     self.PassWordTextField = [self addTextField:@"Password" PositionX:100 PositionY:10];
@@ -93,6 +94,8 @@
     NSLog(@"uiser id ==== %@",string);
     return string;
 }
+
+
 - (void)addActiveId{
     self.activeId = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.activeId.center = CGPointMake(self.view.centerX ,self.view.centerY+200);
@@ -103,8 +106,9 @@
     self.label.adjustsFontSizeToFitWidth = YES;
     self.label.text = @"Connect to server,Please wait";
 }
+
 -(void)getCode{
-    NSLog(@"你是猪");
+
     SQLServerAPI *sql = [SQLServerAPI shareInstance];
     [sql.paremetersSeq removeAllObjects];
     int ret = 0;
@@ -113,7 +117,7 @@
     NSLog(@"%@",sql.paremetersSeq);
     @try{
         ret =  [sql.SQL ExecProc:@"pd_get_contractcode" SQLPQS:sql.paremetersSeq strErrInfo:&erroInfo XMLSqlData:&outPutString];
-        NSLog(@"account = %@  info = %@  ret = %d",outPutString,erroInfo ,ret);
+        //NSLog(@"account = %@  info = %@  ret = %d",outPutString,erroInfo ,ret);
         GDataXMLDocument * doc = [[GDataXMLDocument alloc]initWithXMLString:outPutString error:nil];
         GDataXMLElement *rootElement = [doc rootElement];
         NSArray *division=[rootElement children];
@@ -123,7 +127,7 @@
             NSLog(@"all elements = %@",children);
             ContracInfoModel *model = [[ContracInfoModel alloc]init];
             for(int j =0;j<children.count;j++){
-                NSLog(@"hhhhhhhhhhhhhhhh++++++++++++++++");
+                
                 GDataXMLElement *element = [children objectAtIndex:j];
                 NSString *value = [element stringValue];
                 if([[element name] isEqualToString:@"exchange_type"]){
@@ -180,8 +184,10 @@
 - (void) connect2Server{
     
     ICEQuickOrder *quickOrder = [ICEQuickOrder shareInstance];
-    SQLServerAPI *sql = [SQLServerAPI shareInstance];
-    ICEQuote *quote = [ICEQuote shareInstance];
+    SQLServerAPI  *sql   = [SQLServerAPI shareInstance];
+    ICEQuote      *quote = [ICEQuote shareInstance];
+    
+    
     [self.view addSubview:self.label];
     [self addActiveId];
     [self.activeId startAnimating];
@@ -190,24 +196,27 @@
         @try
         {
             NSLog(@"connect to server");
-           
+            //sql 接口
             [sql Connect2ICE];//sql连接服务器
             [self checkFundAccount];
-           // [self getCode];
+            // [self getCode];
+            
+            //易捷接口
             [quickOrder  Connect2ICE];
             [quickOrder initiateCallback:self.strFundAcc];
+            
             NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
             NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
             int ret = [quickOrder.quickOrder Login:@"" strCmd:self.strCmd strOut:&strOut strErrInfo:&strErroInfo];
-            NSLog(@"ret=  %d",ret);
-//            if(ret == -1){
-//                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:strErroInfo preferredStyle:UIAlertControllerStyleAlert];
-//                UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-//                    NSLog(@"dddddddddd");
-//                }];
-//                [alert addAction:action];
-//                [self presentViewController:alert animated:YES completion:nil];
-//            }
+           // NSLog(@"quickorder login ret=  %d",ret);
+            if(ret == -1){
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:strErroInfo preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    NSLog(@"dddddddddd");
+                }];
+                [alert addAction:action];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
            // [self setHeartbeat];//心跳
             //资金查询
 //            [quickOrder queryFund:quickOrder.strFunAcc];
@@ -220,10 +229,15 @@
             //[quickOrder.quickOrder QueryCode:@"GetTime" strCmd:@"" strOut:&strOut strErrInfo:&strErroInfo];
            // NSLog(@"queryCode: %@",strOut);
             
+            
+            //行情接口
             [quote Connect2Quote];
             [quote initiateCallback:self.strAcc];
             [quote Login:self.strCmd];
             quote.userID = self.strUserId;
+            
+            
+            
             dispatch_sync(dispatch_get_main_queue(), ^{
                 [self.activeId removeFromSuperview];
                 [self.label removeFromSuperview];
@@ -252,13 +266,13 @@
         }
         @catch(ICEException* s)
         {
-            NSLog(@"哈哈哈 :%@",s);
+//            NSLog(@"哈哈哈 :%@",s);
             [self showAlart];
-   
         }
     });
 }
 
+//账号检测
 -(void)checkFundAccount{
     SQLServerAPI *sql = [SQLServerAPI shareInstance];
     [sql.paremetersSeq removeAllObjects];
@@ -268,7 +282,9 @@
     [sql DBAddSqlParameter:@"fund_account" direction:SqlServerInput value:self.strFundAcc];
     [sql DBAddSqlParameter:@"error_no" direction:SqlServerOutput value:@"-1"];
     [sql DBAddSqlParameter:@"error_info" direction:SqlServerOutput value:erroInfo];
-    NSLog(@"%@",sql.paremetersSeq);
+   
+   
+    
     @try{
         ret =  [sql.SQL ExecProc:@"pd_check_fundaccount" SQLPQS:sql.paremetersSeq strErrInfo:&erroInfo XMLSqlData:&outPutString];
         NSLog(@"account = %@  info = %@  ret = %d",outPutString,erroInfo ,ret);
@@ -282,6 +298,8 @@
         NSXMLParser *parser = [[NSXMLParser alloc]initWithData:outData];
         [parser setDelegate:self];
         [parser parse];
+        
+        
         if([self.countStatus isEqualToString:@"1"]){
             NSLog(@"账号正常");
         }
@@ -331,34 +349,40 @@
     checkNav.tabBarItem.title = @"账户";
     checkNav.tabBarItem.image = [UIImage imageNamed:@"checkNotSelected"];
     checkNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"checkSelected"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-
     _tab.viewControllers = @[listNav,buyNav,checkNav];
     [self presentViewController:_tab animated:NO completion:nil];
 }
 
+
 - (void)setHeartbeat{
     // 创建GCD定时器
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    
     _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
     dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行
     // 事件回调
     dispatch_source_set_event_handler(_timer, ^{
+       
         int iRet1 = -2;
+        int iRet2 = -2;
         @try{
             ICEQuickOrder *quickOrder = [ICEQuickOrder shareInstance];
-            SQLServerAPI *sql = [SQLServerAPI shareInstance];
             ICEQuote *quote = [ICEQuote shareInstance];
             iRet1 = [quote HeartBeat:self.strAcc];
-            iRet1 = [sql heartBeat];
-            iRet1 = [quickOrder HeartBeat:self.strCmd];
+            //iRet1 = [sql heartBeat];
+            iRet2 = [quickOrder HeartBeat:self.strCmd];
         }
         @catch(ICEException* s){
-            NSLog(@"ssss %@",s);
-            if(iRet1 == -2){
+            NSLog(@"heart beat exception ==== %@",s);
+            if(iRet1 != 0){
                 dispatch_source_cancel(self->_timer);
                 [self connect2Server];
             }
+        }
+        
+        if(iRet1 != 0 | iRet2 != 0){
+            NSLog(@"heart beat fails ==========");
+            dispatch_source_cancel(self->_timer);
+            [self connect2Server];
         }
     });
     // 开启定时器
@@ -367,10 +391,7 @@
 
 
 
-
-
-
-
+//添加 textfield
 
 -(UITextField*)addTextField:(NSString* )placeholder PositionX:(CGFloat)x PositionY:(CGFloat)y{
     UITextField* TextField = [[UITextField alloc]initWithFrame:CGRectMake(self.view.centerX-x, self.view.centerY-y, 200, 30)];
@@ -380,7 +401,7 @@
     TextField.backgroundColor = [UIColor whiteColor];
     TextField.clearButtonMode = UITextFieldViewModeWhileEditing;
     TextField.clearsOnBeginEditing = YES;
-    TextField.textAlignment = NSTextAlignmentCenter;
+    TextField.textAlignment = NSTextAlignmentCenter;//居中对齐
     TextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     TextField.returnKeyType = UIReturnKeyDone;
     TextField.keyboardType = UIKeyboardTypeASCIICapable;
@@ -388,6 +409,9 @@
     [self.view addSubview:TextField];
     return TextField;
 }
+
+
+
 
 -(UIButton*)addLoginButton{
     UIButton* btn = [[UIButton alloc]initWithFrame:CGRectMake(self.view.centerX-50, self.view.centerY+50, 100, 80)];
@@ -410,46 +434,43 @@
     }
     else
     {
-//        if([self.UserNameTextField.text isEqualToString:USERNAME]==NO | [self.PassWordTextField.text isEqualToString:PASSWORD]==NO)
-//        {
-//            [self setAlertWithMessage:@"用户名或者密码错误"];
-//        }
-//        else
-//        {
-//            ICEQuickOrder *quickOrder = [ICEQuickOrder shareInstance];
-//            quickOrder.strFunAcc = self.UserNameTextField.text;
-//            quickOrder.strUserId = self.strUserId;
-//            quickOrder.strPassword = self.PassWordTextField.text;
-//            AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-//            app.strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
-//            self.strFundAcc = [[NSMutableString alloc]initWithString:self.UserNameTextField.text];
-//            self.strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
-//            self.Pass =   self.PassWordTextField.text;    // [[NSString alloc]initWithFormat:@"%@%@%@%@",self.UserNameTextField.text,@"=",,@"="];
-//            //app.strFundAcc = self.strFundAcc
-//            app.strAcc = [NSString stringWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId];
-//            app.strCmd = [NSString stringWithString:[[NSString alloc]initWithFormat:@"%@%@%@",self.UserNameTextField.text,@"=",self.strUserId]];
-//            [self connect2Server];
-//        }
+
         
         self.strFundAcc = [[NSMutableString alloc]initWithString:self.UserNameTextField.text];
+        
+        ICEQuote *quote = [ICEQuote shareInstance];
+        quote.strFunAcc = self.UserNameTextField.text;
+        quote.strPassword = self.PassWordTextField.text;
+        quote.userID = self.strUserId;
+        
+        
+        
         ICEQuickOrder *quickOrder = [ICEQuickOrder shareInstance];
         quickOrder.strFunAcc = self.UserNameTextField.text;
         quickOrder.strUserId = self.strUserId;
         quickOrder.strPassword = self.PassWordTextField.text;
+        
+        
+        
         AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
         app.strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
         app.strAcc = [NSString stringWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId];
         
         
+        
+        
         self.strAcc = [NSString stringWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId];
-       
         self.strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
+        
         
         self.Pass = self.PassWordTextField.text;
       
         [self connect2Server];
     }
 }
+
+
+
 
 - (void)setAlertWithMessage:(NSString*)msg{
     UIAlertController* alert=[UIAlertController alertControllerWithTitle:@"警告"
@@ -468,6 +489,8 @@
     [super didReceiveMemoryWarning];
     //Dispose of any resources that can be recreated.
 }
+#pragma mark     keyboard delegate
+
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     [textField resignFirstResponder];
     if(textField.text.length>0)
@@ -489,21 +512,22 @@
 }
 */
 #pragma --mark parser 代理
-
+// 1.开始解析
 -(void)parserDidStartDocument:(NSXMLParser *)parser{
     NSLog(@"开始解析数据");
 }
 
+//2.正在解析
 - (void) parser:(NSXMLParser *)parser didStartElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName attributes:(NSDictionary<NSString *,NSString *> *)attributeDict{
     
-    NSLog(@"解析XML文件中所有的元素:elementName:%@    %@",elementName,attributeDict);
+   
     if([elementName isEqualToString:@"account_status"]){
         self.countStatus = @"account_status";
     }
     
     if([elementName isEqualToString:@"row"]){
          self.rowChangeFlag = !self.rowChangeFlag ;
-        NSLog(@"self.rowChangeFla = %d",self.rowChangeFlag);
+        //NSLog(@"self.rowChangeFla = %d",self.rowChangeFlag);
         
     }
     
@@ -513,20 +537,18 @@
    
 }
 -(void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string{
-    NSLog(@"hhahahha = %@",string);
+
     static BOOL flag;
-    
     if(flag != self.rowChangeFlag){
         flag = self.rowChangeFlag;
-        NSLog(@"row changed ++++++++++++++++++++++++++++++++++++");
+        
     }
     else{
-         NSLog(@"hhahahha = %@",string);
+        
     }
     if([self.countStatus isEqualToString:@"account_status"]){
         self.countStatus = string;
     }
-    
 }
 
 //4.XML所有元素解析完毕
