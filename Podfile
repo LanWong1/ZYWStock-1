@@ -5,4 +5,5 @@ pod 'GDataXML-HTML'
 pod 'Masonry'
 pod 'KVOController'
 pod 'FHHFPSIndicator'
+pod ‘Cocoa-Charts’
 end

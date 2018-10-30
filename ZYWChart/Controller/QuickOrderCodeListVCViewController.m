@@ -45,19 +45,16 @@
 
 
 - (void)viewWillAppear:(BOOL)animated{
+    NSLog(@"codelist will appear");
     [super viewWillAppear: animated];
-    self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor blackColor]};
-    self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
-    self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor blackColor]};//设置标题文字为白色
-    //[UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+    self.navigationController.navigationBar.barTintColor = DropColor;//导航栏背景色
+    
+    self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor whiteColor]};
+    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;//设置状态时间文字为白色
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
 }
 
--(void)viewDidAppear:(BOOL)animated{
-    self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];//导航栏背景色
-    self.navigationController.navigationBar.tintColor = [UIColor blackColor];//设置返回字体颜色
-    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;//设置状态时间文字为
-}
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -270,10 +267,10 @@
 }
 //tableview
 - (void)addTableView{
-    self->_tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 60, DEVICE_WIDTH, DEVICE_HEIGHT - 120) style:UITableViewStylePlain];
-    self->_tableView.delegate = self;
-    self->_tableView.dataSource = self;
-    [self.view addSubview:self->_tableView];
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 60, DEVICE_WIDTH, DEVICE_HEIGHT - 120) style:UITableViewStylePlain];
+    _tableView.delegate = self;
+    _tableView.dataSource = self;
+    [self.view addSubview:_tableView];
 
 }
 
@@ -288,7 +285,6 @@
         NSPredicate *filterPredicate = [NSPredicate predicateWithFormat:@"self contains[c]%@",filterString];
         NSArray* allResult = [[NSArray alloc]init];
         allResult = self.codeArray;//所有数据 全局搜索
-        NSLog(@"%@",self.codeArray);
         self.searchResult = [allResult filteredArrayUsingPredicate:filterPredicate];
     }
     [self.tableView reloadData];

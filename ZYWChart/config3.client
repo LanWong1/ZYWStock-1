@@ -5,7 +5,9 @@
 #Ice.Default.Router=DemoGlacier2/router:tcp -p 14064 -h 127.0.0.1
 
 #Ò×½ÝÄ£Äâ
-Ice.Default.Router=DemoGlacier2/router:tcp -p 14064 -h 118.31.40.30
+#Ice.Default.Router=DemoGlacier2/router:tcp -p 14064 -h 118.31.40.30
+
+Ice.Default.Router=DemoGlacier2/router:tcp -p 14063 -h 183.129.188.40
 
 Ice.Trace.Locator=1
 Ice.ACM.Client=0

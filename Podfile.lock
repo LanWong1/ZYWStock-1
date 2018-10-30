@@ -1,10 +1,12 @@
 PODS:
+  - Cocoa-Charts (0.2.1.1)
   - FHHFPSIndicator (1.0.0)
   - GDataXML-HTML (1.4.1)
   - KVOController (1.2.0)
   - Masonry (1.0.2)
 
 DEPENDENCIES:
+  - Cocoa-Charts
   - FHHFPSIndicator
   - GDataXML-HTML
   - KVOController
@@ -12,17 +14,19 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
+    - Cocoa-Charts
     - FHHFPSIndicator
     - GDataXML-HTML
     - KVOController
     - Masonry
 
 SPEC CHECKSUMS:
+  Cocoa-Charts: 9592979d0d0352674e0d3b73285b219a54823e15
   FHHFPSIndicator: b4d34c3a93b702ad18358a4eb49839f83f4f30fb
   GDataXML-HTML: a4f11079b48d9fe96ff1fe478943a317185227e2
   KVOController: d72ace34afea42468329623b3379ab3cd1d286b6
   Masonry: 7c429b56da9d4ee0bbb3ed77a5ea710d6a5df39e
 
-PODFILE CHECKSUM: 67398a291dd9a61487dc7d856b58cafac26b7c68
+PODFILE CHECKSUM: f50af239616d2c9565ecf2714ea65e63e2b176b3
 
 COCOAPODS: 1.5.0

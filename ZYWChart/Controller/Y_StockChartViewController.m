@@ -179,13 +179,18 @@ typedef NS_ENUM(NSInteger,TradeKind){
     self.navigationController.navigationBar.translucent =YES;
     self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor whiteColor]};//设置标题文字为白色
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;//设置状态时间文字为白色
-    self.tabBarController.tabBar.hidden = YES;
+    self.tabBarController.tabBar.hidden = NO;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
     [self unSubscibe];
+    if(_refreshTimer != nil){
+        NSLog(@"关闭定时器");
+        [_refreshTimer invalidate];
+        _refreshTimer = nil;
+    }
     self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor blackColor]};
    
 }
@@ -1266,7 +1271,7 @@ typedef NS_ENUM(NSInteger,TradeKind){
     
     if(!_refreshTimer){
         NSLog(@"开启定时器");
-        _refreshTimer = [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(reloadData) userInfo:nil repeats:YES];//每分钟刷新
+        _refreshTimer = [NSTimer scheduledTimerWithTimeInterval:60.0 target:self selector:@selector(reloadData) userInfo:nil repeats:YES];//每分钟刷新
     }
     //定时刷新数据
 //    if(index == 0){
@@ -1575,9 +1580,11 @@ typedef NS_ENUM(NSInteger,TradeKind){
             [self presentViewController:alert animated:YES completion:nil];
         }
         else{
-            [_MinData addObjectsFromArray:[self getMinData:minArray dataType:@"1min"]];
-            [_fiveMinsData addObjectsFromArray:[self getMinData:minArray dataType:@"5min"]];
-            [_fifteenMinsData addObjectsFromArray:[self getMinData:minArray dataType:@"15min"]];
+
+            _MinData = [self getMinData:minArray dataType:@"1min"];
+            _fiveMinsData = [self getMinData:minArray dataType:@"5min"];
+            _fifteenMinsData = [self getMinData:minArray dataType:@"15min"];
+
             if(_stockChartLangVC){
                 [[NSNotificationCenter defaultCenter]postNotificationName:@"changeMinDataNotity" object:nil userInfo:@{@"minData":_MinData,@"fifteenMinData":_fifteenMinsData,@"fiveMinData":_fiveMinsData}];
             }
@@ -1596,6 +1603,7 @@ typedef NS_ENUM(NSInteger,TradeKind){
     @try {
         NSLog(@"日线 ++++++++++++");
         NSMutableArray *array = [iceQuote getKlineData:strCmd type:@"day"];
+        
         if(array.count == 0){
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:@"无日数据" preferredStyle:UIAlertControllerStyleAlert];
             [alert addAction:[UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleDefault handler:nil]];
