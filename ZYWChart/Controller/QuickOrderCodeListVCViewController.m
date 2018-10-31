@@ -73,13 +73,9 @@
 [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(quoteDataChange:) name:@"quoteNotity" object:nil];
 }
 - (void)quoteDataChange:(NSNotification*)notify{
-    
-    NSLog(@"_tableview  reload data+++++++++");
+
     [_tableView reloadData];
-    
-   // NSLog(@"data ======== %@",notify.userInfo[@"message"]);
-    
-    
+
 }
 
 #pragma mark    获取数据
