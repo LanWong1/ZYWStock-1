@@ -15,16 +15,28 @@
 @protocol ICECommunicator;
 @protocol GLACIER2RouterPrx;
 
-@interface WpQuoteServerCallbackReceiverI : WpQuoteServerCallbackReceiver
-//- (NSMutableArray*)messageForBuyVC;
-@end
+
 
 @protocol ICEQuoteDelegate<NSObject>
 
 @optional
 //传递数据
 - (void)refreshTimeline:(NSString*)s;
+- (void)dataChanged:(NSArray *)array;
 @end
+
+
+@interface WpQuoteServerCallbackReceiverI : WpQuoteServerCallbackReceiver
+//- (NSMutableArray*)messageForBuyVC;
+@property(nonatomic,weak) id<ICEQuoteDelegate>delegate;
+
+@end
+
+
+
+
+
+
 
 @interface ICEQuote : NSObject
 @property (nonatomic) id<WpQuoteServerClientApiPrx> WpQuoteServerclientApiPrx;
@@ -44,6 +56,6 @@
 - (WpQuoteServerDayKLineList*)GetDayKline:(NSString*)ExchangeID;
 //- (NSMutableArray*)getTimeData:(NSString*)sCode;
 - (NSMutableArray*)getKlineData:(NSString*)sCode type:(NSString*)type;
-@property(nonatomic,weak) id<ICEQuoteDelegate>delegate;
+//@property(nonatomic,weak) id<ICEQuoteDelegate>delegate;
 
 @end

@@ -12,8 +12,8 @@
 #import "ContracInfoModel.h"
 #import "GDataXMLNode.h"
 #import "SQLServerAPI.h"
-
-
+#import "ICEQuote.h"
+#import "QuoteModel.h"
 
 #define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
@@ -22,7 +22,7 @@
 #define IS_IPHONE_X (IS_IPHONE && SCREEN_MAX_LENGTH == 812.0)
 
 
-@interface QuickOrderCodeListVCViewController ()<UITableViewDelegate,UITableViewDataSource,UISearchResultsUpdating, UISearchControllerDelegate>
+@interface QuickOrderCodeListVCViewController ()<UITableViewDelegate,UITableViewDataSource,UISearchResultsUpdating, UISearchControllerDelegate,ICEQuoteDelegate>
 
 @property (nonatomic,strong)  UIButton *searchBtn;
 @property (nonatomic,strong)  UISearchController *searchController;
@@ -37,15 +37,16 @@
 @property (nonatomic)         ICEInt refreshFlag;
 @property (nonatomic,strong)  UIRefreshControl   *refreshControl;
 @property (nonatomic,strong)  NSMutableArray<__kindof ContracInfoModel*> *contractInfoArray;
-
-
+@property (nonatomic,strong)  NSMutableArray *subscribedIndex;
+@property (nonatomic,strong)  NSMutableArray<__kindof QuoteModel*> *quoteModelArray;
+@property (nonatomic,strong)  WpQuoteServerCallbackReceiverI* reciver;
 @end
 
 @implementation QuickOrderCodeListVCViewController
 
 
 - (void)viewWillAppear:(BOOL)animated{
-    NSLog(@"codelist will appear");
+   
     [super viewWillAppear: animated];
     self.navigationController.navigationBar.barTintColor = DropColor;//导航栏背景色
     
@@ -58,15 +59,28 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    _subscribedIndex = [NSMutableArray array];
     _codeArray = [NSMutableArray array];
+    _quoteModelArray = [NSMutableArray array];
     self.navigationItem.title = @"合约代码";
      _contractInfoArray = [NSMutableArray array];
+    self.reciver = [[WpQuoteServerCallbackReceiverI alloc]init];
+    self.reciver.delegate = self;
+    
     [self addSearchButton];
     [self getCodeList];//获取数据
     //注册通知
-
+[[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(quoteDataChange:) name:@"quoteNotity" object:nil];
 }
-
+- (void)quoteDataChange:(NSNotification*)notify{
+    
+    NSLog(@"_tableview  reload data+++++++++");
+    [_tableView reloadData];
+    
+   // NSLog(@"data ======== %@",notify.userInfo[@"message"]);
+    
+    
+}
 
 #pragma mark    获取数据
 
@@ -88,6 +102,7 @@
             _searchResult =[NSArray arrayWithArray: _codeArray];
             [self.activeId stopAnimating];
             [self.label removeFromSuperview];
+            [self addHeaderView];
             [self addTableView];
             [self addRefreshControl];
         });
@@ -265,15 +280,50 @@
     self.label.text = @"Please Wait";
     [self.view addSubview:self.label];
 }
+- (void)addHeaderView{
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0,60, DEVICE_WIDTH, 40)];
+    view.backgroundColor = [UIColor lightGrayColor];
+    view.alpha = 0.8;
+    
+    UILabel *lable3 = [[UILabel alloc]initWithFrame:CGRectMake(20, 0, 50, view.height)];
+    lable3.adjustsFontSizeToFitWidth = YES;
+    lable3.text = @"名称";
+    
+    UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(150, 0, 50, view.height)];
+    lable.adjustsFontSizeToFitWidth = YES;
+    lable.text = @"最新价";
+    
+    UILabel *lable1 = [[UILabel alloc]initWithFrame:CGRectMake(250, 0, 50, view.height)];
+    lable1.adjustsFontSizeToFitWidth = YES;
+    lable1.text = @"涨跌";
+    
+    UILabel *lable2 = [[UILabel alloc]initWithFrame:CGRectMake(350, 0, 50, view.height)];
+    lable2.adjustsFontSizeToFitWidth = YES;
+    lable2.text = @"成交量";
+
+    [view addSubview:lable];
+    [view addSubview:lable1];
+    [view addSubview:lable2];
+    [view addSubview:lable3];
+    [self.view addSubview:view];
+    
+}
 //tableview
 - (void)addTableView{
-    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 60, DEVICE_WIDTH, DEVICE_HEIGHT - 120) style:UITableViewStylePlain];
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 100, DEVICE_WIDTH, DEVICE_HEIGHT - 120) style:UITableViewStylePlain];
     _tableView.delegate = self;
     _tableView.dataSource = self;
+    _tableView.tableHeaderView.hidden = YES;
     [self.view addSubview:_tableView];
 
 }
-
+- (void)subscibe:(NSString*)sCode{
+    ICEQuote* iceQuote = [ICEQuote shareInstance];
+    NSString* cmdType = @"CTP,";
+    NSString *strAcc = [NSString stringWithFormat:@"%@%@%@",iceQuote.strFunAcc,@"=",iceQuote.userID];
+    cmdType =  [cmdType stringByAppendingString:strAcc];
+    [iceQuote SubscribeQuote:cmdType strCmd:sCode];
+}
 #pragma mark searchbar delegate
 //search bar 过滤字符串 setter
 - (void)setFilterString:(NSString *)filterString{
@@ -306,6 +356,7 @@
     }];
     [self.searchView removeFromSuperview];
     _searchResult = _codeArray;
+    
     [self.tableView reloadData];
 }
 
@@ -319,18 +370,24 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *sCode = _contractInfoArray[indexPath.row].contract_code;
+    NSString *name = _contractInfoArray[indexPath.row].contract_name;
+    NSString *title = [NSString stringWithFormat:@"%@(%@)",name,sCode];
     Y_StockChartViewController* vc = [[Y_StockChartViewController alloc]initWithScode:sCode];
+    vc.title = title;
     vc.futu_price_step = _contractInfoArray[indexPath.row].futu_price_step;
-    
-    
-    
+
     vc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];
 }
 //每个 cell
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSLog(@"cekkkkkkkkkkk+++++");
     static NSString *identifier = @"identifier";
+    if(![_subscribedIndex containsObject:@(indexPath.row)] ){
+        [_subscribedIndex addObject:@(indexPath.row)];
+        [self subscibe:_contractInfoArray[indexPath.row].contract_code];
+    }
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     if (!cell)
     {
@@ -344,6 +401,17 @@
     cell.textLabel.text = title;
     cell.detailTextLabel.text  = _contractInfoArray[indexPath.row].contract_code;
     return cell;
+}
+
+
+#pragma mark QuoteDelegate
+- (void)dataChanged:(NSArray *)array{
+    
+    NSLog(@"data is %@",array);
+    [_tableView reloadData];
+    
+    
+    
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

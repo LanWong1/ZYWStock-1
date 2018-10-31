@@ -135,7 +135,7 @@
             //[app.iceQuote initiateCallback:app.strAcc];
             //[app.iceQuote Login:app.strCmd];
             ICEQuote *iceQuote = [ICEQuote shareInstance];
-            iceQuote.delegate = self;
+            //iceQuote.delegate = self;
             app.wpQuoteServerCallbackReceiverI = [iceQuote Connect2Quote];
 //          [[ICEQuote shareInstance] initiateCallback:app.strAcc];
 //          [[ICEQuote shareInstance] Login:app.strCmd];

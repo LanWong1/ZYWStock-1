@@ -209,14 +209,14 @@
             NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
             int ret = [quickOrder.quickOrder Login:@"" strCmd:self.strCmd strOut:&strOut strErrInfo:&strErroInfo];
            // NSLog(@"quickorder login ret=  %d",ret);
-            if(ret == -1){
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:strErroInfo preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                    NSLog(@"dddddddddd");
-                }];
-                [alert addAction:action];
-                [self presentViewController:alert animated:YES completion:nil];
-            }
+//            if(ret == -1){
+//                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:strErroInfo preferredStyle:UIAlertControllerStyleAlert];
+//                UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+//                    NSLog(@"dddddddddd");
+//                }];
+//                [alert addAction:action];
+//                [self presentViewController:alert animated:YES completion:nil];
+//            }
            // [self setHeartbeat];//心跳
             //资金查询
 //            [quickOrder queryFund:quickOrder.strFunAcc];

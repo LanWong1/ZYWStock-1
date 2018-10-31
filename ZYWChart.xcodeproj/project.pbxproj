@@ -73,6 +73,7 @@
 		BA84422C212BF55300892E68 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BA84422B212BF55300892E68 /* Images.xcassets */; };
 		BA84422E212BF71300892E68 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BA84422D212BF71300892E68 /* Launch Screen.storyboard */; };
 		BA844232212FB1A400892E68 /* buttonView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BA844231212FB1A400892E68 /* buttonView.xib */; };
+		BA9D68112189864200952D62 /* QuoteModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BA9D68102189864200952D62 /* QuoteModel.m */; };
 		BAC242E321538DE000A06F27 /* quoteView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BAC242E221538DE000A06F27 /* quoteView.xib */; };
 		BAD326E02150824E00438A42 /* ContracInfoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BAD326DF2150824E00438A42 /* ContracInfoModel.m */; };
 		BAE5985720C7718000524CB7 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = BAE5985620C7718000524CB7 /* LoginVC.m */; };
@@ -231,6 +232,8 @@
 		BA84422B212BF55300892E68 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		BA84422D212BF71300892E68 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		BA844231212FB1A400892E68 /* buttonView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = buttonView.xib; sourceTree = "<group>"; };
+		BA9D680F2189864200952D62 /* QuoteModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuoteModel.h; sourceTree = SOURCE_ROOT; };
+		BA9D68102189864200952D62 /* QuoteModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QuoteModel.m; sourceTree = SOURCE_ROOT; };
 		BAC242E221538DE000A06F27 /* quoteView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = quoteView.xib; path = KLine/quoteView.xib; sourceTree = "<group>"; };
 		BAD326DE2150824E00438A42 /* ContracInfoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ContracInfoModel.h; path = ZYWChart/Model/ContracInfoModel.h; sourceTree = SOURCE_ROOT; };
 		BAD326DF2150824E00438A42 /* ContracInfoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ContracInfoModel.m; path = ZYWChart/Model/ContracInfoModel.m; sourceTree = SOURCE_ROOT; };
@@ -414,6 +417,8 @@
 				BA171E25213E5AF00087C95F /* OrderDataModel.h */,
 				BAD326DE2150824E00438A42 /* ContracInfoModel.h */,
 				BAD326DF2150824E00438A42 /* ContracInfoModel.m */,
+				BA9D680F2189864200952D62 /* QuoteModel.h */,
+				BA9D68102189864200952D62 /* QuoteModel.m */,
 			);
 			name = model;
 			path = "New Group";
@@ -843,6 +848,7 @@
 				BA171E1C213E5A400087C95F /* ICENpTrade.m in Sources */,
 				BA3D61D020EDA08400665888 /* Y_KLineModel.m in Sources */,
 				BA3D61D720EDA08400665888 /* Y_KLineVolumeView.m in Sources */,
+				BA9D68112189864200952D62 /* QuoteModel.m in Sources */,
 				BAE5985720C7718000524CB7 /* LoginVC.m in Sources */,
 				BA3D61D320EDA08400665888 /* Y_StockChartRightYView.m in Sources */,
 				BA3D61D620EDA08400665888 /* Y_KLineVolume.m in Sources */,

@@ -13,16 +13,23 @@
 
 
 @interface WpQuoteServerCallbackReceiverI()<WpQuoteServerCallbackReceiver>
+
+
+
+
+
 @end
 
 @implementation WpQuoteServerCallbackReceiverI
+
 - (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current
 {
-    //NSLog(@"hahahah:%d  strmessage = %@",itype,strMessage);
+    //NSLog(@"订阅消息 type:%d  strmessage = %@",itype,strMessage);
     NSArray* arr =  [strMessage componentsSeparatedByString:@","];
-   
+
     //NSString *type = [NSString stringWithFormat:@"%d",itype];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"quoteNotity" object:nil userInfo:@{@"message":arr,@"type":@(itype)}];
+    
 }
 @end
 

@@ -211,14 +211,8 @@ typedef NS_ENUM(NSInteger,TradeKind){
     
     [self downLoadData];//下载数据
     
-    
-    
-    self.navigationItem.title = self.sCode;
+    self.navigationItem.title = self.title;
     self.view.backgroundColor = [UIColor backgroundColor];
-    
-    
-    
-    
     [self addScrollView];//上下滑动
     
     
@@ -404,64 +398,64 @@ typedef NS_ENUM(NSInteger,TradeKind){
     
     
     NSArray *arry = [NSArray arrayWithArray:notif.userInfo[@"message"]];
+   //删除字符串的数字
+    NSRegularExpression *regular = [NSRegularExpression regularExpressionWithPattern:@"[0-9]" options:0 error:NULL];
+    NSString *code = [regular stringByReplacingMatchesInString:arry[1] options:0 range:NSMakeRange(0, [arry[1] length]) withTemplate:@""];
+    NSLog(@"code is ......... %@, code lenth === %lu",code,(unsigned long)[code length]);
+    
     //NSLog(@"行情========%@   type = %@",notif.userInfo[@"message"],notif.userInfo[@"type"]);
-    
+    if( [self.title containsString: code]){
         
-    //价格变化
-    _stockChartView.lastPrice.text = arry[4];
-    float priceChange = [arry[4] floatValue] - [ arry[5] floatValue];
+        //价格变化
+        _stockChartView.lastPrice.text = arry[4];
+        float priceChange = [arry[4] floatValue] - [ arry[5] floatValue];
+        //价格变化百分比
+        float chagepercentage = 100*priceChange/[arry[5] floatValue];
+        //NSLog(@"chagepercentage ===  %f",chagepercentage);
 
-   
-    
-    //价格变化百分比
-    float chagepercentage = 100*priceChange/[arry[5] floatValue];
-    //NSLog(@"chagepercentage ===  %f",chagepercentage);
- 
-    
-    if(priceChange<0){
-        self.stockChartView.priceChangePercentage.textColor = DropColor;//导航栏背景色
-        _stockChartView.priceChange.textColor = DropColor;
-        _stockChartView.lastPrice.textColor = DropColor;
-        _stockChartView.priceChangePercentage.text = [NSString stringWithFormat:@"%.2f%@",chagepercentage ,@"\%"];
-         _stockChartView.priceChange.text =  [NSString stringWithFormat:@"%.1f",priceChange];
-    }
-    else{
-        
-        _stockChartView.priceChangePercentage.text = [NSString stringWithFormat:@"%@%.2f%@",@"+",chagepercentage ,@"\%"];
-        _stockChartView.priceChange.text =  [NSString stringWithFormat:@"%@%.1f",@"+",priceChange];
-        self.stockChartView.priceChangePercentage.textColor = RoseColor;//导航栏背景色
-        _stockChartView.priceChange.textColor = RoseColor;
-          _stockChartView.lastPrice.textColor = RoseColor;
-        
-    }
-    
-    _stockChartView.AskPrice.text = arry[24];
-    _stockChartView.AskVolume.text = arry[25];
-    
-    _stockChartView.BidPrice.text = arry[22];
-    _stockChartView.BidVolume.text = arry[23];
-    
-    _stockChartView.OpenInterest.text = arry[13];
-    NSInteger InterestAdd = [arry[13] integerValue] - [arry[7] integerValue];
-    _stockChartView.dayGrowHold.text = [NSString stringWithFormat:@"%ld",(long)InterestAdd];
-    //有持仓
-    if(_buyCountValue>0){
-        //持仓盈亏
-        __block float win;
-        [_tradeRecordArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            win += [obj[@"count"] integerValue] * ([arry[4] floatValue]- [obj[@"avgPrice"] floatValue]);
-            
-        }];
-        if (win<0) {
-            _holdWinLossLable.text = [NSString stringWithFormat:@"%@%.1f",@"-",win];
-            [_holdWinLossLable setTextColor:DropColor];
+        if(priceChange<0){
+            self.stockChartView.priceChangePercentage.textColor = DropColor;//导航栏背景色
+            _stockChartView.priceChange.textColor = DropColor;
+            _stockChartView.lastPrice.textColor = DropColor;
+            _stockChartView.priceChangePercentage.text = [NSString stringWithFormat:@"%.2f%@",chagepercentage ,@"\%"];
+            _stockChartView.priceChange.text =  [NSString stringWithFormat:@"%.1f",priceChange];
         }
         else{
-            _holdWinLossLable.text = [NSString stringWithFormat:@"%.1f",win];
-            [_holdWinLossLable setTextColor:RoseColor];
+            
+            _stockChartView.priceChangePercentage.text = [NSString stringWithFormat:@"%@%.2f%@",@"+",chagepercentage ,@"\%"];
+            _stockChartView.priceChange.text =  [NSString stringWithFormat:@"%@%.1f",@"+",priceChange];
+            self.stockChartView.priceChangePercentage.textColor = RoseColor;//导航栏背景色
+            _stockChartView.priceChange.textColor = RoseColor;
+            _stockChartView.lastPrice.textColor = RoseColor;
+            
         }
+        
+        _stockChartView.AskPrice.text = arry[24];
+        _stockChartView.AskVolume.text = arry[25];
+        _stockChartView.BidPrice.text = arry[22];
+        _stockChartView.BidVolume.text = arry[23];
+        _stockChartView.OpenInterest.text = arry[13];
+        NSInteger InterestAdd = [arry[13] integerValue] - [arry[7] integerValue];
+        _stockChartView.dayGrowHold.text = [NSString stringWithFormat:@"%ld",(long)InterestAdd];
+        //有持仓
+        if(_buyCountValue>0){
+            //持仓盈亏
+            __block float win;
+            [_tradeRecordArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                win += [obj[@"count"] integerValue] * ([arry[4] floatValue]- [obj[@"avgPrice"] floatValue]);
+                
+            }];
+            if (win<0) {
+                _holdWinLossLable.text = [NSString stringWithFormat:@"%@%.1f",@"-",win];
+                [_holdWinLossLable setTextColor:DropColor];
+            }
+            else{
+                _holdWinLossLable.text = [NSString stringWithFormat:@"%.1f",win];
+                [_holdWinLossLable setTextColor:RoseColor];
+            }
+        }
+
     }
- 
 }
 #pragma --mark 添加views
 // scrollview
