@@ -21,4 +21,29 @@ static QuoteModel* quoteModel = nil;
     });
     return quoteModel;
 }
+
+- (id)initWithArray:(NSArray*)array{
+    self = [super init];
+    if(self){
+        self.instrumenID = array[1];
+        self.lastPrice = array[4];
+        self.preSettlementPrice = array[5];
+        self.preOpenInterest = array[7];
+        self.openInterest = array[13];
+    }
+    return self;
+}
+
+- (void)calculatePriceChange{
+    NSString *priceChangeTemp;
+    float price = ([self.lastPrice integerValue] - [self.preSettlementPrice integerValue])/([self.preSettlementPrice integerValue]);
+    if(price<0){
+        priceChangeTemp = [NSString stringWithFormat:@"%@%.2f%@",@"-",price,@"%"];
+    }
+    else{
+        priceChangeTemp = [NSString stringWithFormat:@"%.2f",price ];
+    }
+    
+    self.priceChange = priceChangeTemp;
+}
 @end
