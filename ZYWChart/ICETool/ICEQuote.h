@@ -17,18 +17,9 @@
 
 
 
-@protocol ICEQuoteDelegate<NSObject>
-
-@optional
-//传递数据
-- (void)refreshTimeline:(NSString*)s;
-- (void)dataChanged:(NSArray *)array;
-@end
 
 
 @interface WpQuoteServerCallbackReceiverI : WpQuoteServerCallbackReceiver
-//- (NSMutableArray*)messageForBuyVC;
-@property(nonatomic,weak) id<ICEQuoteDelegate>delegate;
 
 @end
 

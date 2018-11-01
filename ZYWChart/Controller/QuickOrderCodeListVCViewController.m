@@ -14,7 +14,7 @@
 #import "SQLServerAPI.h"
 #import "ICEQuote.h"
 #import "QuoteModel.h"
-
+#import "QuoteArrayModel.h"
 #define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
 #define kScreenHeight [UIScreen mainScreen].bounds.size.height
@@ -22,7 +22,7 @@
 #define IS_IPHONE_X (IS_IPHONE && SCREEN_MAX_LENGTH == 812.0)
 
 
-@interface QuickOrderCodeListVCViewController ()<UITableViewDelegate,UITableViewDataSource,UISearchResultsUpdating, UISearchControllerDelegate,ICEQuoteDelegate>
+@interface QuickOrderCodeListVCViewController ()<UITableViewDelegate,UITableViewDataSource,UISearchResultsUpdating, UISearchControllerDelegate,QuoteArrayModelDelegate>
 
 @property (nonatomic,strong)  UIButton *searchBtn;
 @property (nonatomic,strong)  UISearchController *searchController;
@@ -40,9 +40,12 @@
 @property (nonatomic,strong)  NSMutableArray *subscribedIndex;
 @property (nonatomic,strong)  NSMutableArray<__kindof QuoteModel*> *quoteModelArray;
 @property (nonatomic,strong)  WpQuoteServerCallbackReceiverI* reciver;
+@property (nonatomic,strong)  QuoteModel *quoteModel;
+@property (nonatomic,strong)  QuoteArrayModel *quoteArrayModel;
 @end
 
 @implementation QuickOrderCodeListVCViewController
+
 
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -58,46 +61,38 @@
 
 
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
     _subscribedIndex = [NSMutableArray array];
     _codeArray = [NSMutableArray array];
+    _quoteArrayModel = [QuoteArrayModel shareInstance];
+    _quoteArrayModel.delegate = self;
+    [QuoteArrayModel shareInstance].quoteModelArray = [NSMutableArray array];
+    
     _quoteModelArray = [NSMutableArray array];
+    
+ 
     self.navigationItem.title = @"合约代码";
      _contractInfoArray = [NSMutableArray array];
     self.reciver = [[WpQuoteServerCallbackReceiverI alloc]init];
-    self.reciver.delegate = self;
+    //self.reciver.delegate = self;
+    
     
     [self addSearchButton];
     [self getCodeList];//获取数据
-    //注册通知
-[[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(quoteDataChange:) name:@"quoteNotity" object:nil];
-}
-- (void)quoteDataChange:(NSNotification*)notify{
-    __block NSInteger findModelIdx;
-    [_quoteModelArray enumerateObjectsUsingBlock:^(__kindof QuoteModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        //array中包含了此合约的model
-        if([obj.instrumenID isEqualToString:notify.userInfo[@"message"][1]]){
-            obj.lastPrice = notify.userInfo[@"message"][4];//最新价
-            obj.openInterest = notify.userInfo[@"message"][13];//持仓量
-            obj.preSettlementPrice = notify.userInfo[@"message"][5];
-            [obj calculatePriceChange];//涨幅
-            findModelIdx = idx;
-            *stop = YES;
-        }
-        //遍历完没有找到相同的合约号 遍历到最后一个
-        if((idx==_quoteModelArray.count-1) & (findModelIdx!= _quoteModelArray.count-1)){
-            
-            QuoteModel *model = [[QuoteModel alloc]initWithArray:notify.userInfo[@"message"]];
-            [_quoteModelArray addObject:model];
-        }
-    }];
-    
   
-    
-
-    [_tableView reloadData];
-
+    //注册通知
+//[[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(quoteDataChange:) name:@"quoteNotity" object:nil];
+[[NSNotificationCenter defaultCenter]addObserver:[QuoteArrayModel shareInstance] selector:@selector(quoteDataChange:) name:@"quoteNotity" object:nil];
 }
+
+- (void)reloadData:(NSMutableArray *)array{
+    NSLog(@"reload data=============");
+    [_quoteModelArray addObjectsFromArray:array];
+    [_tableView reloadData];
+}
+
+
 
 #pragma mark    获取数据
 
@@ -306,22 +301,23 @@
     lable3.adjustsFontSizeToFitWidth = YES;
     lable3.text = @"名称";
     
-    UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(150, 0, 50, view.height)];
+    UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(130, 0, 50, view.height)];
     lable.adjustsFontSizeToFitWidth = YES;
     lable.text = @"最新价";
     
-    UILabel *lable1 = [[UILabel alloc]initWithFrame:CGRectMake(250, 0, 50, view.height)];
+    UILabel *lable1 = [[UILabel alloc]initWithFrame:CGRectMake(240, 0, 50, view.height)];
     lable1.adjustsFontSizeToFitWidth = YES;
     lable1.text = @"涨跌";
     
     UILabel *lable2 = [[UILabel alloc]initWithFrame:CGRectMake(350, 0, 50, view.height)];
     lable2.adjustsFontSizeToFitWidth = YES;
-    lable2.text = @"成交量";
+    lable2.text = @"持仓量";
 
     [view addSubview:lable];
     [view addSubview:lable1];
     [view addSubview:lable2];
     [view addSubview:lable3];
+    
     [self.view addSubview:view];
     
 }
@@ -399,7 +395,10 @@
 //每个 cell
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"cekkkkkkkkkkk+++++");
+    __block NSString *lastPrice;
+    __block NSString *priceChangePercentage;
+    __block NSString *openInterest;
+ 
     static NSString *identifier = @"identifier";
     if(![_subscribedIndex containsObject:@(indexPath.row)] ){
         [_subscribedIndex addObject:@(indexPath.row)];
@@ -410,26 +409,59 @@
     {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
     }
+
+    [_quoteModelArray enumerateObjectsUsingBlock:^(__kindof QuoteModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+
+        NSRegularExpression *regular = [NSRegularExpression regularExpressionWithPattern:@"[0-9]" options:0 error:NULL];
+        NSString *code = [regular stringByReplacingMatchesInString:obj.instrumenID options:0 range:NSMakeRange(0, [obj.instrumenID length]) withTemplate:@""];
+        if([_contractInfoArray[indexPath.row].contract_code containsString:code]){
+            lastPrice    = obj.lastPrice;     //最新价
+            priceChangePercentage  = obj.priceChangePercentage;   //涨幅百分比
+            openInterest = obj.openInterest;  //持仓量
+            *stop = YES;
+        }
+    }];
+
+    
+
+    UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(130, 0, 60, cell.height)];
+    //lable.adjustsFontSizeToFitWidth = YES;
+    lable.textAlignment = NSTextAlignmentCenter;
+    lable.font = [UIFont systemFontOfSize:16];
+    lable.text = lastPrice;
+    [lable setTextColor:RoseColor];
+    
+    UILabel *lable1 = [[UILabel alloc]initWithFrame:CGRectMake(230, 0, 60, cell.height)];
+    //lable1.adjustsFontSizeToFitWidth = YES;
+    lable1.text = priceChangePercentage;
+    lable1.font = [UIFont systemFontOfSize:16];
+    lable1.textAlignment = NSTextAlignmentCenter;
+    
+    [lable1 setTextColor:RoseColor];
+    if([lable1.text containsString:@"-"]){
+        [lable1 setTextColor:DropColor];
+        [lable setTextColor:DropColor];
+    }
+    
+    UILabel *lable2 = [[UILabel alloc]initWithFrame:CGRectMake(330, 0, 80, cell.height)];
+    //lable2.adjustsFontSizeToFitWidth = YES3
+    lable2.font = [UIFont systemFontOfSize:16];
+    lable2.textAlignment = NSTextAlignmentCenter;
+    lable2.text = openInterest;
+
     cell.selectionStyle = UITableViewCellSelectionStyleBlue; //设置选中的颜色
-    [cell setEditingAccessoryType:UITableViewCellAccessoryCheckmark];
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    //NSString* title = [_searchResult[indexPath.row] uppercaseString];
+
     NSString* title = _searchResult[indexPath.row];
     cell.textLabel.text = title;
+    cell.textLabel.font = [UIFont systemFontOfSize:16];
     cell.detailTextLabel.text  = _contractInfoArray[indexPath.row].contract_code;
+    [cell addSubview:lable];
+    [cell addSubview:lable1];
+    [cell addSubview:lable2];
     return cell;
 }
 
 
-#pragma mark QuoteDelegate
-- (void)dataChanged:(NSArray *)array{
-    
-    NSLog(@"data is %@",array);
-    [_tableView reloadData];
-    
-    
-    
-}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 

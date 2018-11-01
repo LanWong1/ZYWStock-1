@@ -20,6 +20,9 @@
 #import "checkVC.h"
 #import "NSArray+Extension.h"
 #import "NSDictionary+Extension.h"
+#import "QuoteArrayModel.h"
+#import "QuoteModel.h"
+
 
 
 typedef NS_ENUM(NSInteger,TradeKind){
@@ -41,7 +44,7 @@ typedef NS_ENUM(NSInteger,TradeKind){
 #define SCREEN_MAX_LENGTH MAX(kScreenWidth,kScreenHeight)
 #define IS_IPHONE_X (IS_IPHONE && SCREEN_MAX_LENGTH == 812.0)
 
-@interface Y_StockChartViewController ()<Y_StockChartViewDataSource,ICEQuoteDelegate,UIGestureRecognizerDelegate,UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
+@interface Y_StockChartViewController ()<Y_StockChartViewDataSource,UIGestureRecognizerDelegate,UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,QuoteArrayModelDelegate>
 
 @property (nonatomic, strong) Y_StockChartLandScapeViewController *stockChartLangVC;
 @property (nonatomic, strong) Y_StockChartView *stockChartView;
@@ -128,8 +131,8 @@ typedef NS_ENUM(NSInteger,TradeKind){
 @property (nonatomic, assign) NSInteger tradeKind;
 
 
-
-
+@property (nonatomic,strong)  NSMutableArray<__kindof QuoteModel*> *quoteModelArray;
+@property (nonatomic,strong) QuoteArrayModel* quoteArrayModel;
 @end
 
 @implementation Y_StockChartViewController
@@ -185,7 +188,7 @@ typedef NS_ENUM(NSInteger,TradeKind){
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    [self unSubscibe];
+    //[self unSubscibe];
     if(_refreshTimer != nil){
         NSLog(@"关闭定时器");
         [_refreshTimer invalidate];
@@ -202,6 +205,10 @@ typedef NS_ENUM(NSInteger,TradeKind){
     _buyCountArray = [NSMutableArray array];
     _tradeRecordArray = [NSMutableArray array];
     //
+    _quoteArrayModel = [QuoteArrayModel shareInstance];
+    _quoteArrayModel.delegate = self;
+    _quoteModelArray = [NSMutableArray array];
+    
     _MinData = [NSMutableArray array];
     _fiveMinsData = [NSMutableArray array];
     _fifteenMinsData = [NSMutableArray array];
@@ -230,7 +237,7 @@ typedef NS_ENUM(NSInteger,TradeKind){
     //交易成功通知
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(tradeResult:) name:@"tradeNotify" object:nil];
     //行情推送通知
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(quoteData:) name:@"quoteNotity" object:nil];
+    //[[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(quoteData:) name:@"quoteNotity" object:nil];
 }
 
 
@@ -392,71 +399,126 @@ typedef NS_ENUM(NSInteger,TradeKind){
 }
 
 
-
-//行情通知
-- (void)quoteData:(NSNotification*)notif{
+- (void)quoteViewRefresh:(NSMutableArray *)array{
+    [_quoteModelArray addObjectsFromArray:array];
     
-    
-    NSArray *arry = [NSArray arrayWithArray:notif.userInfo[@"message"]];
-   //删除字符串的数字
-    NSRegularExpression *regular = [NSRegularExpression regularExpressionWithPattern:@"[0-9]" options:0 error:NULL];
-    NSString *code = [regular stringByReplacingMatchesInString:arry[1] options:0 range:NSMakeRange(0, [arry[1] length]) withTemplate:@""];
-    NSLog(@"code is ......... %@, code lenth === %lu",code,(unsigned long)[code length]);
-    
-    //NSLog(@"行情========%@   type = %@",notif.userInfo[@"message"],notif.userInfo[@"type"]);
-    if( [self.title containsString: code]){
-        
-        //价格变化
-        _stockChartView.lastPrice.text = arry[4];
-        float priceChange = [arry[4] floatValue] - [ arry[5] floatValue];
-        //价格变化百分比
-        float chagepercentage = 100*priceChange/[arry[5] floatValue];
-        //NSLog(@"chagepercentage ===  %f",chagepercentage);
-
-        if(priceChange<0){
-            self.stockChartView.priceChangePercentage.textColor = DropColor;//导航栏背景色
-            _stockChartView.priceChange.textColor = DropColor;
-            _stockChartView.lastPrice.textColor = DropColor;
-            _stockChartView.priceChangePercentage.text = [NSString stringWithFormat:@"%.2f%@",chagepercentage ,@"\%"];
-            _stockChartView.priceChange.text =  [NSString stringWithFormat:@"%.1f",priceChange];
-        }
-        else{
-            
-            _stockChartView.priceChangePercentage.text = [NSString stringWithFormat:@"%@%.2f%@",@"+",chagepercentage ,@"\%"];
-            _stockChartView.priceChange.text =  [NSString stringWithFormat:@"%@%.1f",@"+",priceChange];
-            self.stockChartView.priceChangePercentage.textColor = RoseColor;//导航栏背景色
+    [_quoteModelArray enumerateObjectsUsingBlock:^(__kindof QuoteModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSRegularExpression *regular = [NSRegularExpression regularExpressionWithPattern:@"[0-9]" options:0 error:NULL];
+        NSString *code = [regular stringByReplacingMatchesInString:obj.instrumenID options:0 range:NSMakeRange(0, [obj.instrumenID length]) withTemplate:@""];
+        if( [self.title containsString: code]){
+            //价格变化
+            _stockChartView.lastPrice.text = obj.lastPrice;
+            _stockChartView.priceChangePercentage.text = obj.priceChangePercentage;
+            _stockChartView.priceChange.text =  obj.priceChange;
+            _stockChartView.priceChangePercentage.textColor = RoseColor;
             _stockChartView.priceChange.textColor = RoseColor;
             _stockChartView.lastPrice.textColor = RoseColor;
             
+            if([_stockChartView.priceChange.text containsString:@"-"]){
+                _stockChartView.priceChangePercentage.textColor = DropColor;
+                _stockChartView.priceChange.textColor = DropColor;
+                _stockChartView.lastPrice.textColor = DropColor;
+                
+             
+            }
+       
+            
+            _stockChartView.AskPrice.text = obj.askPrice;
+            _stockChartView.AskVolume.text = obj.askVolum;
+            _stockChartView.BidPrice.text = obj.bidPrice;
+            _stockChartView.BidVolume.text = obj.bidVolum;
+            _stockChartView.OpenInterest.text = obj.openInterest;
+
+            _stockChartView.dayGrowHold.text = obj.openInterestChange;//持仓增量
+            //有持仓
+            if(_buyCountValue>0){
+                //持仓盈亏
+                __block float win;
+                [_tradeRecordArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    win += [obj[@"count"] integerValue] * ([_stockChartView.lastPrice.text floatValue]- [obj[@"avgPrice"] floatValue]);
+                    
+                }];
+                if (win<0) {
+                    _holdWinLossLable.text = [NSString stringWithFormat:@"%@%.1f",@"-",win];
+                    [_holdWinLossLable setTextColor:DropColor];
+                }
+                else{
+                    _holdWinLossLable.text = [NSString stringWithFormat:@"%.1f",win];
+                    [_holdWinLossLable setTextColor:RoseColor];
+                }
+            }
+            
         }
         
-        _stockChartView.AskPrice.text = arry[24];
-        _stockChartView.AskVolume.text = arry[25];
-        _stockChartView.BidPrice.text = arry[22];
-        _stockChartView.BidVolume.text = arry[23];
-        _stockChartView.OpenInterest.text = arry[13];
-        NSInteger InterestAdd = [arry[13] integerValue] - [arry[7] integerValue];
-        _stockChartView.dayGrowHold.text = [NSString stringWithFormat:@"%ld",(long)InterestAdd];
-        //有持仓
-        if(_buyCountValue>0){
-            //持仓盈亏
-            __block float win;
-            [_tradeRecordArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                win += [obj[@"count"] integerValue] * ([arry[4] floatValue]- [obj[@"avgPrice"] floatValue]);
-                
-            }];
-            if (win<0) {
-                _holdWinLossLable.text = [NSString stringWithFormat:@"%@%.1f",@"-",win];
-                [_holdWinLossLable setTextColor:DropColor];
-            }
-            else{
-                _holdWinLossLable.text = [NSString stringWithFormat:@"%.1f",win];
-                [_holdWinLossLable setTextColor:RoseColor];
-            }
-        }
-
-    }
+    }];
 }
+
+////行情通知
+//- (void)quoteData:(NSNotification*)notif{
+//
+//
+//    NSArray *arry = [NSArray arrayWithArray:notif.userInfo[@"message"]];
+//   //删除字符串的数字
+//    NSRegularExpression *regular = [NSRegularExpression regularExpressionWithPattern:@"[0-9]" options:0 error:NULL];
+//    NSString *code = [regular stringByReplacingMatchesInString:arry[1] options:0 range:NSMakeRange(0, [arry[1] length]) withTemplate:@""];
+//
+//
+//    NSLog(@"code is ......... %@, code lenth === %lu",code,(unsigned long)[code length]);
+//
+//    //NSLog(@"行情========%@   type = %@",notif.userInfo[@"message"],notif.userInfo[@"type"]);
+//    if( [self.title containsString: code]){
+//
+//        //价格变化
+//        _stockChartView.lastPrice.text = arry[4];
+//        float priceChange = [arry[4] floatValue] - [ arry[5] floatValue];
+//        //价格变化百分比
+//        float chagepercentage = 100*priceChange/[arry[5] floatValue];
+//        //NSLog(@"chagepercentage ===  %f",chagepercentage);
+//
+//        if(priceChange<0){
+//            self.stockChartView.priceChangePercentage.textColor = DropColor;//导航栏背景色
+//            _stockChartView.priceChange.textColor = DropColor;
+//            _stockChartView.lastPrice.textColor = DropColor;
+//            _stockChartView.priceChangePercentage.text = [NSString stringWithFormat:@"%.2f%@",chagepercentage ,@"\%"];
+//            _stockChartView.priceChange.text =  [NSString stringWithFormat:@"%.1f",priceChange];
+//        }
+//        else{
+//
+//            _stockChartView.priceChangePercentage.text = [NSString stringWithFormat:@"%@%.2f%@",@"+",chagepercentage ,@"\%"];
+//            _stockChartView.priceChange.text =  [NSString stringWithFormat:@"%@%.1f",@"+",priceChange];
+//            self.stockChartView.priceChangePercentage.textColor = RoseColor;//导航栏背景色
+//            _stockChartView.priceChange.textColor = RoseColor;
+//            _stockChartView.lastPrice.textColor = RoseColor;
+//
+//        }
+//
+//        _stockChartView.AskPrice.text = arry[24];
+//        _stockChartView.AskVolume.text = arry[25];
+//        _stockChartView.BidPrice.text = arry[22];
+//        _stockChartView.BidVolume.text = arry[23];
+//        _stockChartView.OpenInterest.text = arry[13];
+//        NSInteger InterestAdd = [arry[13] integerValue] - [arry[7] integerValue];
+//        _stockChartView.dayGrowHold.text = [NSString stringWithFormat:@"%ld",(long)InterestAdd];
+//        //有持仓
+//        if(_buyCountValue>0){
+//            //持仓盈亏
+//            __block float win;
+//            [_tradeRecordArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//                win += [obj[@"count"] integerValue] * ([arry[4] floatValue]- [obj[@"avgPrice"] floatValue]);
+//
+//            }];
+//            if (win<0) {
+//                _holdWinLossLable.text = [NSString stringWithFormat:@"%@%.1f",@"-",win];
+//                [_holdWinLossLable setTextColor:DropColor];
+//            }
+//            else{
+//                _holdWinLossLable.text = [NSString stringWithFormat:@"%.1f",win];
+//                [_holdWinLossLable setTextColor:RoseColor];
+//            }
+//        }
+//
+//    }
+//}
 #pragma --mark 添加views
 // scrollview
 - (void)addScrollView{

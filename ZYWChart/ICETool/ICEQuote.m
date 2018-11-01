@@ -9,15 +9,11 @@
 #import "ICEQuote.h"
 #import <objc/Ice.h>
 #import <objc/Glacier2.h>
-
+#import "QuoteModel.h"
 
 
 @interface WpQuoteServerCallbackReceiverI()<WpQuoteServerCallbackReceiver>
-
-
-
-
-
+@property (nonatomic, strong) dispatch_source_t timer;
 @end
 
 @implementation WpQuoteServerCallbackReceiverI
@@ -26,11 +22,27 @@
 {
     //NSLog(@"订阅消息 type:%d  strmessage = %@",itype,strMessage);
     NSArray* arr =  [strMessage componentsSeparatedByString:@","];
-
     //NSString *type = [NSString stringWithFormat:@"%d",itype];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"quoteNotity" object:nil userInfo:@{@"message":arr,@"type":@(itype)}];
+   // [QuoteModel shareInstance];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"quoteNotity" object:self userInfo:@{@"message":arr,@"type":@(itype)}];
+    //[self setHeartbeat];
+ 
+    
     
 }
+//- (void)setHeartbeat{
+//    // 创建GCD定时器
+//    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+//    _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+//    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行
+//    // 事件回调
+//    dispatch_source_set_event_handler(_timer, ^{
+//        [[NSNotificationCenter defaultCenter] postNotificationName:@"quoteNotity" object:self userInfo:@{@"message":@"jjkkkjkjk",@"type":@(5)}];
+//
+//    });
+//    // 开启定时器
+//    dispatch_resume(_timer);
+//}
 @end
 
 @interface ICEQuote()
@@ -116,6 +128,9 @@ static ICEQuote* iceQuote = nil;
     [adapter activate];
     self.wpQuoteServerCallbackReceiverI = [[WpQuoteServerCallbackReceiverI alloc]init];
     self.twowayR = [WpQuoteServerCallbackReceiverPrx uncheckedCast:[adapter add:_wpQuoteServerCallbackReceiverI identity:callbackReceiverIdent]];
+    
+  
+    
     return self.wpQuoteServerCallbackReceiverI;
 }
 
