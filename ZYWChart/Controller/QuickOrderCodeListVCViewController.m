@@ -444,13 +444,11 @@
     }
     
     UILabel *lable2 = [[UILabel alloc]initWithFrame:CGRectMake(330, 0, 80, cell.height)];
-    //lable2.adjustsFontSizeToFitWidth = YES3
     lable2.font = [UIFont systemFontOfSize:16];
     lable2.textAlignment = NSTextAlignmentCenter;
     lable2.text = openInterest;
 
     cell.selectionStyle = UITableViewCellSelectionStyleBlue; //设置选中的颜色
-
     NSString* title = _searchResult[indexPath.row];
     cell.textLabel.text = title;
     cell.textLabel.font = [UIFont systemFontOfSize:16];
