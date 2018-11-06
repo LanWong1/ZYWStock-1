@@ -20,7 +20,7 @@
 
 - (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current
 {
-    //NSLog(@"订阅消息 type:%d  strmessage = %@",itype,strMessage);
+   // NSLog(@"订阅消息 type:%d  strmessage = %@",itype,strMessage);
     NSArray* arr =  [strMessage componentsSeparatedByString:@","];
     //NSString *type = [NSString stringWithFormat:@"%d",itype];
    // [QuoteModel shareInstance];
@@ -128,9 +128,7 @@ static ICEQuote* iceQuote = nil;
     [adapter activate];
     self.wpQuoteServerCallbackReceiverI = [[WpQuoteServerCallbackReceiverI alloc]init];
     self.twowayR = [WpQuoteServerCallbackReceiverPrx uncheckedCast:[adapter add:_wpQuoteServerCallbackReceiverI identity:callbackReceiverIdent]];
-    
-  
-    
+
     return self.wpQuoteServerCallbackReceiverI;
 }
 
@@ -157,7 +155,7 @@ static ICEQuote* iceQuote = nil;
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     int ret = [self.WpQuoteServerclientApiPrx Login:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
-    NSLog(@"login%d",ret);
+    NSLog(@"login======== ===== %d",ret);
    // [self setHeartbeat];//设置心跳
 }
 

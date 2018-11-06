@@ -175,7 +175,7 @@ typedef NS_ENUM(NSInteger,TradeKind){
 {
     
     [super viewWillAppear:animated];
-    [self subscibe];
+    //[self subscibe];
   
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];//设置返回字体颜色
     self.navigationController.navigationBar.barTintColor = DropColor;//导航栏背景色

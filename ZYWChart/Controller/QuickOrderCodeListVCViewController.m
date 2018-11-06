@@ -84,12 +84,20 @@
     //注册通知
 //[[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(quoteDataChange:) name:@"quoteNotity" object:nil];
 [[NSNotificationCenter defaultCenter]addObserver:[QuoteArrayModel shareInstance] selector:@selector(quoteDataChange:) name:@"quoteNotity" object:nil];
+
+
 }
 
-- (void)reloadData:(NSMutableArray *)array{
-    NSLog(@"reload data=============");
+- (void)reloadData:(NSMutableArray *)array index:(NSInteger)idx{
+    
+    [_quoteModelArray removeAllObjects];
     [_quoteModelArray addObjectsFromArray:array];
-    [_tableView reloadData];
+    NSIndexPath *pth = [NSIndexPath indexPathForRow:idx inSection:0];
+    [UIView performWithoutAnimation:^{
+        [_tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:pth, nil] withRowAnimation:UITableViewRowAnimationNone];
+    }];
+   
+   // [_tableView reloadData];
 }
 
 
@@ -398,8 +406,10 @@
     __block NSString *lastPrice;
     __block NSString *priceChangePercentage;
     __block NSString *openInterest;
- 
     static NSString *identifier = @"identifier";
+    
+    NSLog(@"reload data============= index=======%ld",(long)indexPath.row);
+    
     if(![_subscribedIndex containsObject:@(indexPath.row)] ){
         [_subscribedIndex addObject:@(indexPath.row)];
         [self subscibe:_contractInfoArray[indexPath.row].contract_code];
@@ -410,19 +420,28 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
     }
 
-    [_quoteModelArray enumerateObjectsUsingBlock:^(__kindof QuoteModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-
-        NSRegularExpression *regular = [NSRegularExpression regularExpressionWithPattern:@"[0-9]" options:0 error:NULL];
-        NSString *code = [regular stringByReplacingMatchesInString:obj.instrumenID options:0 range:NSMakeRange(0, [obj.instrumenID length]) withTemplate:@""];
-        if([_contractInfoArray[indexPath.row].contract_code containsString:code]){
-            lastPrice    = obj.lastPrice;     //最新价
-            priceChangePercentage  = obj.priceChangePercentage;   //涨幅百分比
-            openInterest = obj.openInterest;  //持仓量
-            *stop = YES;
-        }
-    }];
-
-    
+//    [_quoteModelArray enumerateObjectsUsingBlock:^(__kindof QuoteModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//
+//        NSRegularExpression *regular = [NSRegularExpression regularExpressionWithPattern:@"[0-9]" options:0 error:NULL];
+//        NSString *code = [regular stringByReplacingMatchesInString:obj.instrumenID options:0 range:NSMakeRange(0, [obj.instrumenID length]) withTemplate:@""];
+//        if([_contractInfoArray[indexPath.row].contract_code containsString:code]){
+//            lastPrice    = obj.lastPrice;     //最新价
+//            priceChangePercentage  = obj.priceChangePercentage;   //涨幅百分比
+//            openInterest = obj.openInterest;  //持仓量
+//            *stop = YES;
+//        }
+//    }];
+    if(_quoteModelArray.count==0 | _quoteModelArray.count < indexPath.row){
+        lastPrice = @"--";
+        priceChangePercentage = @"--";
+        openInterest = @"--";
+    }
+    else{
+        lastPrice = _quoteModelArray[indexPath.row].lastPrice;
+        priceChangePercentage = _quoteModelArray[indexPath.row].priceChangePercentage;
+        openInterest = _quoteModelArray[indexPath.row].openInterest;
+    }
+  
 
     UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(130, 0, 60, cell.height)];
     //lable.adjustsFontSizeToFitWidth = YES;
@@ -430,19 +449,19 @@
     lable.font = [UIFont systemFontOfSize:16];
     lable.text = lastPrice;
     [lable setTextColor:RoseColor];
-    
+
     UILabel *lable1 = [[UILabel alloc]initWithFrame:CGRectMake(230, 0, 60, cell.height)];
     //lable1.adjustsFontSizeToFitWidth = YES;
     lable1.text = priceChangePercentage;
     lable1.font = [UIFont systemFontOfSize:16];
     lable1.textAlignment = NSTextAlignmentCenter;
-    
+
     [lable1 setTextColor:RoseColor];
     if([lable1.text containsString:@"-"]){
         [lable1 setTextColor:DropColor];
         [lable setTextColor:DropColor];
     }
-    
+
     UILabel *lable2 = [[UILabel alloc]initWithFrame:CGRectMake(330, 0, 80, cell.height)];
     lable2.font = [UIFont systemFontOfSize:16];
     lable2.textAlignment = NSTextAlignmentCenter;

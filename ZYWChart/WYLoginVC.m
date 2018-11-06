@@ -209,14 +209,17 @@
             NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
             int ret = [quickOrder.quickOrder Login:@"" strCmd:self.strCmd strOut:&strOut strErrInfo:&strErroInfo];
            // NSLog(@"quickorder login ret=  %d",ret);
-//            if(ret == -1){
-//                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:strErroInfo preferredStyle:UIAlertControllerStyleAlert];
-//                UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-//                    NSLog(@"dddddddddd");
-//                }];
-//                [alert addAction:action];
-//                [self presentViewController:alert animated:YES completion:nil];
-//            }
+            if(ret == -1){
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:strErroInfo preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    NSLog(@"dddddddddd");
+                    [self.activeId removeFromSuperview];
+                    [self.label removeFromSuperview];
+ 
+                }];
+                [alert addAction:action];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
            // [self setHeartbeat];//心跳
             //资金查询
 //            [quickOrder queryFund:quickOrder.strFunAcc];
@@ -231,14 +234,14 @@
             
             
             //行情接口
+       
             [quote Connect2Quote];
             [quote initiateCallback:self.strAcc];
             [quote Login:self.strCmd];
             quote.userID = self.strUserId;
-            
-            
-            
+
             dispatch_sync(dispatch_get_main_queue(), ^{
+                
                 [self.activeId removeFromSuperview];
                 [self.label removeFromSuperview];
 
@@ -266,7 +269,7 @@
         }
         @catch(ICEException* s)
         {
-//            NSLog(@"哈哈哈 :%@",s);
+            NSLog(@"哈哈哈 :%@",s);
             [self showAlart];
         }
     });
@@ -435,16 +438,14 @@
     else
     {
 
-        
         self.strFundAcc = [[NSMutableString alloc]initWithString:self.UserNameTextField.text];
+        
         
         ICEQuote *quote = [ICEQuote shareInstance];
         quote.strFunAcc = self.UserNameTextField.text;
         quote.strPassword = self.PassWordTextField.text;
         quote.userID = self.strUserId;
-        
-        
-        
+ 
         ICEQuickOrder *quickOrder = [ICEQuickOrder shareInstance];
         quickOrder.strFunAcc = self.UserNameTextField.text;
         quickOrder.strUserId = self.strUserId;

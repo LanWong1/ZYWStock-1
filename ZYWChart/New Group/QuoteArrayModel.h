@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol QuoteArrayModelDelegate <NSObject>
 
 @optional
-- (void)reloadData:(NSMutableArray*)array;
+- (void)reloadData:(NSMutableArray*)array index:(NSInteger)idx;
 
 - (void)quoteViewRefresh:(NSMutableArray*)array;
 @end
