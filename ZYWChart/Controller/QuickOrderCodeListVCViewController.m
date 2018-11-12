@@ -15,6 +15,8 @@
 #import "ICEQuote.h"
 #import "QuoteModel.h"
 #import "QuoteArrayModel.h"
+#import "NSDictionary+Extension.h"
+#import "CodeListCell.h"
 #define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
 #define kScreenHeight [UIScreen mainScreen].bounds.size.height
@@ -22,7 +24,7 @@
 #define IS_IPHONE_X (IS_IPHONE && SCREEN_MAX_LENGTH == 812.0)
 
 
-@interface QuickOrderCodeListVCViewController ()<UITableViewDelegate,UITableViewDataSource,UISearchResultsUpdating, UISearchControllerDelegate,QuoteArrayModelDelegate>
+@interface QuickOrderCodeListVCViewController ()<UITableViewDelegate,UITableViewDataSource,UISearchResultsUpdating, UISearchControllerDelegate,QuoteModelDelegate>
 
 @property (nonatomic,strong)  UIButton *searchBtn;
 @property (nonatomic,strong)  UISearchController *searchController;
@@ -65,13 +67,10 @@
     [super viewDidLoad];
     _subscribedIndex = [NSMutableArray array];
     _codeArray = [NSMutableArray array];
-    _quoteArrayModel = [QuoteArrayModel shareInstance];
-    _quoteArrayModel.delegate = self;
-    [QuoteArrayModel shareInstance].quoteModelArray = [NSMutableArray array];
     
-    _quoteModelArray = [NSMutableArray array];
+    _quoteModel = [QuoteModel shareInstance];
+    _quoteModel.delegate = self;
     
- 
     self.navigationItem.title = @"合约代码";
      _contractInfoArray = [NSMutableArray array];
     self.reciver = [[WpQuoteServerCallbackReceiverI alloc]init];
@@ -80,25 +79,18 @@
     
     [self addSearchButton];
     [self getCodeList];//获取数据
-  
-    //注册通知
-//[[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(quoteDataChange:) name:@"quoteNotity" object:nil];
-[[NSNotificationCenter defaultCenter]addObserver:[QuoteArrayModel shareInstance] selector:@selector(quoteDataChange:) name:@"quoteNotity" object:nil];
-
-
-}
-
-- (void)reloadData:(NSMutableArray *)array index:(NSInteger)idx{
     
-    [_quoteModelArray removeAllObjects];
-    [_quoteModelArray addObjectsFromArray:array];
-    NSIndexPath *pth = [NSIndexPath indexPathForRow:idx inSection:0];
-    [UIView performWithoutAnimation:^{
-        [_tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:pth, nil] withRowAnimation:UITableViewRowAnimationNone];
-    }];
-   
-   // [_tableView reloadData];
+    //注册通知
+    //在对象QuoteModel 观察
+    [[NSNotificationCenter defaultCenter]addObserver:[QuoteModel shareInstance] selector:@selector(quoteDataChange:) name:@"quoteNotity" object:nil];
+
+
 }
+
+
+
+
+
 
 
 
@@ -115,11 +107,18 @@
     }
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
         [self getCode];//获取合约信息
+        [QuoteArrayModel shareInstance].quoteModelArray = [NSMutableArray arrayWithCapacity:_codeArray.count];
         [_contractInfoArray enumerateObjectsUsingBlock:^(__kindof ContracInfoModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+       
             [_codeArray addObject:obj.contract_name];
+            [[QuoteArrayModel shareInstance].codelistDic setValue:@(idx) forKey:obj.contract_code];
+            [[QuoteArrayModel shareInstance].quoteModelArray addObject: [QuoteModel shareInstance]];
+            //NSLog(@"codelistDic ==     %@", [QuoteArrayModel shareInstance].codelistDic);
         }];
         dispatch_sync(dispatch_get_main_queue(), ^{
             _searchResult =[NSArray arrayWithArray: _codeArray];
+         
+            
             [self.activeId stopAnimating];
             [self.label removeFromSuperview];
             [self addHeaderView];
@@ -390,6 +389,7 @@
 // 选中 cell
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+   // NSLog(@"indexpath,row is %d",indexPath.row);
     NSString *sCode = _contractInfoArray[indexPath.row].contract_code;
     NSString *name = _contractInfoArray[indexPath.row].contract_name;
     NSString *title = [NSString stringWithFormat:@"%@(%@)",name,sCode];
@@ -403,81 +403,59 @@
 //每个 cell
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    __block NSString *lastPrice;
-    __block NSString *priceChangePercentage;
-    __block NSString *openInterest;
-    static NSString *identifier = @"identifier";
     
-    NSLog(@"reload data============= index=======%ld",(long)indexPath.row);
+    NSLog(@"cell refresh===========");    
+    NSString *lastPrice;
+    NSString *priceChangePercentage;
+    NSString *openInterest;
     
     if(![_subscribedIndex containsObject:@(indexPath.row)] ){
         [_subscribedIndex addObject:@(indexPath.row)];
         [self subscibe:_contractInfoArray[indexPath.row].contract_code];
     }
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    if (!cell)
-    {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
+ 
+    CodeListCell *cell = [CodeListCell cellWithTableView:tableView];
+    if([QuoteArrayModel shareInstance].quoteModelArray.count > 0){
+        lastPrice = [QuoteArrayModel shareInstance].quoteModelArray[indexPath.row].lastPrice;
+        priceChangePercentage = [QuoteArrayModel shareInstance].quoteModelArray[indexPath.row].priceChangePercentage;
+        openInterest = [QuoteArrayModel shareInstance].quoteModelArray[indexPath.row].openInterest;
     }
-
-//    [_quoteModelArray enumerateObjectsUsingBlock:^(__kindof QuoteModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//
-//        NSRegularExpression *regular = [NSRegularExpression regularExpressionWithPattern:@"[0-9]" options:0 error:NULL];
-//        NSString *code = [regular stringByReplacingMatchesInString:obj.instrumenID options:0 range:NSMakeRange(0, [obj.instrumenID length]) withTemplate:@""];
-//        if([_contractInfoArray[indexPath.row].contract_code containsString:code]){
-//            lastPrice    = obj.lastPrice;     //最新价
-//            priceChangePercentage  = obj.priceChangePercentage;   //涨幅百分比
-//            openInterest = obj.openInterest;  //持仓量
-//            *stop = YES;
-//        }
-//    }];
-    if(_quoteModelArray.count==0 | _quoteModelArray.count < indexPath.row){
+   if(lastPrice == NULL){
         lastPrice = @"--";
+    }
+    if(priceChangePercentage==NULL){
         priceChangePercentage = @"--";
+    }
+    if(openInterest == NULL){
         openInterest = @"--";
     }
-    else{
-        lastPrice = _quoteModelArray[indexPath.row].lastPrice;
-        priceChangePercentage = _quoteModelArray[indexPath.row].priceChangePercentage;
-        openInterest = _quoteModelArray[indexPath.row].openInterest;
+    
+    cell.lastPriceLabel.text = lastPrice;
+    [cell.lastPriceLabel setTextColor:RoseColor];
+    cell.priceChangePercentageLabel.text = priceChangePercentage;
+    [cell.priceChangePercentageLabel setTextColor:RoseColor];
+    if([cell.priceChangePercentageLabel.text containsString:@"-"]){
+        [cell.priceChangePercentageLabel setTextColor:DropColor];
+        [cell.lastPriceLabel setTextColor:DropColor];
     }
-  
-
-    UILabel *lable = [[UILabel alloc]initWithFrame:CGRectMake(130, 0, 60, cell.height)];
-    //lable.adjustsFontSizeToFitWidth = YES;
-    lable.textAlignment = NSTextAlignmentCenter;
-    lable.font = [UIFont systemFontOfSize:16];
-    lable.text = lastPrice;
-    [lable setTextColor:RoseColor];
-
-    UILabel *lable1 = [[UILabel alloc]initWithFrame:CGRectMake(230, 0, 60, cell.height)];
-    //lable1.adjustsFontSizeToFitWidth = YES;
-    lable1.text = priceChangePercentage;
-    lable1.font = [UIFont systemFontOfSize:16];
-    lable1.textAlignment = NSTextAlignmentCenter;
-
-    [lable1 setTextColor:RoseColor];
-    if([lable1.text containsString:@"-"]){
-        [lable1 setTextColor:DropColor];
-        [lable setTextColor:DropColor];
-    }
-
-    UILabel *lable2 = [[UILabel alloc]initWithFrame:CGRectMake(330, 0, 80, cell.height)];
-    lable2.font = [UIFont systemFontOfSize:16];
-    lable2.textAlignment = NSTextAlignmentCenter;
-    lable2.text = openInterest;
-
+    cell.openInsertLabel.text = openInterest;
     cell.selectionStyle = UITableViewCellSelectionStyleBlue; //设置选中的颜色
     NSString* title = _searchResult[indexPath.row];
     cell.textLabel.text = title;
     cell.textLabel.font = [UIFont systemFontOfSize:16];
     cell.detailTextLabel.text  = _contractInfoArray[indexPath.row].contract_code;
-    [cell addSubview:lable];
-    [cell addSubview:lable1];
-    [cell addSubview:lable2];
     return cell;
 }
-
+#pragma mark    delegate of QuoteModel
+- (void)reloadData:(NSInteger)idx{
+    
+    NSLog(@"reload data ==============");
+    NSIndexPath *pth = [NSIndexPath indexPathForRow:idx inSection:0];
+    [UIView performWithoutAnimation:^{
+        [_tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:pth, nil] withRowAnimation:UITableViewRowAnimationNone];
+    }];
+    // [_tableView reloadData];
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

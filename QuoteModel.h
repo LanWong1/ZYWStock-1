@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol QuoteModelDelegate <NSObject>
 
-- (void)reloadData;
+- (void)reloadData:(NSInteger)index;
 
 @end
 
@@ -41,9 +41,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 + (QuoteModel*)shareInstance;
-- (id)initWithArray:(NSArray*)array;
+//- (id)initWithArray:(NSArray*)array;
 - (void)calculatePriceChange;
 - (void)calculateInterestChange;
+- (void)processWithArray:(NSArray*)array;
 
 @end
 

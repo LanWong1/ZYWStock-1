@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,strong)  NSMutableArray<__kindof QuoteModel*> *quoteModelArray;
 
 @property(weak,nonatomic) id<QuoteArrayModelDelegate> delegate;
+@property(strong,nonatomic) NSMutableDictionary *codelistDic;
+
 +(QuoteArrayModel*)shareInstance;
 @end
 

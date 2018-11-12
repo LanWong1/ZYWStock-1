@@ -10,26 +10,105 @@
 #import <objc/Ice.h>
 #import <objc/Glacier2.h>
 #import "QuoteModel.h"
+#import "QuoteArrayModel.h"
 
 
 @interface WpQuoteServerCallbackReceiverI()<WpQuoteServerCallbackReceiver>
 @property (nonatomic, strong) dispatch_source_t timer;
+
+@property (nonatomic,strong)  NSMutableArray<__kindof QuoteModel*> *quoteModelArray;
 @end
 
 @implementation WpQuoteServerCallbackReceiverI
 
 - (void)SendMsg:(ICEInt)itype strMessage:(NSMutableString *)strMessage current:(ICECurrent *)current
 {
-   // NSLog(@"订阅消息 type:%d  strmessage = %@",itype,strMessage);
-    NSArray* arr =  [strMessage componentsSeparatedByString:@","];
-    //NSString *type = [NSString stringWithFormat:@"%d",itype];
-   // [QuoteModel shareInstance];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"quoteNotity" object:self userInfo:@{@"message":arr,@"type":@(itype)}];
-    //[self setHeartbeat];
+    if(itype == 1){
+        NSLog(@"订阅消息 type:%d  strmessage = %@",itype,strMessage);
+        NSArray* arr =  [strMessage componentsSeparatedByString:@","];
+        NSLog(@"index =======   %@",[QuoteArrayModel shareInstance].codelistDic[arr[1]]) ;
+        
+        QuoteModel* model = [[QuoteModel alloc] init];
+        [model processWithArray:arr];
+        
+        
+//        if(_delegate && [_delegate respondsToSelector:@selector(reloadData:)]){
+//            NSLog(@"调用代理 回调");
+//            [_delegate reloadData:[[QuoteArrayModel shareInstance].codelistDic[arr[1]] integerValue] ];
+//        }
+        
+        
+        
+        //NSString *type = [NSString stringWithFormat:@"%d",itype];
+        // [QuoteModel shareInstance];
+        // [self dataProcess:arr];
+        if([QuoteArrayModel shareInstance].codelistDic[arr[1]]){
+            
+           
+             [[NSNotificationCenter defaultCenter] postNotificationName:@"quoteNotity" object:self userInfo:@{@"index":[QuoteArrayModel shareInstance].codelistDic[arr[1]],@"model":model}];
+        }
+       
+        //[self setHeartbeat];
+    }
+
  
     
     
 }
+/*
+-(void)dataProcess:(NSArray*)strMessage{
+    
+    if(!_quoteModelArray){
+        _quoteModelArray = [NSMutableArray array];
+    }
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
+        
+        __block NSInteger findModelIdx = 0;
+        if(_quoteModelArray.count>0){
+            NSLog(@"开始遍历_quoteModelArray");
+            [_quoteModelArray enumerateObjectsUsingBlock:^(__kindof QuoteModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                NSLog(@"obj.instrumentID ===== %@   message = ==  %@",obj.instrumenID,strMessage[1]);
+                //array中包含了此合约的model
+                if([obj.instrumenID isEqualToString:strMessage[1]]){
+                    
+                    obj.lastPrice = strMessage[4];//最新价
+                    obj.openInterest = strMessage[13];//持仓量
+                    obj.preSettlementPrice = strMessage[5];
+                    [obj calculatePriceChange];//涨幅
+                    findModelIdx = idx;
+                    NSLog(@"findmodel index  ===== %ld",idx);
+                    *stop = YES;
+                }
+                //遍历完没有找到相同的合约号 遍历到最后一个
+                if((idx== _quoteModelArray.count-1) && (findModelIdx!= _quoteModelArray.count-1)){
+                    QuoteModel *model = [[QuoteModel alloc]initWithArray:strMessage];
+                    [_quoteModelArray addObject:model];
+                    findModelIdx = _quoteModelArray.count - 1;
+                    NSLog(@"findmodel index+++++++++++ ===== %ld",(long)findModelIdx);
+                }
+                
+            }];
+        }
+        else{
+            NSLog(@"第一组数据开始++++++++++");
+            QuoteModel *model = [[QuoteModel alloc]initWithArray:strMessage];
+            [_quoteModelArray addObject:model];
+        }
+        
+//        dispatch_sync(dispatch_get_main_queue(), ^{
+//            //代理通知 找到第几个cell需要改变。合约顺序不变
+//            if(_delegate && [_delegate respondsToSelector:@selector(reloadData: index:)]){
+//                NSLog(@"findmodel index ===== %ld",(long)findModelIdx);
+//                [_delegate reloadData:_quoteModelArray index:findModelIdx];
+//            }
+//            if(_delegate && [_delegate respondsToSelector:@selector(quoteViewRefresh:)]){
+//                [_delegate quoteViewRefresh:_quoteModelArray];
+//            }
+//        });
+    });
+}
+ */
 //- (void)setHeartbeat{
 //    // 创建GCD定时器
 //    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -182,12 +261,11 @@ static ICEQuote* iceQuote = nil;
 //    int ret = [self.WpQuoteServerclientApiPrx SubscribeQuote:strCmdType strCmd:strcmd strOut:&strOut strErrInfo:&strErroInfo];
 //    NSLog(@"ret ======= %d erro ====== %@  strout======= %@",ret,strErroInfo,strOut);
     @try{
-
         NSLog(@"开始订阅!!strCmdType = %@ strcmd = %@ ",strCmdType,strcmd);
         [self.WpQuoteServerclientApiPrx begin_SubscribeQuote:strCmdType strCmd:strcmd response:^(ICEInt i, NSMutableString *string, NSMutableString *string2) {
-           // NSLog(@"ret========%d string======%@ string======%@",i, string, string2);
+           NSLog(@"ret========%d string======%@ string======%@",i, string, string2);
         } exception:^(ICEException *s) {
-            NSLog(@"订阅失败 原因 %@",s);
+            NSLog(@"%@订阅失败 原因 %@",strcmd, s);
         }];
     }
     @catch(NSException* s)

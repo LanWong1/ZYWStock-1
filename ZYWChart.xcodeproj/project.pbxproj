@@ -14,6 +14,7 @@
 		422787A61E04F18600DB5CEC /* ZYWChartUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 422787A51E04F18600DB5CEC /* ZYWChartUITests.m */; };
 		4C2C30A0216D9C9F00E443D8 /* NSDictionary+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2C309D216D9C9F00E443D8 /* NSDictionary+Extension.m */; };
 		4C2C30A1216D9C9F00E443D8 /* NSArray+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2C309E216D9C9F00E443D8 /* NSArray+Extension.m */; };
+		4C3C45F321992B52000F45A9 /* CodeListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C3C45F221992B52000F45A9 /* CodeListCell.m */; };
 		4C5E070420E269100053F7CB /* searchNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5E070320E2690F0053F7CB /* searchNormal.png */; };
 		4CA5EE9B21548E91008907AA /* SqlServer.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA6E0012214A3B480020834C /* SqlServer.ice */; };
 		4CA5EE9C21548EA6008907AA /* QuickOrder.ice in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3E91820FD71930073A7FB /* QuickOrder.ice */; };
@@ -130,6 +131,8 @@
 		4C2C309D216D9C9F00E443D8 /* NSDictionary+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Extension.m"; sourceTree = "<group>"; };
 		4C2C309E216D9C9F00E443D8 /* NSArray+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+Extension.m"; sourceTree = "<group>"; };
 		4C2C309F216D9C9F00E443D8 /* NSDictionary+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Extension.h"; sourceTree = "<group>"; };
+		4C3C45F121992B52000F45A9 /* CodeListCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodeListCell.h; sourceTree = "<group>"; };
+		4C3C45F221992B52000F45A9 /* CodeListCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeListCell.m; sourceTree = "<group>"; };
 		4C5E070320E2690F0053F7CB /* searchNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchNormal.png; sourceTree = "<group>"; };
 		4CA5EE9821548A4B008907AA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4CC3E91820FD71930073A7FB /* QuickOrder.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = QuickOrder.ice; sourceTree = "<group>"; };
@@ -379,6 +382,8 @@
 				BA3D61DA20EDA0B800665888 /* Y_StockChartViewController.h */,
 				BA3D61DD20EDA0B900665888 /* Y_StockChartViewController.m */,
 				BA844231212FB1A400892E68 /* buttonView.xib */,
+				4C3C45F121992B52000F45A9 /* CodeListCell.h */,
+				4C3C45F221992B52000F45A9 /* CodeListCell.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -841,6 +846,7 @@
 				4CA5EE9C21548EA6008907AA /* QuickOrder.ice in Sources */,
 				4CA5EE9B21548E91008907AA /* SqlServer.ice in Sources */,
 				BA3D61D820EDA08400665888 /* Y_KLineView.m in Sources */,
+				4C3C45F321992B52000F45A9 /* CodeListCell.m in Sources */,
 				BA171E38213E5E590087C95F /* UIView+Extension.m in Sources */,
 				BA3D61CF20EDA08400665888 /* Y_KLineGroupModel.m in Sources */,
 				BA6E000C2149E7B90020834C /* BaoBiaoItem.m in Sources */,

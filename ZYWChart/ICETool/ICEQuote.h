@@ -15,11 +15,17 @@
 @protocol ICECommunicator;
 @protocol GLACIER2RouterPrx;
 
+@protocol WpQuoteServerCallbackReceiverDelegate <NSObject>
 
+- (void)reloadData:(NSInteger)index;
+
+@end
 
 
 
 @interface WpQuoteServerCallbackReceiverI : WpQuoteServerCallbackReceiver
+@property (weak,nonatomic) id<WpQuoteServerCallbackReceiverDelegate> delegate;
+
 
 @end
 
