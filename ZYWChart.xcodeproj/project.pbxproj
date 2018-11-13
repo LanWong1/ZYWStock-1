@@ -15,6 +15,8 @@
 		4C2C30A0216D9C9F00E443D8 /* NSDictionary+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2C309D216D9C9F00E443D8 /* NSDictionary+Extension.m */; };
 		4C2C30A1216D9C9F00E443D8 /* NSArray+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2C309E216D9C9F00E443D8 /* NSArray+Extension.m */; };
 		4C3C45F321992B52000F45A9 /* CodeListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C3C45F221992B52000F45A9 /* CodeListCell.m */; };
+		4C3C45F7219A6CC8000F45A9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C3C45F6219A6CC7000F45A9 /* CoreData.framework */; };
+		4C3C45FA219A6FCB000F45A9 /* CodeListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C3C45F9219A6FCB000F45A9 /* CodeListViewController.m */; };
 		4C5E070420E269100053F7CB /* searchNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5E070320E2690F0053F7CB /* searchNormal.png */; };
 		4CA5EE9B21548E91008907AA /* SqlServer.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA6E0012214A3B480020834C /* SqlServer.ice */; };
 		4CA5EE9C21548EA6008907AA /* QuickOrder.ice in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3E91820FD71930073A7FB /* QuickOrder.ice */; };
@@ -133,6 +135,9 @@
 		4C2C309F216D9C9F00E443D8 /* NSDictionary+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Extension.h"; sourceTree = "<group>"; };
 		4C3C45F121992B52000F45A9 /* CodeListCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodeListCell.h; sourceTree = "<group>"; };
 		4C3C45F221992B52000F45A9 /* CodeListCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeListCell.m; sourceTree = "<group>"; };
+		4C3C45F6219A6CC7000F45A9 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		4C3C45F8219A6FCA000F45A9 /* CodeListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodeListViewController.h; sourceTree = "<group>"; };
+		4C3C45F9219A6FCB000F45A9 /* CodeListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeListViewController.m; sourceTree = "<group>"; };
 		4C5E070320E2690F0053F7CB /* searchNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchNormal.png; sourceTree = "<group>"; };
 		4CA5EE9821548A4B008907AA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4CC3E91820FD71930073A7FB /* QuickOrder.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = QuickOrder.ice; sourceTree = "<group>"; };
@@ -254,6 +259,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C3C45F7219A6CC8000F45A9 /* CoreData.framework in Frameworks */,
 				79715BAE312AE6B07031DB82 /* libPods-ZYWChart.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -384,6 +390,8 @@
 				BA844231212FB1A400892E68 /* buttonView.xib */,
 				4C3C45F121992B52000F45A9 /* CodeListCell.h */,
 				4C3C45F221992B52000F45A9 /* CodeListCell.m */,
+				4C3C45F8219A6FCA000F45A9 /* CodeListViewController.h */,
+				4C3C45F9219A6FCB000F45A9 /* CodeListViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -666,6 +674,7 @@
 		CAE0EB55B1E3F98AE30B25A9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4C3C45F6219A6CC7000F45A9 /* CoreData.framework */,
 				3E2B8C997449299EE5E08697 /* libPods-ZYWChart.a */,
 			);
 			name = Frameworks;
@@ -840,6 +849,7 @@
 			files = (
 				BA9D6813218AC64B00952D62 /* LoginVC.m in Sources */,
 				BA9D6812218AC61B00952D62 /* QuoteModel.m in Sources */,
+				4C3C45FA219A6FCB000F45A9 /* CodeListViewController.m in Sources */,
 				4CA5EE9F21548ECC008907AA /* WpQuote.ice in Sources */,
 				4CA5EE9E21548EC4008907AA /* NpTrade.ice in Sources */,
 				4CA5EE9D21548EBB008907AA /* WpTrade.ice in Sources */,

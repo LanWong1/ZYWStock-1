@@ -53,9 +53,8 @@
 - (void)viewWillAppear:(BOOL)animated{
    
     [super viewWillAppear: animated];
-    self.navigationController.navigationBar.barTintColor = DropColor;//导航栏背景色
-    
-    self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor whiteColor]};
+//    self.navigationController.navigationBar.barTintColor = DropColor;//导航栏背景色
+//    self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor whiteColor]};
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;//设置状态时间文字为白色
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
 }
@@ -71,7 +70,7 @@
     _quoteModel = [QuoteModel shareInstance];
     _quoteModel.delegate = self;
     
-    self.navigationItem.title = @"合约代码";
+    self.navigationItem.title = @"行情";
      _contractInfoArray = [NSMutableArray array];
     self.reciver = [[WpQuoteServerCallbackReceiverI alloc]init];
     //self.reciver.delegate = self;

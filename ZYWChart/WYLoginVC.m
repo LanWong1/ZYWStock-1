@@ -18,7 +18,7 @@
 #import "SQLServerAPI.h"
 #import "GDataXMLNode.h"
 #import "ContracInfoModel.h"
-
+#import "CodeListViewController.h"
 
 
 #define USERNAME @"063607"
@@ -116,11 +116,14 @@
     NSString *outPutString = @"";
     NSLog(@"%@",sql.paremetersSeq);
     @try{
+        //获取合约代码 pd_get_contractcode
         ret =  [sql.SQL ExecProc:@"pd_get_contractcode" SQLPQS:sql.paremetersSeq strErrInfo:&erroInfo XMLSqlData:&outPutString];
         //NSLog(@"account = %@  info = %@  ret = %d",outPutString,erroInfo ,ret);
-        GDataXMLDocument * doc = [[GDataXMLDocument alloc]initWithXMLString:outPutString error:nil];
+        
+        GDataXMLDocument *doc = [[GDataXMLDocument alloc]initWithXMLString:outPutString error:nil];
         GDataXMLElement *rootElement = [doc rootElement];
         NSArray *division=[rootElement children];
+        
         for(int i =0; i<division.count;i++){
             GDataXMLElement *ele = [division objectAtIndex:i];
             NSArray *children = [ele children];
@@ -198,7 +201,7 @@
             NSLog(@"connect to server");
             //sql 接口
             [sql Connect2ICE];//sql连接服务器
-            [self checkFundAccount];
+            [self checkFundAccount];//检查账号信息
             // [self getCode];
             
             //易捷接口
@@ -222,7 +225,7 @@
             }
            // [self setHeartbeat];//心跳
             //资金查询
-//            [quickOrder queryFund:quickOrder.strFunAcc];
+             [quickOrder queryFund:quickOrder.strFunAcc];
 //            NSString *cmd1 = [NSString stringWithFormat:@"%@%@%@",quickOrder.strFunAcc,@"=",@"" ];
 //            [quickOrder queryOrder:cmd1];
 //            //资金消息
@@ -230,15 +233,13 @@
 //            [quickOrder queryCode:quickOrder.strFunAcc];
             //交易时间
             //[quickOrder.quickOrder QueryCode:@"GetTime" strCmd:@"" strOut:&strOut strErrInfo:&strErroInfo];
-           // NSLog(@"queryCode: %@",strOut);
-            
-            
+            // NSLog(@"queryCode: %@",strOut);
             //行情接口
-       
             [quote Connect2Quote];
             [quote initiateCallback:self.strAcc];
             [quote Login:self.strCmd];
-            quote.userID = self.strUserId;
+            
+             quote.userID = self.strUserId;
 
             dispatch_sync(dispatch_get_main_queue(), ^{
                 
@@ -277,11 +278,14 @@
 
 //账号检测
 -(void)checkFundAccount{
+    
+    
     SQLServerAPI *sql = [SQLServerAPI shareInstance];
     [sql.paremetersSeq removeAllObjects];
     int ret = -0;
     NSString *erroInfo = @"";
     NSString *outPutString = @"";
+    //配置sql参数
     [sql DBAddSqlParameter:@"fund_account" direction:SqlServerInput value:self.strFundAcc];
     [sql DBAddSqlParameter:@"error_no" direction:SqlServerOutput value:@"-1"];
     [sql DBAddSqlParameter:@"error_info" direction:SqlServerOutput value:erroInfo];
@@ -289,14 +293,16 @@
    
     
     @try{
+        //检查账户
         ret =  [sql.SQL ExecProc:@"pd_check_fundaccount" SQLPQS:sql.paremetersSeq strErrInfo:&erroInfo XMLSqlData:&outPutString];
         NSLog(@"account = %@  info = %@  ret = %d",outPutString,erroInfo ,ret);
         if(ret == 0){
             [self setAlertWithMessage:@"账号不存在或未开通交易权限"];
         }
         if(ret == -1){
-            [self setAlertWithMessage:@"异常"];
+            [self setAlertWithMessage:@"账号异常"];
         }
+        
         NSData *outData = [NSData dataWithBytes:[outPutString UTF8String] length:[outPutString length]];
         NSXMLParser *parser = [[NSXMLParser alloc]initWithData:outData];
         [parser setDelegate:self];
@@ -311,9 +317,7 @@
         }
     }
     @catch(NSException *s){
-
-        [self setAlertWithMessage:@"异常"];
-        
+        [self setAlertWithMessage:@"检查账号异常"];
     }
 }
 
@@ -335,24 +339,32 @@
 
 
 - (void)addTabBarController{
-    BuyVC* buy = [[BuyVC alloc]init];
-    checkVC* check = [[checkVC alloc]init];
-    QuickOrderCodeListVCViewController *list = [[QuickOrderCodeListVCViewController alloc]init];
+    
+    BuyVC* buy = [[BuyVC alloc]init];//交易
+    checkVC* check = [[checkVC alloc]init];//查询
+    //QuickOrderCodeListVCViewController *list = [[QuickOrderCodeListVCViewController alloc]init];//行情列表
+    CodeListViewController *list = [[CodeListViewController alloc]init];
+    
     //CodeListVC* list = [[CodeListVC alloc]init];
     self.tab = [[UITabBarController alloc]init];
     UINavigationController* listNav = [[UINavigationController alloc]initWithRootViewController:list];
     UINavigationController* buyNav = [[UINavigationController alloc]initWithRootViewController:buy];
     UINavigationController* checkNav = [[UINavigationController alloc]initWithRootViewController:check];
+    
     buyNav.tabBarItem.title = @"交易";
     buyNav.tabBarItem.image = [UIImage imageNamed:@"tradeNotSelected"];
     buyNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"tradeSelected"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    
     listNav.tabBarItem.title = @"行情";
     listNav.tabBarItem.image = [UIImage imageNamed:@"quoNotSelectet"];
     listNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"quoSelected"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    
     checkNav.tabBarItem.title = @"账户";
     checkNav.tabBarItem.image = [UIImage imageNamed:@"checkNotSelected"];
     checkNav.tabBarItem.selectedImage = [[UIImage imageNamed:@"checkSelected"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    
     _tab.viewControllers = @[listNav,buyNav,checkNav];
+    
     [self presentViewController:_tab animated:NO completion:nil];
 }
 
@@ -397,6 +409,8 @@
 //添加 textfield
 
 -(UITextField*)addTextField:(NSString* )placeholder PositionX:(CGFloat)x PositionY:(CGFloat)y{
+    
+    
     UITextField* TextField = [[UITextField alloc]initWithFrame:CGRectMake(self.view.centerX-x, self.view.centerY-y, 200, 30)];
     [TextField setPlaceholder:placeholder];
     [TextField setTextColor:[UIColor redColor]];
@@ -461,6 +475,7 @@
         
         
         self.strAcc = [NSString stringWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId];
+        
         self.strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
         
         

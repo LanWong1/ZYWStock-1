@@ -41,7 +41,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 + (QuoteModel*)shareInstance;
-//- (id)initWithArray:(NSArray*)array;
 - (void)calculatePriceChange;
 - (void)calculateInterestChange;
 - (void)processWithArray:(NSArray*)array;

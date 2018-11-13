@@ -316,6 +316,7 @@
 - (void)addSementView{
     NSArray *titleArray = [[NSArray alloc]initWithObjects:@"委托",@"持仓",@"资金",@"挂单",@"成交", nil];
     self.segment = [[UISegmentedControl alloc]initWithItems:titleArray];
+    
     self.segment.selectedSegmentIndex = 1;//默认显示委托的数据
     //self.segment.tintColor = DropColor;
     [self.segment setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} forState:UIControlStateNormal];
