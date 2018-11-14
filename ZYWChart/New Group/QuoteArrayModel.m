@@ -19,6 +19,7 @@ static QuoteArrayModel *quoteArrayModel;
         if(quoteArrayModel == nil){
             quoteArrayModel = [[self alloc]init];
             quoteArrayModel.codelistDic = [[NSMutableDictionary alloc]init];
+            quoteArrayModel.quoteModelArray = [NSMutableArray array];
         }
     });
     return quoteArrayModel;

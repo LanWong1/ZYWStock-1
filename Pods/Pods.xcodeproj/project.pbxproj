@@ -210,15 +210,15 @@
 		3BC8ACBDADE04ADDF95DF32C18908BF2 /* MASLayoutConstraint.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MASLayoutConstraint.h; path = Masonry/MASLayoutConstraint.h; sourceTree = "<group>"; };
 		3C395F1D6C898512F7DD33CE5D9E948E /* CCSLineData.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = CCSLineData.h; path = src/CocoaCharts/CCSLineData.h; sourceTree = "<group>"; };
 		3D0EFC0BF60C17B609137A641EF98211 /* MASConstraint.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MASConstraint.m; path = Masonry/MASConstraint.m; sourceTree = "<group>"; };
-		403F7174D31C68AF50BBF4ABA40028E4 /* libGDataXML-HTML.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libGDataXML-HTML.a"; path = "libGDataXML-HTML.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		403F7174D31C68AF50BBF4ABA40028E4 /* libGDataXML-HTML.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libGDataXML-HTML.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		410CDBCCDAEAB0C936DAF6A34296BCBC /* CCSPizzaChart.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = CCSPizzaChart.h; path = src/CocoaCharts/CCSPizzaChart.h; sourceTree = "<group>"; };
 		4163F4E69B9063E59D52CB4CDDAD100B /* CCSDonutChart.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = CCSDonutChart.m; path = src/CocoaCharts/CCSDonutChart.m; sourceTree = "<group>"; };
 		46045E645F974EA156BC55B0D79C1A13 /* CCSSlipStickChart.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = CCSSlipStickChart.m; path = src/CocoaCharts/CCSSlipStickChart.m; sourceTree = "<group>"; };
 		48198AE33962B9DB0CE90B81A020D363 /* Masonry-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Masonry-prefix.pch"; sourceTree = "<group>"; };
 		48A04449D0270471C990E25DF647F6F3 /* FHHFPSIndicator-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "FHHFPSIndicator-dummy.m"; sourceTree = "<group>"; };
-		4A9E7967855B33DC70CAFE32AD252D7D /* libKVOController.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libKVOController.a; path = libKVOController.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		4A9E7967855B33DC70CAFE32AD252D7D /* libKVOController.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKVOController.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E698680BF3AAB437B71ACB69413B21E /* CCSSlipCandleStickChart.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = CCSSlipCandleStickChart.h; path = src/CocoaCharts/CCSSlipCandleStickChart.h; sourceTree = "<group>"; };
-		4FD9533AA7D05563D44901CF72CBA16C /* libCocoa-Charts.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libCocoa-Charts.a"; path = "libCocoa-Charts.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4FD9533AA7D05563D44901CF72CBA16C /* libCocoa-Charts.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libCocoa-Charts.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		50A54100F392385160FC3B82917C8C8F /* Masonry-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Masonry-dummy.m"; sourceTree = "<group>"; };
 		55A7C248CED1DB5EF3A0A9898A8EBB87 /* FHHFPSIndicator.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FHHFPSIndicator.h; path = FHHFPSIndicator/FHHFPSIndicator.h; sourceTree = "<group>"; };
 		57ABB82B18FD760CF88328D5281CC054 /* CCSStackedAreaChart.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = CCSStackedAreaChart.m; path = src/CocoaCharts/CCSStackedAreaChart.m; sourceTree = "<group>"; };
@@ -227,12 +227,12 @@
 		600C5C6C1E9F6CD6E73461F9471D3090 /* CCSColoredStickChart.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = CCSColoredStickChart.m; path = src/CocoaCharts/CCSColoredStickChart.m; sourceTree = "<group>"; };
 		608D3A66696B4DDF52BF303B38BB1B7A /* View+MASAdditions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "View+MASAdditions.m"; path = "Masonry/View+MASAdditions.m"; sourceTree = "<group>"; };
 		60C41D8267514F7123393827BD168E14 /* CCSTitledLine.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = CCSTitledLine.h; path = src/CocoaCharts/CCSTitledLine.h; sourceTree = "<group>"; };
-		64E0B1C1996A2670CAD1D0D66A4ADB88 /* libMasonry.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libMasonry.a; path = libMasonry.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		64E0B1C1996A2670CAD1D0D66A4ADB88 /* libMasonry.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMasonry.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		6506AB030556B45EB6D71CAE682ABB52 /* CCSTitleValuesColor.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = CCSTitleValuesColor.m; path = src/CocoaCharts/CCSTitleValuesColor.m; sourceTree = "<group>"; };
 		6B60566117D5CDC966497DD5C3581DEB /* CCSColoredStickChartData.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = CCSColoredStickChartData.m; path = src/CocoaCharts/CCSColoredStickChartData.m; sourceTree = "<group>"; };
 		6BE77A564506643E276999EB5532B947 /* CCSTitleValuesColor.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = CCSTitleValuesColor.h; path = src/CocoaCharts/CCSTitleValuesColor.h; sourceTree = "<group>"; };
-		6F12061DD1E14445E0F6CAADFBD92367 /* libFHHFPSIndicator.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libFHHFPSIndicator.a; path = libFHHFPSIndicator.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		703AF975943C48D1DE784901A8D8AB90 /* libPods-ZYWChart.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-ZYWChart.a"; path = "libPods-ZYWChart.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F12061DD1E14445E0F6CAADFBD92367 /* libFHHFPSIndicator.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libFHHFPSIndicator.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		703AF975943C48D1DE784901A8D8AB90 /* libPods-ZYWChart.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ZYWChart.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7042D4E00D9D5B5FCA825BF424CBBB4F /* CCSSpiderWebChart.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = CCSSpiderWebChart.h; path = src/CocoaCharts/CCSSpiderWebChart.h; sourceTree = "<group>"; };
 		70CEB601E4AC2D5F058F4D475FCD803A /* CCSLineData.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = CCSLineData.m; path = src/CocoaCharts/CCSLineData.m; sourceTree = "<group>"; };
 		77E136F2EAC5F30774431EF46A879C3D /* CCSGridChart.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = CCSGridChart.m; path = src/CocoaCharts/CCSGridChart.m; sourceTree = "<group>"; };
@@ -249,7 +249,7 @@
 		8CE4C357B76AF3D4D8613B4D7D2DD4C7 /* FBKVOController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FBKVOController.m; path = FBKVOController/FBKVOController.m; sourceTree = "<group>"; };
 		936C8046AC560BBC64FDF3F0D854F421 /* Pods-ZYWChart-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-ZYWChart-acknowledgements.markdown"; sourceTree = "<group>"; };
 		93A271FF2763E23A29E93D5D9946F252 /* CCSDonutChart.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = CCSDonutChart.h; path = src/CocoaCharts/CCSDonutChart.h; sourceTree = "<group>"; };
-		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		94F14F59F873B8F3FA64CD4CBC89F21B /* UIWindow+FHH.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIWindow+FHH.h"; path = "FHHFPSIndicator/UIWindow+FHH.h"; sourceTree = "<group>"; };
 		9653631A30907E2EC652CDCBECD231E7 /* CCSTitleValue.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = CCSTitleValue.m; path = src/CocoaCharts/CCSTitleValue.m; sourceTree = "<group>"; };
 		966590D37D2A7599D56834561F828826 /* CCSOHLCVDData.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = CCSOHLCVDData.h; path = src/CocoaCharts/CCSOHLCVDData.h; sourceTree = "<group>"; };
@@ -273,6 +273,7 @@
 		B5461F1D4F1AEE7BA7BF8FA85BB46EE9 /* CCSPizzaChart.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = CCSPizzaChart.m; path = src/CocoaCharts/CCSPizzaChart.m; sourceTree = "<group>"; };
 		B5C3276752901436A3E0AEE8B78CEF5F /* ViewController+MASAdditions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "ViewController+MASAdditions.m"; path = "Masonry/ViewController+MASAdditions.m"; sourceTree = "<group>"; };
 		B63C6A64CF66340668996F78DA6BB482 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		BAD403A6219C0BF000F4E30D /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
 		BB112E951164C1DFA984701443B5CCCB /* NSObject+FBKVOController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSObject+FBKVOController.m"; path = "FBKVOController/NSObject+FBKVOController.m"; sourceTree = "<group>"; };
 		BE2D94968AB64D3F2B8B67172FFEA48A /* KVOController.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = KVOController.xcconfig; sourceTree = "<group>"; };
 		C2215823FB327FA04CF422A89A3E13D1 /* CCSGridChart.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = CCSGridChart.h; path = src/CocoaCharts/CCSGridChart.h; sourceTree = "<group>"; };
@@ -426,6 +427,7 @@
 			isa = PBXGroup;
 			children = (
 				D88AAE1F92055A60CC2FC970D7D34634 /* Foundation.framework */,
+				BAD403A6219C0BF000F4E30D /* CoreData.framework */,
 				B63C6A64CF66340668996F78DA6BB482 /* UIKit.framework */,
 			);
 			name = iOS;
@@ -441,7 +443,6 @@
 				BB112E951164C1DFA984701443B5CCCB /* NSObject+FBKVOController.m */,
 				778027BFC69C968F6AFFDA7AC09BEFFB /* Support Files */,
 			);
-			name = KVOController;
 			path = KVOController;
 			sourceTree = "<group>";
 		};
@@ -454,7 +455,6 @@
 				393F1EC630F4B8A52068B895F4B2ADD2 /* UIWindow+FHH.m */,
 				2E0DD06B28CD972FA39BE5FDCC07E368 /* Support Files */,
 			);
-			name = FHHFPSIndicator;
 			path = FHHFPSIndicator;
 			sourceTree = "<group>";
 		};
@@ -488,7 +488,6 @@
 				B5C3276752901436A3E0AEE8B78CEF5F /* ViewController+MASAdditions.m */,
 				06B0F567347CFA3A1A6A8E50A5B98061 /* Support Files */,
 			);
-			name = Masonry;
 			path = Masonry;
 			sourceTree = "<group>";
 		};
@@ -532,7 +531,6 @@
 				FCC54ED625AAA4444FF746D183ECFC0E /* GDataXMLNode.m */,
 				6D1F2D83DE07BE3C7B8B5FD2321A3E79 /* Support Files */,
 			);
-			name = "GDataXML-HTML";
 			path = "GDataXML-HTML";
 			sourceTree = "<group>";
 		};
@@ -632,7 +630,6 @@
 				6506AB030556B45EB6D71CAE682ABB52 /* CCSTitleValuesColor.m */,
 				1523E2AB5EFD8032AA92004A0BA61C96 /* Support Files */,
 			);
-			name = "Cocoa-Charts";
 			path = "Cocoa-Charts";
 			sourceTree = "<group>";
 		};

@@ -176,13 +176,14 @@ typedef NS_ENUM(NSInteger,TradeKind){
     
     [super viewWillAppear:animated];
     //[self subscibe];
-  
+    
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];//设置返回字体颜色
     self.navigationController.navigationBar.barTintColor = DropColor;//导航栏背景色
     self.navigationController.navigationBar.translucent =YES;
     self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor whiteColor]};//设置标题文字为白色
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;//设置状态时间文字为白色
-    self.tabBarController.tabBar.hidden = NO;
+ 
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -221,8 +222,6 @@ typedef NS_ENUM(NSInteger,TradeKind){
     self.navigationItem.title = self.title;
     self.view.backgroundColor = [UIColor backgroundColor];
     [self addScrollView];//上下滑动
-    
-    
     self.stockChartView.backgroundColor = [UIColor backgroundColor];//调用了getter方法
     self.currentIndex = -1;
     [self addBottomBtnView];

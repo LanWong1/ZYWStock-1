@@ -15,8 +15,6 @@
 		4C2C30A0216D9C9F00E443D8 /* NSDictionary+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2C309D216D9C9F00E443D8 /* NSDictionary+Extension.m */; };
 		4C2C30A1216D9C9F00E443D8 /* NSArray+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C2C309E216D9C9F00E443D8 /* NSArray+Extension.m */; };
 		4C3C45F321992B52000F45A9 /* CodeListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C3C45F221992B52000F45A9 /* CodeListCell.m */; };
-		4C3C45F7219A6CC8000F45A9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C3C45F6219A6CC7000F45A9 /* CoreData.framework */; };
-		4C3C45FA219A6FCB000F45A9 /* CodeListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C3C45F9219A6FCB000F45A9 /* CodeListViewController.m */; };
 		4C5E070420E269100053F7CB /* searchNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C5E070320E2690F0053F7CB /* searchNormal.png */; };
 		4CA5EE9B21548E91008907AA /* SqlServer.ice in Sources */ = {isa = PBXBuildFile; fileRef = BA6E0012214A3B480020834C /* SqlServer.ice */; };
 		4CA5EE9C21548EA6008907AA /* QuickOrder.ice in Sources */ = {isa = PBXBuildFile; fileRef = 4CC3E91820FD71930073A7FB /* QuickOrder.ice */; };
@@ -81,6 +79,9 @@
 		BA9D6819218ACA5600952D62 /* QuoteArrayModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BA9D6818218ACA5600952D62 /* QuoteArrayModel.m */; };
 		BAC242E321538DE000A06F27 /* quoteView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BAC242E221538DE000A06F27 /* quoteView.xib */; };
 		BAD326E02150824E00438A42 /* ContracInfoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BAD326DF2150824E00438A42 /* ContracInfoModel.m */; };
+		BAD40369219BAD6C00F4E30D /* MyFavoriteCodeModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BAD40367219BAD6C00F4E30D /* MyFavoriteCodeModel.xcdatamodeld */; };
+		BAD4036C219BAE1B00F4E30D /* CodeListCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = BAD4036B219BAE1B00F4E30D /* CodeListCoreData.m */; };
+		BAD40375219BB34400F4E30D /* MyFavoriteModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BAD40374219BB34400F4E30D /* MyFavoriteModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -135,9 +136,6 @@
 		4C2C309F216D9C9F00E443D8 /* NSDictionary+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Extension.h"; sourceTree = "<group>"; };
 		4C3C45F121992B52000F45A9 /* CodeListCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodeListCell.h; sourceTree = "<group>"; };
 		4C3C45F221992B52000F45A9 /* CodeListCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeListCell.m; sourceTree = "<group>"; };
-		4C3C45F6219A6CC7000F45A9 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		4C3C45F8219A6FCA000F45A9 /* CodeListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodeListViewController.h; sourceTree = "<group>"; };
-		4C3C45F9219A6FCB000F45A9 /* CodeListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeListViewController.m; sourceTree = "<group>"; };
 		4C5E070320E2690F0053F7CB /* searchNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchNormal.png; sourceTree = "<group>"; };
 		4CA5EE9821548A4B008907AA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4CC3E91820FD71930073A7FB /* QuickOrder.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = QuickOrder.ice; sourceTree = "<group>"; };
@@ -248,6 +246,11 @@
 		BAC242E221538DE000A06F27 /* quoteView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = quoteView.xib; path = KLine/quoteView.xib; sourceTree = "<group>"; };
 		BAD326DE2150824E00438A42 /* ContracInfoModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ContracInfoModel.h; path = ZYWChart/Model/ContracInfoModel.h; sourceTree = SOURCE_ROOT; };
 		BAD326DF2150824E00438A42 /* ContracInfoModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ContracInfoModel.m; path = ZYWChart/Model/ContracInfoModel.m; sourceTree = SOURCE_ROOT; };
+		BAD40368219BAD6C00F4E30D /* MyFavoriteCodeModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MyFavoriteCodeModel.xcdatamodel; sourceTree = "<group>"; };
+		BAD4036A219BAE1B00F4E30D /* CodeListCoreData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodeListCoreData.h; sourceTree = "<group>"; };
+		BAD4036B219BAE1B00F4E30D /* CodeListCoreData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeListCoreData.m; sourceTree = "<group>"; };
+		BAD40373219BB34400F4E30D /* MyFavoriteModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyFavoriteModel.h; sourceTree = "<group>"; };
+		BAD40374219BB34400F4E30D /* MyFavoriteModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyFavoriteModel.m; sourceTree = "<group>"; };
 		BAE5985520C7718000524CB7 /* LoginVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginVC.h; sourceTree = "<group>"; };
 		BAE5985620C7718000524CB7 /* LoginVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginVC.m; sourceTree = "<group>"; };
 		BAE5985820C7CDE000524CB7 /* NpTrade.ice */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NpTrade.ice; sourceTree = "<group>"; };
@@ -259,7 +262,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C3C45F7219A6CC8000F45A9 /* CoreData.framework in Frameworks */,
 				79715BAE312AE6B07031DB82 /* libPods-ZYWChart.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -310,15 +312,14 @@
 				BA171E2C213E5C820087C95F /* Category */,
 				BA171E2B213E5AFF0087C95F /* model */,
 				BA171E0F213E5A3F0087C95F /* ICETool */,
-				BA3D618A20EDA08400665888 /* BTC_K线图 */,
+				BAD4037E219BF65500F4E30D /* 登录 */,
+				BAD40376219BF2BB00F4E30D /* 行情 */,
 				422787BE1E04F73900DB5CEC /* Controller */,
 				BAE5985520C7718000524CB7 /* LoginVC.h */,
 				4CA5EE9821548A4B008907AA /* Info.plist */,
 				BAE5985620C7718000524CB7 /* LoginVC.m */,
 				BA78AC8F20DB74E800F07D40 /* LoginVC1.h */,
 				BA78AC9020DB74E800F07D40 /* LoginVC1.m */,
-				4CC3E95F20FDB8BC0073A7FB /* WYLoginVC.h */,
-				4CC3E96020FDB8BC0073A7FB /* WYLoginVC.m */,
 				422787841E04F18600DB5CEC /* AppDelegate.m */,
 				422787831E04F18600DB5CEC /* AppDelegate.h */,
 				BA78AC8120D9ECE800F07D40 /* searchSelected.png */,
@@ -327,6 +328,7 @@
 				4227878C1E04F18600DB5CEC /* Assets.xcassets */,
 				BA84422B212BF55300892E68 /* Images.xcassets */,
 				422787801E04F18600DB5CEC /* Supporting Files */,
+				BAD40367219BAD6C00F4E30D /* MyFavoriteCodeModel.xcdatamodeld */,
 			);
 			path = ZYWChart;
 			sourceTree = "<group>";
@@ -377,21 +379,11 @@
 				BA6E00012149E7B90020834C /* 查询 */,
 				BA0EF4C620BD3D3300E5F974 /* CodeListVC.h */,
 				BA0EF4C720BD3D3300E5F974 /* CodeListVC.m */,
-				BA171E3C213F62100087C95F /* QuickOrderCodeListVCViewController.h */,
-				BA171E3D213F62100087C95F /* QuickOrderCodeListVCViewController.m */,
 				BA8209C120C66E5700A5BCAE /* BuyVC.h */,
 				BA8209C220C66E5700A5BCAE /* BuyVC.m */,
 				BA5994C720E20CFC00AB2E76 /* checkVC.h */,
 				BA5994C820E20CFC00AB2E76 /* checkVC.m */,
-				BA3D61DB20EDA0B800665888 /* Y_StockChartLandScapeViewController.h */,
-				BA3D61DC20EDA0B800665888 /* Y_StockChartLandScapeViewController.m */,
-				BA3D61DA20EDA0B800665888 /* Y_StockChartViewController.h */,
-				BA3D61DD20EDA0B900665888 /* Y_StockChartViewController.m */,
 				BA844231212FB1A400892E68 /* buttonView.xib */,
-				4C3C45F121992B52000F45A9 /* CodeListCell.h */,
-				4C3C45F221992B52000F45A9 /* CodeListCell.m */,
-				4C3C45F8219A6FCA000F45A9 /* CodeListViewController.h */,
-				4C3C45F9219A6FCB000F45A9 /* CodeListViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -453,7 +445,7 @@
 			path = Category;
 			sourceTree = "<group>";
 		};
-		BA3D618A20EDA08400665888 /* BTC_K线图 */ = {
+		BA3D618A20EDA08400665888 /* View */ = {
 			isa = PBXGroup;
 			children = (
 				BA3D618B20EDA08400665888 /* Config */,
@@ -462,7 +454,7 @@
 				BAC242E221538DE000A06F27 /* quoteView.xib */,
 				BA3D61C520EDA08400665888 /* Y_StockChartView.m */,
 			);
-			path = "BTC_K线图";
+			path = View;
 			sourceTree = "<group>";
 		};
 		BA3D618B20EDA08400665888 /* Config */ = {
@@ -671,10 +663,78 @@
 			path = "查询";
 			sourceTree = "<group>";
 		};
+		BAD40376219BF2BB00F4E30D /* 行情 */ = {
+			isa = PBXGroup;
+			children = (
+				BAD4037B219BF32900F4E30D /* Kline */,
+				BAD40377219BF2D000F4E30D /* 行情列表 */,
+			);
+			path = "行情";
+			sourceTree = "<group>";
+		};
+		BAD40377219BF2D000F4E30D /* 行情列表 */ = {
+			isa = PBXGroup;
+			children = (
+				BAD4037A219BF31000F4E30D /* Controller */,
+				BAD40378219BF2E000F4E30D /* model */,
+			);
+			path = "行情列表";
+			sourceTree = "<group>";
+		};
+		BAD40378219BF2E000F4E30D /* model */ = {
+			isa = PBXGroup;
+			children = (
+				BAD40373219BB34400F4E30D /* MyFavoriteModel.h */,
+				BAD40374219BB34400F4E30D /* MyFavoriteModel.m */,
+				BAD4036A219BAE1B00F4E30D /* CodeListCoreData.h */,
+				BAD4036B219BAE1B00F4E30D /* CodeListCoreData.m */,
+			);
+			path = model;
+			sourceTree = "<group>";
+		};
+		BAD4037A219BF31000F4E30D /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				4C3C45F121992B52000F45A9 /* CodeListCell.h */,
+				4C3C45F221992B52000F45A9 /* CodeListCell.m */,
+				BA171E3C213F62100087C95F /* QuickOrderCodeListVCViewController.h */,
+				BA171E3D213F62100087C95F /* QuickOrderCodeListVCViewController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		BAD4037B219BF32900F4E30D /* Kline */ = {
+			isa = PBXGroup;
+			children = (
+				BAD4037D219BF62100F4E30D /* controller */,
+				BA3D618A20EDA08400665888 /* View */,
+			);
+			path = Kline;
+			sourceTree = "<group>";
+		};
+		BAD4037D219BF62100F4E30D /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				BA3D61DB20EDA0B800665888 /* Y_StockChartLandScapeViewController.h */,
+				BA3D61DC20EDA0B800665888 /* Y_StockChartLandScapeViewController.m */,
+				BA3D61DA20EDA0B800665888 /* Y_StockChartViewController.h */,
+				BA3D61DD20EDA0B900665888 /* Y_StockChartViewController.m */,
+			);
+			path = controller;
+			sourceTree = "<group>";
+		};
+		BAD4037E219BF65500F4E30D /* 登录 */ = {
+			isa = PBXGroup;
+			children = (
+				4CC3E95F20FDB8BC0073A7FB /* WYLoginVC.h */,
+				4CC3E96020FDB8BC0073A7FB /* WYLoginVC.m */,
+			);
+			path = "登录";
+			sourceTree = "<group>";
+		};
 		CAE0EB55B1E3F98AE30B25A9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4C3C45F6219A6CC7000F45A9 /* CoreData.framework */,
 				3E2B8C997449299EE5E08697 /* libPods-ZYWChart.a */,
 			);
 			name = Frameworks;
@@ -849,7 +909,6 @@
 			files = (
 				BA9D6813218AC64B00952D62 /* LoginVC.m in Sources */,
 				BA9D6812218AC61B00952D62 /* QuoteModel.m in Sources */,
-				4C3C45FA219A6FCB000F45A9 /* CodeListViewController.m in Sources */,
 				4CA5EE9F21548ECC008907AA /* WpQuote.ice in Sources */,
 				4CA5EE9E21548EC4008907AA /* NpTrade.ice in Sources */,
 				4CA5EE9D21548EBB008907AA /* WpTrade.ice in Sources */,
@@ -873,6 +932,7 @@
 				BA3D61D720EDA08400665888 /* Y_KLineVolumeView.m in Sources */,
 				BA3D61D320EDA08400665888 /* Y_StockChartRightYView.m in Sources */,
 				BA3D61D620EDA08400665888 /* Y_KLineVolume.m in Sources */,
+				BAD4036C219BAE1B00F4E30D /* CodeListCoreData.m in Sources */,
 				BA3D61C720EDA08400665888 /* UIColor+Y_StockChart.m in Sources */,
 				BA0EF4C820BD3D3300E5F974 /* CodeListVC.m in Sources */,
 				BA9D6819218ACA5600952D62 /* QuoteArrayModel.m in Sources */,
@@ -887,6 +947,7 @@
 				BA3D61C920EDA08400665888 /* Y_KLineAccessory.m in Sources */,
 				BA171E2A213E5AF00087C95F /* OrderDataModel.m in Sources */,
 				BA171E3E213F62100087C95F /* QuickOrderCodeListVCViewController.m in Sources */,
+				BAD40375219BB34400F4E30D /* MyFavoriteModel.m in Sources */,
 				BA3D61CE20EDA08400665888 /* Y_KLineMainView.m in Sources */,
 				BA3D61C820EDA08400665888 /* Y_AccessoryMAView.m in Sources */,
 				BA3D61D920EDA08400665888 /* Y_StockChartView.m in Sources */,
@@ -903,6 +964,7 @@
 				BA3D61CD20EDA08400665888 /* Y_MALine.m in Sources */,
 				BA3D61CC20EDA08400665888 /* Y_KLine.m in Sources */,
 				BA171E1D213E5A400087C95F /* ICEQuickOrder.m in Sources */,
+				BAD40369219BAD6C00F4E30D /* MyFavoriteCodeModel.xcdatamodeld in Sources */,
 				BA171E34213E5C820087C95F /* UIColor+YW.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1090,6 +1152,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = lanwong;
 				PRODUCT_NAME = "中大快赢";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				STRIP_SWIFT_SYMBOLS = YES;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
@@ -1138,6 +1202,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = lanwong;
 				PRODUCT_NAME = "中大快赢";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				STRIP_SWIFT_SYMBOLS = YES;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
@@ -1229,6 +1295,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		BAD40367219BAD6C00F4E30D /* MyFavoriteCodeModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				BAD40368219BAD6C00F4E30D /* MyFavoriteCodeModel.xcdatamodel */,
+			);
+			currentVersion = BAD40368219BAD6C00F4E30D /* MyFavoriteCodeModel.xcdatamodel */;
+			path = MyFavoriteCodeModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 422787751E04F18600DB5CEC /* Project object */;
 }

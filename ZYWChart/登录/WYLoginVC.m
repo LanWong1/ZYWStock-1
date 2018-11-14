@@ -18,7 +18,7 @@
 #import "SQLServerAPI.h"
 #import "GDataXMLNode.h"
 #import "ContracInfoModel.h"
-#import "CodeListViewController.h"
+
 
 
 #define USERNAME @"063607"
@@ -342,8 +342,8 @@
     
     BuyVC* buy = [[BuyVC alloc]init];//交易
     checkVC* check = [[checkVC alloc]init];//查询
-    //QuickOrderCodeListVCViewController *list = [[QuickOrderCodeListVCViewController alloc]init];//行情列表
-    CodeListViewController *list = [[CodeListViewController alloc]init];
+    QuickOrderCodeListVCViewController *list = [[QuickOrderCodeListVCViewController alloc]init];//行情列表
+    //CodeListViewController *list = [[CodeListViewController alloc]init];
     
     //CodeListVC* list = [[CodeListVC alloc]init];
     self.tab = [[UITabBarController alloc]init];
