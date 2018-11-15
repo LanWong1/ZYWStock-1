@@ -16,6 +16,7 @@
 
 
 @property (nonatomic,copy) NSString *futu_price_step; //价格变动单位
-@property (nonatomic,strong) NSString *title;
+@property (nonatomic,copy) NSString *navigationBarTitle;
+@property (nonatomic,assign) NSInteger codeIndex;
 - (instancetype)initWithScode:(NSString *)sCodeSelect;
 @end

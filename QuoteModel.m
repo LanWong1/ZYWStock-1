@@ -24,18 +24,24 @@ static QuoteModel* quoteModel = nil;
     });
     return quoteModel;
 }
+
+
 - (void)quoteDataChange:(NSNotification *)notify{
     
     NSInteger index = [notify.userInfo[@"index"] integerValue];
     //NSLog(@"indexModel ========== %d",index);
-    [QuoteArrayModel shareInstance].quoteModelArray[index] = notify.userInfo[@"model"];
-    
+    [QuoteArrayModel shareInstance].quoteModelArray[index] = notify.userInfo[@"model"];//更新第index个的数据
    // NSLog(@"quoteModelArray[%d] == %@",index,[[QuoteArrayModel shareInstance].quoteModelArray[index] description]);
     
     if(self.delegate && [self.delegate respondsToSelector:@selector(reloadData:)]){
       
         [self.delegate reloadData:index];
     }
+    if(self.delegate && [self.delegate respondsToSelector:@selector(quoteViewRefresh:)]){
+        
+        [self.delegate quoteViewRefresh:index];
+    }
+    
 }
 
 

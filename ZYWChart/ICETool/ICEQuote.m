@@ -26,28 +26,22 @@
     if(itype == 1){
         NSLog(@"订阅消息 type:%d  strmessage = %@",itype,strMessage);
         NSArray* arr =  [strMessage componentsSeparatedByString:@","];
-        NSLog(@"index =======   %@",[QuoteArrayModel shareInstance].codelistDic[arr[1]]) ;
+        NSLog(@"index =======   %@",[QuoteArrayModel shareInstance].codelistDic[arr[1]]);
         
-        QuoteModel* model = [[QuoteModel alloc] init];
-        [model processWithArray:arr];
-        
+        QuoteModel* model = [[QuoteModel alloc] init];//订阅返回数据模型
+        [model processWithArray:arr];//处理数据
         
 //        if(_delegate && [_delegate respondsToSelector:@selector(reloadData:)]){
 //            NSLog(@"调用代理 回调");
 //            [_delegate reloadData:[[QuoteArrayModel shareInstance].codelistDic[arr[1]] integerValue] ];
 //        }
-        
-        
-        
         //NSString *type = [NSString stringWithFormat:@"%d",itype];
         // [QuoteModel shareInstance];
         // [self dataProcess:arr];
+        //index>0的时候
         if([QuoteArrayModel shareInstance].codelistDic[arr[1]]){
-            
-           
              [[NSNotificationCenter defaultCenter] postNotificationName:@"quoteNotity" object:self userInfo:@{@"index":[QuoteArrayModel shareInstance].codelistDic[arr[1]],@"model":model}];
         }
-       
         //[self setHeartbeat];
     }
 

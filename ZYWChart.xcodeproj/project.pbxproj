@@ -316,7 +316,6 @@
 				BAD40376219BF2BB00F4E30D /* 行情 */,
 				422787BE1E04F73900DB5CEC /* Controller */,
 				BAE5985520C7718000524CB7 /* LoginVC.h */,
-				4CA5EE9821548A4B008907AA /* Info.plist */,
 				BAE5985620C7718000524CB7 /* LoginVC.m */,
 				BA78AC8F20DB74E800F07D40 /* LoginVC1.h */,
 				BA78AC9020DB74E800F07D40 /* LoginVC1.m */,
@@ -336,6 +335,7 @@
 		422787801E04F18600DB5CEC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4CA5EE9821548A4B008907AA /* Info.plist */,
 				4C2C309C216D9C9E00E443D8 /* NSArray+Extension.h */,
 				4C2C309E216D9C9F00E443D8 /* NSArray+Extension.m */,
 				4C2C309F216D9C9F00E443D8 /* NSDictionary+Extension.h */,

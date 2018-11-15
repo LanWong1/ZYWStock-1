@@ -12,20 +12,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 
-@protocol QuoteArrayModelDelegate <NSObject>
-
-@optional
-- (void)reloadData:(NSMutableArray*)array index:(NSInteger)idx;
-
-- (void)quoteViewRefresh:(NSMutableArray*)array;
-@end
+//@protocol QuoteArrayModelDelegate <NSObject>
+//
+//@optional
+//- (void)reloadData:(NSMutableArray*)array index:(NSInteger)idx;
+//
+//- (void)quoteViewRefresh:(NSMutableArray*)array;
+//@end
 
 
 @interface QuoteArrayModel : NSObject
 
 @property (nonatomic,strong)  NSMutableArray<__kindof QuoteModel*> *quoteModelArray;
 
-@property(weak,nonatomic) id<QuoteArrayModelDelegate> delegate;
+//@property(weak,nonatomic) id<QuoteArrayModelDelegate> delegate;
 @property(strong,nonatomic) NSMutableDictionary *codelistDic;
 
 +(QuoteArrayModel*)shareInstance;

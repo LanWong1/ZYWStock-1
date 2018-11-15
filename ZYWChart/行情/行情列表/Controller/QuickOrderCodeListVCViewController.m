@@ -62,20 +62,13 @@
 - (void)viewWillAppear:(BOOL)animated{
    
     [super viewWillAppear: animated];
-    _segment.hidden = NO;
-    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];//设置返回字体颜色
-    self.navigationController.navigationBar.barTintColor = DropColor;//导航栏背景色
+    //_segment.hidden = NO;
+    self.navigationController.navigationBar.hidden = YES;
     self.navigationController.navigationBar.translucent =YES;
-    //self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor whiteColor]};//设置标题文字为白色
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;//设置状态时间文字为白色
-    
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
 }
 
-- (void)viewWillDisappear:(BOOL)animated{
-    [super viewWillDisappear:animated];
-    _segment.hidden = YES;
-}
 
 - (void)viewDidLoad {
     
@@ -95,19 +88,33 @@
     [self addSegment];
     [self addSearchButton];
     [self getCodeList];//获取数据
+    
     //注册通知
     //在对象QuoteModel 观察
+    
     [[NSNotificationCenter defaultCenter]addObserver:[QuoteModel shareInstance] selector:@selector(quoteDataChange:) name:@"quoteNotity" object:nil];
 }
 
 - (void)addSegment{
     NSArray *title = [NSArray arrayWithObjects:@"自选",@"主力", nil];
+    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.width, self.navigationController.navigationBar.height + [UIApplication sharedApplication].statusBarFrame.size.height)];
+    view.backgroundColor = DropColor;
     _segment = [[UISegmentedControl alloc]initWithItems:title];
     _segment.selectedSegmentIndex = 1;
+   // [_segment setTintColor:RoseColor];
+    _segment.backgroundColor = [UIColor orangeColor];
     [_segment setTitleTextAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} forState:UIControlStateNormal];
-    _segment.frame = CGRectMake(self.view.centerX-50, self.navigationController.navigationBar.centerY-40, 100, 40);
-    [self.navigationController.navigationBar addSubview: _segment];
+    //    _segment.frame = CGRectMake(self.view.centerX-50, self.navigationController.navigationBar.centerY-40, 100, 40);
+    [view addSubview: _segment];
+    [_segment mas_makeConstraints:^(MASConstraintMaker *make) {
+        [make.center isEqual:@(view.center)];
+        make.width.equalTo(@100);
+        make.height.equalTo(@30);
+    }];
     [_segment addTarget:self action:@selector(touchSegment:) forControlEvents:UIControlEventValueChanged];
+    [self.view addSubview:view];
+   
+    
     
 }
 
@@ -153,10 +160,9 @@
         [_contractInfoArray enumerateObjectsUsingBlock:^(__kindof ContracInfoModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
        
             [_codeArray addObject:obj.contract_name];
-            //名称和顺序 当收到消息时 可以通过名称确定index 更新相应的数据
+            //名称和顺序 当收到消息时 可以通过名称确定index 更新相应的数据code 对应 index  按照tableVIew的code排列顺序
             [[QuoteArrayModel shareInstance].codelistDic setValue:@(idx) forKey:obj.contract_code];
             //初始化quotemodelarray
-            
             [[QuoteArrayModel shareInstance].quoteModelArray addObject: [QuoteModel shareInstance]];
         }];
         dispatch_sync(dispatch_get_main_queue(), ^{
@@ -345,7 +351,7 @@
 - (void)addHeaderView{
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0,60, DEVICE_WIDTH, 40)];
     view.backgroundColor = [UIColor lightGrayColor];
-    view.alpha = 0.8;
+    //view.alpha = 0.8;
     
     UILabel *lable3 = [[UILabel alloc]initWithFrame:CGRectMake(20, 0, 50, view.height)];
     lable3.adjustsFontSizeToFitWidth = YES;
@@ -437,9 +443,9 @@
     NSString *name = _contractInfoArray[indexPath.row].contract_name;
     NSString *title = [NSString stringWithFormat:@"%@(%@)",name,sCode];
     Y_StockChartViewController* vc = [[Y_StockChartViewController alloc]initWithScode:sCode];
-    vc.title = title;
+    vc.navigationBarTitle = title;
     vc.futu_price_step = _contractInfoArray[indexPath.row].futu_price_step;
-
+    vc.codeIndex = indexPath.row;
     
     vc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];

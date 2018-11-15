@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol QuoteModelDelegate <NSObject>
 
 - (void)reloadData:(NSInteger)index;
-
+- (void)quoteViewRefresh:(NSInteger)index;
 @end
 
 

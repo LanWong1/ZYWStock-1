@@ -2,8 +2,8 @@
 //  YStockChartViewController.m
 //  BTC-Kline
 //
-//  Created by yate1996 on 16/4/27.
-//  Copyright © 2016年 yate1996. All rights reserved.
+//  Created by IanWong on 18/10/27.
+//  Copyright © 2018年 IanWong. All rights reserved.
 //
 
 #import "Y_StockChartViewController.h"
@@ -44,7 +44,7 @@ typedef NS_ENUM(NSInteger,TradeKind){
 #define SCREEN_MAX_LENGTH MAX(kScreenWidth,kScreenHeight)
 #define IS_IPHONE_X (IS_IPHONE && SCREEN_MAX_LENGTH == 812.0)
 
-@interface Y_StockChartViewController ()<Y_StockChartViewDataSource,UIGestureRecognizerDelegate,UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,QuoteArrayModelDelegate>
+@interface Y_StockChartViewController ()<Y_StockChartViewDataSource,UIGestureRecognizerDelegate,UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,QuoteModelDelegate>
 
 @property (nonatomic, strong) Y_StockChartLandScapeViewController *stockChartLangVC;
 @property (nonatomic, strong) Y_StockChartView *stockChartView;
@@ -132,7 +132,18 @@ typedef NS_ENUM(NSInteger,TradeKind){
 
 
 @property (nonatomic,strong)  NSMutableArray<__kindof QuoteModel*> *quoteModelArray;
+
 @property (nonatomic,strong) QuoteArrayModel* quoteArrayModel;
+@property (nonatomic,strong) QuoteModel *quoteModel;
+
+
+//@property (nonatomic,strong) UILabel *navigationBarTitle;
+
+@property (nonatomic,assign) NSInteger firstLoadFlag;
+
+
+
+@property (nonatomic,strong) UIView *navgationView;
 @end
 
 @implementation Y_StockChartViewController
@@ -176,14 +187,12 @@ typedef NS_ENUM(NSInteger,TradeKind){
     
     [super viewWillAppear:animated];
     //[self subscibe];
-    
-    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];//设置返回字体颜色
-    self.navigationController.navigationBar.barTintColor = DropColor;//导航栏背景色
-    self.navigationController.navigationBar.translucent =YES;
-    self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor whiteColor]};//设置标题文字为白色
+    //self.navigationController.navigationBar.hidden = NO;
+//    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];//设置返回字体颜色
+//    self.navigationController.navigationBar.barTintColor = DropColor;//导航栏背景色
+//    self.navigationController.navigationBar.translucent =YES;
+//    self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor whiteColor]};//设置标题文字为白色
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;//设置状态时间文字为白色
- 
-
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -195,6 +204,7 @@ typedef NS_ENUM(NSInteger,TradeKind){
         [_refreshTimer invalidate];
         _refreshTimer = nil;
     }
+
     self.navigationController.navigationBar.titleTextAttributes=@{NSForegroundColorAttributeName:[UIColor blackColor]};
    
 }
@@ -202,33 +212,40 @@ typedef NS_ENUM(NSInteger,TradeKind){
 - (void)viewDidLoad {
  
     [super viewDidLoad];
-
-    _buyCountArray = [NSMutableArray array];
+    self.quoteModel = [[QuoteModel alloc]init];
+    self.quoteModel.delegate = self;
+    _firstLoadFlag = 0;
+    
+    _buyCountArray    = [NSMutableArray array];
     _tradeRecordArray = [NSMutableArray array];
+    
+    
+    
     //
-    _quoteArrayModel = [QuoteArrayModel shareInstance];
-    _quoteArrayModel.delegate = self;
+//    _quoteArrayModel = [QuoteArrayModel shareInstance];
+//    _quoteArrayModel.delegate = self;
+    
     _quoteModelArray = [NSMutableArray array];
-    
-    _MinData = [NSMutableArray array];
-    _fiveMinsData = [NSMutableArray array];
+    _MinData         = [NSMutableArray array];
+    _fiveMinsData    = [NSMutableArray array];
     _fifteenMinsData = [NSMutableArray array];
-    _monthData = [NSMutableArray array];
-    _weekData = [NSMutableArray array];
-    _dayData = [NSMutableArray array];
+    _monthData       = [NSMutableArray array];
+    _weekData        = [NSMutableArray array];
+    _dayData         = [NSMutableArray array];
     
-    [self downLoadData];//下载数据
+
     
-    self.navigationItem.title = self.title;
+    self.navigationController.navigationBar.hidden = YES;
     self.view.backgroundColor = [UIColor backgroundColor];
+    [self addNavgationView];
     [self addScrollView];//上下滑动
     self.stockChartView.backgroundColor = [UIColor backgroundColor];//调用了getter方法
     self.currentIndex = -1;
     [self addBottomBtnView];
     [self itemModels];//加载数据
-  
     
-    
+    _quoteModel = [QuoteArrayModel shareInstance].quoteModelArray[self.codeIndex];
+    [self updateQuoteView];
     
     //[self subscibe];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];//键盘将要隐藏通知
@@ -240,7 +257,26 @@ typedef NS_ENUM(NSInteger,TradeKind){
 }
 
 
-
+- (void)addNavgationView{
+    _navgationView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.width, self.navigationController.navigationBar.height + [UIApplication sharedApplication].statusBarFrame.size.height)];
+    _navgationView.backgroundColor = DropColor;
+    
+    UILabel *label = [[UILabel alloc]init];
+    label.text = self.navigationBarTitle;
+    [label setTextColor:[UIColor whiteColor]];
+    [label setTextAlignment:NSTextAlignmentCenter];
+    [label setAdjustsFontSizeToFitWidth:YES];
+    [_navgationView addSubview:label];
+    [label mas_makeConstraints:^(MASConstraintMaker *make) {
+        [make.center isEqual:@(self.navigationController.navigationBar.center)];
+        //NSLog(@"_navgationView.centerX====%f",_navgationView.centerX);
+        make.centerX.equalTo(@(_navgationView.centerX));
+        make.width.equalTo(@200);
+        make.height.equalTo(@30);
+        make.bottom.equalTo(_navgationView.mas_bottom).offset(-10);
+    }];
+    [self.view addSubview:_navgationView];
+}
 #pragma mark  通知中心
 //交易成功返回消息
 - (void)tradeResult:(NSNotification*)notify{
@@ -398,58 +434,56 @@ typedef NS_ENUM(NSInteger,TradeKind){
 }
 
 
-- (void)quoteViewRefresh:(NSMutableArray *)array{
-    [_quoteModelArray addObjectsFromArray:array];
-    
-    [_quoteModelArray enumerateObjectsUsingBlock:^(__kindof QuoteModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        NSRegularExpression *regular = [NSRegularExpression regularExpressionWithPattern:@"[0-9]" options:0 error:NULL];
-        NSString *code = [regular stringByReplacingMatchesInString:obj.instrumenID options:0 range:NSMakeRange(0, [obj.instrumenID length]) withTemplate:@""];
-        if( [self.title containsString: code]){
-            //价格变化
-            _stockChartView.lastPrice.text = obj.lastPrice;
-            _stockChartView.priceChangePercentage.text = obj.priceChangePercentage;
-            _stockChartView.priceChange.text =  obj.priceChange;
-            _stockChartView.priceChangePercentage.textColor = RoseColor;
-            _stockChartView.priceChange.textColor = RoseColor;
-            _stockChartView.lastPrice.textColor = RoseColor;
-            
-            if([_stockChartView.priceChange.text containsString:@"-"]){
-                _stockChartView.priceChangePercentage.textColor = DropColor;
-                _stockChartView.priceChange.textColor = DropColor;
-                _stockChartView.lastPrice.textColor = DropColor;
-                
-             
-            }
-       
-            
-            _stockChartView.AskPrice.text = obj.askPrice;
-            _stockChartView.AskVolume.text = obj.askVolum;
-            _stockChartView.BidPrice.text = obj.bidPrice;
-            _stockChartView.BidVolume.text = obj.bidVolum;
-            _stockChartView.OpenInterest.text = obj.openInterest;
 
-            _stockChartView.dayGrowHold.text = obj.openInterestChange;//持仓增量
-            //有持仓
-            if(_buyCountValue>0){
-                //持仓盈亏
-                __block float win;
-                [_tradeRecordArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    win += [obj[@"count"] integerValue] * ([_stockChartView.lastPrice.text floatValue]- [obj[@"avgPrice"] floatValue]);
-                    
-                }];
-                if (win<0) {
-                    _holdWinLossLable.text = [NSString stringWithFormat:@"%@%.1f",@"-",win];
-                    [_holdWinLossLable setTextColor:DropColor];
-                }
-                else{
-                    _holdWinLossLable.text = [NSString stringWithFormat:@"%.1f",win];
-                    [_holdWinLossLable setTextColor:RoseColor];
-                }
-            }
-            
+
+
+
+
+- (void)quoteViewRefresh:(NSInteger)index{
+    
+    if(index == self.codeIndex){
+        _quoteModel = [QuoteArrayModel shareInstance].quoteModelArray[index];
+        [self updateQuoteView];
+    }
+}
+//更新顶部行情
+- (void)updateQuoteView{
+    
+    _stockChartView.lastPrice.text = _quoteModel.lastPrice;
+    _stockChartView.priceChangePercentage.text = _quoteModel.priceChangePercentage;
+    _stockChartView.priceChange.text =  _quoteModel.priceChange;
+    _stockChartView.priceChangePercentage.textColor = RoseColor;
+    _stockChartView.priceChange.textColor = RoseColor;
+    _stockChartView.lastPrice.textColor = RoseColor;
+    
+    if([_stockChartView.priceChange.text containsString:@"-"]){
+        _stockChartView.priceChangePercentage.textColor = DropColor;
+        _stockChartView.priceChange.textColor = DropColor;
+        _stockChartView.lastPrice.textColor = DropColor;
+    }
+    _stockChartView.AskPrice.text = _quoteModel.askPrice;
+    _stockChartView.AskVolume.text = _quoteModel.askVolum;
+    _stockChartView.BidPrice.text = _quoteModel.bidPrice;
+    _stockChartView.BidVolume.text = _quoteModel.bidVolum;
+    _stockChartView.OpenInterest.text = _quoteModel.openInterest;
+    
+    _stockChartView.dayGrowHold.text = _quoteModel.openInterestChange;//持仓增量
+    //有持仓
+    if(_buyCountValue>0){
+        //持仓盈亏
+        __block float win;
+        [_tradeRecordArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            win += [obj[@"count"] integerValue] * ([_stockChartView.lastPrice.text floatValue]- [obj[@"avgPrice"] floatValue]);
+        }];
+        if (win<0) {
+            _holdWinLossLable.text = [NSString stringWithFormat:@"%@%.1f",@"-",win];
+            [_holdWinLossLable setTextColor:DropColor];
         }
-        
-    }];
+        else{
+            _holdWinLossLable.text = [NSString stringWithFormat:@"%.1f",win];
+            [_holdWinLossLable setTextColor:RoseColor];
+        }
+    }
 }
 
 ////行情通知
@@ -526,7 +560,8 @@ typedef NS_ENUM(NSInteger,TradeKind){
     _scrollView.showsHorizontalScrollIndicator = NO;
     _scrollView.showsVerticalScrollIndicator = NO;
     [_scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.top.bottom.equalTo(self.view);
+        make.left.right.bottom.equalTo(self.view);
+        make.top.equalTo(_navgationView.mas_bottom);
     }];
     _scrollView.scrollEnabled = YES;
     _scrollView.userInteractionEnabled = YES;
@@ -1618,7 +1653,6 @@ typedef NS_ENUM(NSInteger,TradeKind){
 - (void)downLoadData{
     [self downloadDayData];
     [self downloadMinData];
-    
 }
 
 - (void)downloadMinData{
@@ -1680,10 +1714,23 @@ typedef NS_ENUM(NSInteger,TradeKind){
 - (void)reloadData
 {
     NSLog(@"reload data");
+    //首次加载
+    if (_firstLoadFlag==0) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            _firstLoadFlag = 1;
+            [self downLoadData];//下载数
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                [self redrawData];
+            });
+        });
+    }
+    else {
+        [self downloadMinData]; //分钟线要及时加载更新
+        [self redrawData];
+    }
+}
+-(void)redrawData{
     NSMutableArray *data = [NSMutableArray array];
-    
-    [self downloadMinData];//分钟线要及时加载 更新
-    
     switch (self.currentIndex) {
         case 0:
             [data addObjectsFromArray:_MinData];
@@ -1709,14 +1756,12 @@ typedef NS_ENUM(NSInteger,TradeKind){
         default:
             break;
     }
-    
-    
     self.groupModel  = [Y_KLineGroupModel objectWithArray:data];
     [self.modelsDict setObject:_groupModel forKey:self.type];//model 字典 键值编程 更新M_groupModel
     [self.stockChartView reloadData];
     [self.stockChartView.kLineView reDraw];//重绘kline
+    //return data;
 }
-
 #pragma --mark Getter方法 of Y_StockChartView
 - (void)itemModels{
     _stockChartView.itemModels = @[

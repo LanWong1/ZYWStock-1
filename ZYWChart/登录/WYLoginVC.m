@@ -234,25 +234,15 @@
             //交易时间
             //[quickOrder.quickOrder QueryCode:@"GetTime" strCmd:@"" strOut:&strOut strErrInfo:&strErroInfo];
             // NSLog(@"queryCode: %@",strOut);
+            
             //行情接口
             [quote Connect2Quote];
             [quote initiateCallback:self.strAcc];
             [quote Login:self.strCmd];
             
-             quote.userID = self.strUserId;
+            quote.userID = self.strUserId;
 
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                
-                [self.activeId removeFromSuperview];
-                [self.label removeFromSuperview];
-
-                [self setHeartbeat];//心跳
-                //判断是否重新连接 若是重新连接 无需跳转页面
-                if(self.connectFlag == 0){
-                    self.connectFlag = 1;
-                    [self addTabBarController];
-                }
-            });
+     
         }
         @catch(GLACIER2CannotCreateSessionException* ex)
         {
@@ -273,6 +263,17 @@
             NSLog(@"哈哈哈 :%@",s);
             [self showAlart];
         }
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            
+            [self.activeId removeFromSuperview];
+            [self.label removeFromSuperview];
+            [self setHeartbeat];//心跳
+            //判断是否重新连接 若是重新连接 无需跳转页面
+            if(self.connectFlag == 0){
+                self.connectFlag = 1;
+                [self addTabBarController];
+            }
+        });
     });
 }
 
@@ -373,7 +374,7 @@
     // 创建GCD定时器
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
-    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行
+    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行 发送心跳频率
     // 事件回调
     dispatch_source_set_event_handler(_timer, ^{
        
@@ -388,17 +389,18 @@
         }
         @catch(ICEException* s){
             NSLog(@"heart beat exception ==== %@",s);
-            if(iRet1 != 0){
-                dispatch_source_cancel(self->_timer);
-                [self connect2Server];
-            }
-        }
-        
-        if(iRet1 != 0 | iRet2 != 0){
-            NSLog(@"heart beat fails ==========");
             dispatch_source_cancel(self->_timer);
             [self connect2Server];
+//            if(iRet1 != 0){
+//                dispatch_source_cancel(self->_timer);
+//                [self connect2Server];
+//            }
         }
+//        if(iRet1 != 0 | iRet2 != 0){
+//            NSLog(@"heart beat fails ==========");
+//            dispatch_source_cancel(self->_timer);
+//            [self connect2Server];
+//        }
     });
     // 开启定时器
     dispatch_resume(_timer);
