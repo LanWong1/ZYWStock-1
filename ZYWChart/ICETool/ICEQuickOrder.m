@@ -10,7 +10,7 @@
 #import "QuickOrder.h"
 #import <objc/Ice.h>
 #import <objc/Glacier2.h>
-
+#import "AppDelegate.h"
 
 @interface autoTradeCallbackReceiver()<AutoTradeCtpCallbackReceiver>
 //@property (nonatomic) NSMutableArray* Msg;
@@ -63,8 +63,10 @@ static ICEQuickOrder* QuickOrder = nil;
 
 
 
-- (autoTradeCallbackReceiver*)Connect2ICE{
+- (int)Connect2ICE{
+    NSLog(@"connect quickorder===========");
     
+    int ret;
     if(self.router){
      
         @try{
@@ -115,7 +117,11 @@ static ICEQuickOrder* QuickOrder = nil;
     [adapter activate];
     self.callbackReceiver = [[autoTradeCallbackReceiver alloc]init];
     self.twowayR = [AutoTradeCtpCallbackReceiverPrx uncheckedCast:[adapter add:_callbackReceiver identity:callbackReceiverIdent]];
-    return self.callbackReceiver;
+    
+    [self initiateCallback:self.strFunAcc];
+    ret = [self Login:self.strcmd];
+    return ret;
+   // return self.callbackReceiver;
 }
 
 
@@ -132,8 +138,11 @@ static ICEQuickOrder* QuickOrder = nil;
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
     //[self.NpTrade Login:@"" strCmd:_loginStrCmd strOut:&strOut strErrInfo:&strErroInfo];
     int ret = [self.quickOrder Login:@"" strCmd:StrCmd strOut:&strOut strErrInfo:&strErroInfo];
+    AppDelegate *app =(AppDelegate*)[UIApplication sharedApplication].delegate;
+    app.strErroInfo = strErroInfo;
     return ret;
 }
+
 - (int)HeartBeat:(NSString*)strCmd{
     int iRet = -2;
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
@@ -143,6 +152,7 @@ static ICEQuickOrder* QuickOrder = nil;
     //iRet = [self.quickOrder begin_HeartBeat:@"" strCmd:strCmd];
     return iRet;
 }
+
 - (void)sendOrder:(NSString*)StrCmdType strCmd:(NSString *)StrCmd{
     NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
     NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];

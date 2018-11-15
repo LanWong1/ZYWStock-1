@@ -36,6 +36,6 @@
 
 @property (strong,nonatomic) autoTradeCallbackReceiver* autoTradeCallback;
 
-
+@property (copy, nonatomic) NSString *strErroInfo;
 @end
 

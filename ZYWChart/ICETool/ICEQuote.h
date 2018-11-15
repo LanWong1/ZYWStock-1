@@ -41,6 +41,8 @@
 @property (copy, nonatomic) NSString *userID;
 @property (nonatomic, copy) NSString* strFunAcc;
 @property (nonatomic, copy) NSString* strPassword;
+@property (nonatomic, copy) NSString* strAcc;
+@property (nonatomic,copy) NSString* strCmd;
 
 + (ICEQuote*)shareInstance;
 

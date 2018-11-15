@@ -84,8 +84,36 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     NSLog(@"Did Become Active======");
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if(self.loginFlag){
+           
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                @try{
+                    ICEQuickOrder *quickOrder = [ICEQuickOrder shareInstance];
+                    ICEQuote *quote = [ICEQuote shareInstance];
+                    [quickOrder Connect2ICE];
+                    [quote Connect2Quote];
+                }
+                @catch(ICEException* s){
+                    NSLog(@"heart beat exception ==== %@",s);
+                    // [self connect2Server];
+                    //            if(iRet1 != 0){
+                    //                dispatch_source_cancel(self->_timer);
+                    //                [self connect2Server];
+                    //            }
+                }
+            });
 
+        }
+    });
+    
+    
+ 
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    
+    
+    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

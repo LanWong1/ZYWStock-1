@@ -28,6 +28,10 @@
 @property (nonatomic, copy) NSString* strFunAcc;
 @property (nonatomic, copy) NSString* strPassword;
 @property (nonatomic, copy) NSString* strUserId;
+@property (nonatomic, copy) NSString* strcmd;
+@property (nonatomic, copy) NSString* strAcc;
+
+
 
 @property (nonatomic) id<ICECommunicator> communicator;
 @property (nonatomic) id<AutoTradeCtpCallbackReceiverPrx> twowayR;
@@ -56,5 +60,5 @@
 - (void)clearOrder:(NSString*)StrCmd;
 //- (void)Logout:(NSString*)StrCmd;
 - (NSMutableString *)queryCode:(NSString*)StrCmd;
-- (autoTradeCallbackReceiver*)Connect2ICE;
+- (int)Connect2ICE;
 @end

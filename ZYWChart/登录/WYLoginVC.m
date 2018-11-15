@@ -191,9 +191,14 @@
     ICEQuote      *quote = [ICEQuote shareInstance];
     
     
+    
+    
     [self.view addSubview:self.label];
     [self addActiveId];
     [self.activeId startAnimating];
+    
+    
+    
     //开线程
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
         @try
@@ -201,31 +206,31 @@
             NSLog(@"connect to server");
             //sql 接口
             [sql Connect2ICE];//sql连接服务器
+            
+            
+            
             [self checkFundAccount];//检查账号信息
             // [self getCode];
             
             //易捷接口
-            [quickOrder  Connect2ICE];
-            [quickOrder initiateCallback:self.strFundAcc];
-            
-            NSMutableString* strOut = [[NSMutableString alloc]initWithString:@""];
-            NSMutableString* strErroInfo = [[NSMutableString alloc]initWithString:@""];
-            int ret = [quickOrder.quickOrder Login:@"" strCmd:self.strCmd strOut:&strOut strErrInfo:&strErroInfo];
-           // NSLog(@"quickorder login ret=  %d",ret);
+           int ret = [quickOrder  Connect2ICE];
+//            [quickOrder initiateCallback:self.strFundAcc];
+//            = [quickOrder Login:self.strCmd];
             if(ret == -1){
-                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:strErroInfo preferredStyle:UIAlertControllerStyleAlert];
+                AppDelegate *app =(AppDelegate*) [UIApplication sharedApplication].delegate;
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"警告" message:app.strErroInfo preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                    NSLog(@"dddddddddd");
-                    [self.activeId removeFromSuperview];
-                    [self.label removeFromSuperview];
- 
+                    [self.activeId removeFromSuperview];//转圈圈消失
+                    [self.label removeFromSuperview];//请稍后消失
+                    
                 }];
                 [alert addAction:action];
                 [self presentViewController:alert animated:YES completion:nil];
             }
-           // [self setHeartbeat];//心跳
+
             //资金查询
              [quickOrder queryFund:quickOrder.strFunAcc];
+            
 //            NSString *cmd1 = [NSString stringWithFormat:@"%@%@%@",quickOrder.strFunAcc,@"=",@"" ];
 //            [quickOrder queryOrder:cmd1];
 //            //资金消息
@@ -234,12 +239,11 @@
             //交易时间
             //[quickOrder.quickOrder QueryCode:@"GetTime" strCmd:@"" strOut:&strOut strErrInfo:&strErroInfo];
             // NSLog(@"queryCode: %@",strOut);
-            
             //行情接口
-            [quote Connect2Quote];
-            [quote initiateCallback:self.strAcc];
-            [quote Login:self.strCmd];
             
+            [quote Connect2Quote];//链接登录
+//            [quote initiateCallback:self.strAcc];
+//            [quote Login:self.strCmd];
             quote.userID = self.strUserId;
 
      
@@ -264,14 +268,19 @@
             [self showAlart];
         }
         dispatch_sync(dispatch_get_main_queue(), ^{
-            
+            AppDelegate *app =(AppDelegate*) [UIApplication sharedApplication].delegate;
+            app.loginFlag = 1;
             [self.activeId removeFromSuperview];
             [self.label removeFromSuperview];
             [self setHeartbeat];//心跳
             //判断是否重新连接 若是重新连接 无需跳转页面
+            NSLog(@"connet flag ===== %d",self.connectFlag);
             if(self.connectFlag == 0){
                 self.connectFlag = 1;
                 [self addTabBarController];
+            }
+            else{
+                [self presentViewController:_tab animated:NO completion:nil];
             }
         });
     });
@@ -291,8 +300,6 @@
     [sql DBAddSqlParameter:@"error_no" direction:SqlServerOutput value:@"-1"];
     [sql DBAddSqlParameter:@"error_info" direction:SqlServerOutput value:erroInfo];
    
-   
-    
     @try{
         //检查账户
         ret =  [sql.SQL ExecProc:@"pd_check_fundaccount" SQLPQS:sql.paremetersSeq strErrInfo:&erroInfo XMLSqlData:&outPutString];
@@ -374,7 +381,7 @@
     // 创建GCD定时器
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
-    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 3 * NSEC_PER_SEC, 0); //每3秒执行 发送心跳频率
+    dispatch_source_set_timer(_timer, dispatch_walltime(NULL, 0), 20 * NSEC_PER_SEC, 0); //每3秒执行 发送心跳频率
     // 事件回调
     dispatch_source_set_event_handler(_timer, ^{
        
@@ -457,25 +464,12 @@
         self.strFundAcc = [[NSMutableString alloc]initWithString:self.UserNameTextField.text];
         
         
-        ICEQuote *quote = [ICEQuote shareInstance];
-        quote.strFunAcc = self.UserNameTextField.text;
-        quote.strPassword = self.PassWordTextField.text;
-        quote.userID = self.strUserId;
- 
-        ICEQuickOrder *quickOrder = [ICEQuickOrder shareInstance];
-        quickOrder.strFunAcc = self.UserNameTextField.text;
-        quickOrder.strUserId = self.strUserId;
-        quickOrder.strPassword = self.PassWordTextField.text;
-        
+     
         
         
         AppDelegate* app = (AppDelegate*)[[UIApplication sharedApplication] delegate];
         app.strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
         app.strAcc = [NSString stringWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId];
-        
-        
-        
-        
         self.strAcc = [NSString stringWithFormat:@"%@%@%@",self.strFundAcc,@"=",self.strUserId];
         
         self.strCmd = [[NSString alloc]initWithFormat:@"%@%@%@%@%@",self.UserNameTextField.text,@"=",self.strUserId,@"=",self.PassWordTextField.text];
@@ -483,6 +477,22 @@
         
         self.Pass = self.PassWordTextField.text;
       
+        
+        ICEQuote *quote = [ICEQuote shareInstance];
+        quote.strFunAcc = self.UserNameTextField.text;
+        quote.strPassword = self.PassWordTextField.text;
+        quote.userID = self.strUserId;
+        quote.strAcc = self.strAcc;
+        quote.strCmd = self.strCmd;
+        
+        ICEQuickOrder *quickOrder = [ICEQuickOrder shareInstance];
+        quickOrder.strFunAcc = self.UserNameTextField.text;
+        quickOrder.strUserId = self.strUserId;
+        quickOrder.strPassword = self.PassWordTextField.text;
+        quickOrder.strAcc = self.strAcc;
+        quickOrder.strcmd = self.strCmd;
+        
+        
         [self connect2Server];
     }
 }
